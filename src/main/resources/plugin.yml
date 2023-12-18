@@ -1,0 +1,9 @@
+name: 'EternalEconomy'
+author: 'EternalCode'
+main: com.eternalcode.eternaleconomy.EternalEconomy
+version: '1.0.0'
+depend:
+    - Vault
+api-version: '1.13'
+commands:
+    money:
