@@ -14,7 +14,7 @@ public class EternalEconomy extends JavaPlugin {
 
         public void onEnable(){
                 instance = this;
-                vaultImpl = new VaultImpl();
+                vaultImpl = createVaultImpl();
                 if (!this.setupEconomy()) {
                         this.getLogger().warning("Economy couldn't be registed, Vault plugin is missing!");
                 } else {
@@ -22,8 +22,8 @@ public class EternalEconomy extends JavaPlugin {
                 }
 
         }
-        public static EternalEconomy getInstance() {
-                return instance;
+        private VaultImpl createVaultImpl() {
+                return new VaultImpl(this);
         }
         private boolean setupEconomy() {
                 if (this.getServer().getPluginManager().getPlugin("Vault") == null) {

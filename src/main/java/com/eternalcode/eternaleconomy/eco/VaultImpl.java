@@ -12,8 +12,13 @@ import java.util.List;
 import java.util.UUID;
 
 public class VaultImpl implements Economy {
+    private final EternalEconomy plugin;
+
+    public VaultImpl(EternalEconomy plugin) {
+        this.plugin = plugin;
+    }
     public boolean isEnabled() {
-        return EternalEconomy.getInstance() != null;
+        return plugin != null;
     }
     public String getName() {
         return "EternalEconomy";

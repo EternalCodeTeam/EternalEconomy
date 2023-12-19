@@ -6,7 +6,7 @@ public class PlayerBalance {
     private UUID uuid;
     private double balance;
 
-    public PlayerBalance(UUID uuid, double balance) {
+    public PlayerBalance(final UUID uuid, double balance) {
         this.uuid = uuid;
         this.balance = balance;
     }
