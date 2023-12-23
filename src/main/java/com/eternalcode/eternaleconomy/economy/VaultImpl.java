@@ -1,4 +1,4 @@
-package com.eternalcode.eternaleconomy.eco;
+package com.eternalcode.eternaleconomy.economy;
 
 import com.eternalcode.eternaleconomy.EternalEconomy;
 import net.milkbowl.vault.economy.Economy;
@@ -12,34 +12,44 @@ import java.util.List;
 import java.util.UUID;
 
 public class VaultImpl implements Economy {
+
     private final EternalEconomy plugin;
 
     public VaultImpl(EternalEconomy plugin) {
         this.plugin = plugin;
     }
+
+
     public boolean isEnabled() {
         return plugin != null;
     }
+
     public String getName() {
         return "EternalEconomy";
     }
+
     public String currencyNamePlural() {
         return "$";
     }
 
+
     public String currencyNameSingular() {
         return "$";
     }
+
     public boolean hasBankSupport() {
         return false;
     }
+
     public int fractionalDigits() {
         return -1;
     }
+
     public String format(double v) {
         BigDecimal bd = (new BigDecimal(v)).setScale(2, RoundingMode.HALF_EVEN);
         return String.valueOf(bd.doubleValue());
     }
+
     public boolean createPlayerAccount(String name) {
         return this.createAccount(Bukkit.getOfflinePlayer(name).getUniqueId());
     }
@@ -55,9 +65,11 @@ public class VaultImpl implements Economy {
     public boolean createPlayerAccount(OfflinePlayer player, String world) {
         return this.createAccount(player.getUniqueId());
     }
+
     private boolean createAccount(UUID uuid) {
         return EternalEconomy.getEconomy().createAccount(uuid);
     }
+
     public boolean hasAccount(String name) {
         return this.hasAccount(Bukkit.getOfflinePlayer(name).getUniqueId());
     }
@@ -73,9 +85,11 @@ public class VaultImpl implements Economy {
     public boolean hasAccount(OfflinePlayer player, String world) {
         return this.hasAccount(player.getUniqueId());
     }
+
     private boolean hasAccount(UUID uuid) {
         return EternalEconomy.getEconomy().hasAccount(uuid);
     }
+
     public double getBalance(String name) {
         return this.getBalance(Bukkit.getOfflinePlayer(name).getUniqueId());
     }
@@ -91,6 +105,7 @@ public class VaultImpl implements Economy {
     public double getBalance(OfflinePlayer player, String world) {
         return this.getBalance(player.getUniqueId());
     }
+
     public boolean has(String name, double amount) {
         return this.has(Bukkit.getOfflinePlayer(name).getUniqueId(), amount);
     }
@@ -115,6 +130,7 @@ public class VaultImpl implements Economy {
         return EternalEconomy.getEconomy().getBalance(uuid).getBalance();
 
     }
+
     public EconomyResponse withdrawPlayer(String name, double amount) {
         return this.withdraw(Bukkit.getOfflinePlayer(name).getUniqueId(), amount);
     }
@@ -134,6 +150,7 @@ public class VaultImpl implements Economy {
     private EconomyResponse withdraw(UUID uuid, double amount) {
         return !EternalEconomy.getEconomy().withdraw(uuid, amount) ? new EconomyResponse(0.0D, 0.0D, EconomyResponse.ResponseType.FAILURE, "Failed to withdraw funds.") : new EconomyResponse(amount, this.getBalance(uuid), EconomyResponse.ResponseType.SUCCESS, "");
     }
+
     public EconomyResponse depositPlayer(String name, double amount) {
         return this.deposit(Bukkit.getOfflinePlayer(name).getUniqueId(), amount);
     }
@@ -153,6 +170,7 @@ public class VaultImpl implements Economy {
     private EconomyResponse deposit(UUID uuid, double amount) {
         return !EternalEconomy.getEconomy().deposit(uuid, amount) ? new EconomyResponse(0.0D, 0.0D, EconomyResponse.ResponseType.FAILURE, "Failed to deposit funds.") : new EconomyResponse(amount, this.getBalance(uuid), EconomyResponse.ResponseType.SUCCESS, "");
     }
+
     public List<String> getBanks() {
         return null;
     }

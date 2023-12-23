@@ -1,4 +1,4 @@
-package com.eternalcode.eternaleconomy.eco;
+package com.eternalcode.eternaleconomy.economy;
 
 import java.util.UUID;
 
@@ -13,10 +13,6 @@ public class PlayerBalance {
 
     public UUID getUUID() {
         return this.uuid;
-    }
-
-    public void setUUID(UUID uuid) {
-        this.uuid = uuid;
     }
 
     public double getBalance() {
