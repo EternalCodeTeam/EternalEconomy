@@ -1,40 +1,42 @@
 package com.eternalcode.eternaleconomy;
 
-import com.eternalcode.eternaleconomy.eco.Economy;
-import com.eternalcode.eternaleconomy.eco.VaultImpl;
-import org.bukkit.plugin.ServicePriority;
+import com.eternalcode.eternaleconomy.adventure.AdventureColorProcessor;
+import com.eternalcode.eternaleconomy.configuration.ConfigurationService;
+import com.eternalcode.eternaleconomy.configuration.implementation.PluginConfiguration;
+import com.eternalcode.eternaleconomy.notification.NotificationSender;
+import net.kyori.adventure.platform.AudienceProvider;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
 
 public class EternalEconomy extends JavaPlugin {
 
+    private AudienceProvider audiences;
 
-        private static EternalEconomy instance;
-        private static VaultImpl vaultImpl;
-        public static Economy eco;
+    @Override
+    public void onEnable() {
+        Server server = this.getServer();
 
-        public void onEnable(){
-                instance = this;
-                vaultImpl = createVaultImpl();
-                if (!this.setupEconomy()) {
-                        this.getLogger().warning("Economy couldn't be registed, Vault plugin is missing!");
-                } else {
-                        this.getLogger().info("Vault found, Economy has been registered.");
-                }
+        ConfigurationService configurationService = new ConfigurationService();
+        PluginConfiguration config = configurationService.create(PluginConfiguration.class, new File(this.getDataFolder(), "config.yml"));
 
+        this.audiences = BukkitAudiences.create(this);
+        MiniMessage miniMessage = MiniMessage.builder()
+            .postProcessor(new AdventureColorProcessor())
+            .build();
+
+        NotificationSender notificationSender = new NotificationSender(this.audiences, miniMessage);
+    }
+
+    @Override
+    public void onDisable() {
+        if (this.audiences != null) {
+            this.audiences.close();
         }
-        private VaultImpl createVaultImpl() {
-                return new VaultImpl(this);
-        }
-        private boolean setupEconomy() {
-                if (this.getServer().getPluginManager().getPlugin("Vault") == null) {
-                        return false;
-                } else {
-                        this.getServer().getServicesManager().register(net.milkbowl.vault.economy.Economy.class, vaultImpl, this, ServicePriority.Highest);
-                        return true;
-                }
-        }
-        public static Economy getEconomy() {
-                return eco;
-        }
+    }
+
 }
 
