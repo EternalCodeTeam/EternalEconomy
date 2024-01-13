@@ -1,14 +1,15 @@
 package com.eternalcode.eternaleconomy.user;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class User {
 
     public UUID uniqueId;
     public String name;
-    public double balance;
+    public BigDecimal balance;
 
-    public User(UUID uniqueId, String name, double balance) {
+    public User(UUID uniqueId, String name, BigDecimal balance) {
         this.uniqueId = uniqueId;
         this.name = name;
         this.balance = balance;
@@ -22,20 +23,20 @@ public class User {
         return name;
     }
 
-    public double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 
-    public void addBalance(double balance) {
-        this.balance += balance;
+    public void addBalance(BigDecimal balance) {
+        this.balance = this.balance.add(balance);
     }
 
-    public void removeBalance(double balance) {
-        this.balance -= balance;
+    public void removeBalance(BigDecimal balance) {
+        this.balance = this.balance.subtract(balance);
     }
 
     public void setName(String name) {
