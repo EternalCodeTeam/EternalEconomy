@@ -16,16 +16,26 @@ public class UserService {
         return Optional.ofNullable(this.usersByUniqueId.get(uuid));
     }
 
-    public User create(UUID uuid, String name, BigDecimal balance) {
+    public User create(UUID uuid, String name) {
         if (this.usersByUniqueId.containsKey(uuid)) {
             throw new IllegalArgumentException("User already exists");
         }
 
-        User user = new User(uuid, name, 0.0);
+        User user = new User(uuid, name, BigDecimal.ZERO);
         this.usersByUniqueId.put(uuid, user);
 
         return user;
     }
+
+    public void addUser(User user) {
+        this.usersByUniqueId.put(user.uniqueId, user);
+    }
+
+    public void remove(UUID uuid) {
+        this.usersByUniqueId.remove(uuid);
+    }
+
+    // save
 
     public Collection<User> getUsers() {
         return Collections.unmodifiableCollection(this.usersByUniqueId.values());

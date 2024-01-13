@@ -31,6 +31,9 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.3.1")
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
 
+    // hikari
+    implementation("com.zaxxer:HikariCP:5.1.0")
+
     // spigot api
     compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
     testImplementation("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
