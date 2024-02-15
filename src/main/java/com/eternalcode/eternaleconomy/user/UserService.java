@@ -1,43 +1,48 @@
 package com.eternalcode.eternaleconomy.user;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class UserService {
 
     private final Map<UUID, User> usersByUniqueId = new HashMap<>();
+    private final Map<String, User> usersByName = new HashMap<>();
 
-    public Optional<User> getUser(UUID uuid) {
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public Optional<User> findUser(UUID uuid) {
         return Optional.ofNullable(this.usersByUniqueId.get(uuid));
     }
 
-    public User create(UUID uuid, String name) {
-        if (this.usersByUniqueId.containsKey(uuid)) {
-            throw new IllegalArgumentException("User already exists");
-        }
+    public Optional<User> findUser(String name) {
+        return Optional.ofNullable(this.usersByName.get(name));
+    }
 
-        User user = new User(uuid, name, BigDecimal.ZERO);
-        this.usersByUniqueId.put(uuid, user);
-
-        return user;
+    public void create(UUID uuid, String name) {
+        this.usersByUniqueId.put(uuid, new User(uuid, name, BigDecimal.ZERO));
+        this.usersByName.put(name, this.usersByUniqueId.get(uuid));
     }
 
     public void addUser(User user) {
-        this.usersByUniqueId.put(user.uniqueId, user);
+        this.usersByUniqueId.put(user.getUniqueId(), user);
+        this.usersByName.put(user.getName(), user);
     }
 
-    public void remove(UUID uuid) {
+    public void removeUser(UUID uuid) {
         this.usersByUniqueId.remove(uuid);
+        this.usersByName.remove(this.usersByUniqueId.get(uuid).getName());
     }
 
-    // save
-
-    public Collection<User> getUsers() {
-        return Collections.unmodifiableCollection(this.usersByUniqueId.values());
+    public void saveUser(User user) {
+        this.userRepository.saveUser(user);
     }
+
+    public Collection<User> users() {
+        return this.usersByUniqueId.values();
+    }
+
 }

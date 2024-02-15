@@ -21,7 +21,9 @@ public class UserListener implements Listener {
         Player player = event.getPlayer();
         UUID uniqueId = player.getUniqueId();
 
-        // todo: implement, create or load
+        this.userService.findUser(uniqueId).ifPresentOrElse(user -> {
+            user.setName(player.getName());
+        }, () -> this.userService.create(uniqueId, player.getName()));
     }
 
     @EventHandler
@@ -29,7 +31,8 @@ public class UserListener implements Listener {
         Player player = event.getPlayer();
         UUID uniqueId = player.getUniqueId();
 
-        // todo: implement save user
+
+        this.userService.findUser(uniqueId).ifPresent(this.userService::saveUser);
     }
 
 }
