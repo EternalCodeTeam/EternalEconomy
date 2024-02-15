@@ -1,13 +1,14 @@
 package com.eternalcode.eternaleconomy.user;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface UserRepository {
 
     List<User> loadUsers();
 
-    void saveUser();
+    CompletableFuture<Void> saveUser(User user);
 
-    void removeUser();
+    CompletableFuture<Void> removeUser(User user);
 
 }

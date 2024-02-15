@@ -21,6 +21,9 @@ public class PluginConfiguration extends OkaeriConfig {
     public Database database = new Database();
 
 
+
+    @Comment("Starting balance")
+    public int starting_balance = 250;
     public static class Database extends OkaeriConfig {
         public DatabaseType type = DatabaseType.SQLITE;
 
@@ -34,5 +37,6 @@ public class PluginConfiguration extends OkaeriConfig {
 
         @Comment("For file based databases.")
         public String file = "economy.db";
+
     }
 }

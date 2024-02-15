@@ -1,10 +1,13 @@
 package com.eternalcode.eternaleconomy;
 
-import com.eternalcode.eternaleconomy.adventure.AdventureColorProcessor;
+import com.eternalcode.commons.adventure.AdventureLegacyColorPostProcessor;
+import com.eternalcode.commons.adventure.AdventureLegacyColorPreProcessor;
 import com.eternalcode.eternaleconomy.configuration.ConfigurationService;
 import com.eternalcode.eternaleconomy.configuration.implementation.PluginConfiguration;
 import com.eternalcode.eternaleconomy.database.DatabaseService;
 import com.eternalcode.eternaleconomy.notification.NotificationSender;
+import com.eternalcode.eternaleconomy.user.UserRepositoryImpl;
+import com.zaxxer.hikari.HikariDataSource;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -26,11 +29,13 @@ public class EternalEconomy extends JavaPlugin {
         PluginConfiguration config = configurationService.create(PluginConfiguration.class, new File(dataFolder, "config.yml"));
 
         DatabaseService databaseService = new DatabaseService(config);
-        databaseService.connect(dataFolder);
+        HikariDataSource connect = databaseService.connect(dataFolder);
+        UserRepositoryImpl userRepository = new UserRepositoryImpl(connect);
 
         this.audiences = BukkitAudiences.create(this);
         MiniMessage miniMessage = MiniMessage.builder()
-            .postProcessor(new AdventureColorProcessor())
+            .preProcessor(new AdventureLegacyColorPreProcessor())
+            .postProcessor(new AdventureLegacyColorPostProcessor())
             .build();
 
         NotificationSender notificationSender = new NotificationSender(this.audiences, miniMessage);

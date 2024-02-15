@@ -15,10 +15,11 @@ repositories {
     gradlePluginPortal()
     mavenCentral()
 
-    maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
-    maven { url = uri("https://jitpack.io") }
-    maven { url = uri("https://storehouse.okaeri.eu/repository/maven-public/") }
-    maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/") }
+    maven("https://repo.eternalcode.pl/releases/")
+    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    maven("https://jitpack.io")
+    maven("https://storehouse.okaeri.eu/repository/maven-public/")
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
 }
 
 dependencies {
@@ -26,6 +27,10 @@ dependencies {
     val okaeriConfigsVersion = "5.0.0-beta.5"
     implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:${okaeriConfigsVersion}")
     implementation("eu.okaeri:okaeri-configs-serdes-commons:${okaeriConfigsVersion}")
+
+    val eternalcodeCommonsVersion = "1.1.1"
+    implementation("com.eternalcode:eternalcode-commons-adventure:${eternalcodeCommonsVersion}")
+    implementation("com.eternalcode:eternalcode-commons-bukkit:${eternalcodeCommonsVersion}")
 
     // kyori adventure & minimessage
     implementation("net.kyori:adventure-platform-bukkit:4.3.1")
@@ -42,7 +47,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.4")
 
     // VaultAPI
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7.3")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
     // unit test
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
