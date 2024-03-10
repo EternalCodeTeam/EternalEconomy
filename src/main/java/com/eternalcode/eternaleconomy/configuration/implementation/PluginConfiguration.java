@@ -21,6 +21,7 @@ public class PluginConfiguration extends OkaeriConfig {
 
 
     public Database database = new Database();
+    public BalanceTop balanceTop = new BalanceTop();
 
 
     @Comment("Starting balance")
@@ -77,5 +78,10 @@ public class PluginConfiguration extends OkaeriConfig {
         @Comment("For file based databases.")
         public String file = "economy.db";
 
+    }
+
+    public static class BalanceTop extends OkaeriConfig {
+        @Comment("Inventory title")
+        public String inventory_title = "<yellow>Balance Top";
     }
 }
