@@ -57,6 +57,9 @@ dependencies {
     // litecommands
     val litecommandsVersion = "3.4.0"
     implementation("dev.rollczi:litecommands-bukkit:${litecommandsVersion}")
+
+    // Gui liblary
+    implementation("dev.triumphteam:triumph-gui:3.1.7")
 }
 
 java {

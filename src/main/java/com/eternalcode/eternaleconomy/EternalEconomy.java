@@ -2,14 +2,16 @@ package com.eternalcode.eternaleconomy;
 
 import com.eternalcode.commons.adventure.AdventureLegacyColorPostProcessor;
 import com.eternalcode.commons.adventure.AdventureLegacyColorPreProcessor;
-import com.eternalcode.eternaleconomy.commands.EconomyCommand;
-import com.eternalcode.eternaleconomy.commands.MoneyCommand;
-import com.eternalcode.eternaleconomy.commands.PayCommand;
+import com.eternalcode.eternaleconomy.command.EconomyCommand;
+import com.eternalcode.eternaleconomy.command.MoneyCommand;
+import com.eternalcode.eternaleconomy.command.PayCommand;
 import com.eternalcode.eternaleconomy.configuration.ConfigurationService;
 import com.eternalcode.eternaleconomy.configuration.implementation.PluginConfiguration;
 import com.eternalcode.eternaleconomy.database.DatabaseService;
 import com.eternalcode.eternaleconomy.notification.NotificationSender;
+import com.eternalcode.eternaleconomy.user.User;
 import com.eternalcode.eternaleconomy.user.UserRepositoryImpl;
+import com.eternalcode.eternaleconomy.user.UserService;
 import com.zaxxer.hikari.HikariDataSource;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
@@ -26,6 +28,9 @@ public class EternalEconomy extends JavaPlugin {
 
     private AudienceProvider audiences;
     private LiteCommands<CommandSender> liteCommands;
+    private UserService userService;
+    private User user;
+
 
     @Override
     public void onEnable() {
@@ -45,8 +50,15 @@ public class EternalEconomy extends JavaPlugin {
             .postProcessor(new AdventureLegacyColorPostProcessor())
             .build();
 
+        userService = new UserService(config, userRepository);
+
         NotificationSender notificationSender = new NotificationSender(this.audiences, miniMessage);
 
+        this.liteCommands = LiteCommandsBukkit.builder("EternalEconomy")
+            .commands(new EconomyCommand(this, userService, config),
+                new MoneyCommand(this, userService, config),
+                new PayCommand(this, userService, config))
+            .build();
 
     }
 

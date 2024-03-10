@@ -1,5 +1,6 @@
-package com.eternalcode.eternaleconomy.commands;
+package com.eternalcode.eternaleconomy.command;
 
+import com.eternalcode.eternaleconomy.EternalEconomy;
 import com.eternalcode.eternaleconomy.configuration.implementation.PluginConfiguration;
 import com.eternalcode.eternaleconomy.user.User;
 import com.eternalcode.eternaleconomy.user.UserService;
@@ -8,7 +9,6 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -19,10 +19,11 @@ public class PayCommand {
     private UserService userService;
     private User user;
     private PluginConfiguration configuration;
+    private final EternalEconomy eternalEconomy;
 
-    public PayCommand(UserService userService, User user, PluginConfiguration configuration) {
+    public PayCommand(EternalEconomy eternalEconomy, UserService userService, PluginConfiguration configuration) {
+        this.eternalEconomy = eternalEconomy;
         this.userService = userService;
-        this.user = user;
         this.configuration = configuration;
     }
 
