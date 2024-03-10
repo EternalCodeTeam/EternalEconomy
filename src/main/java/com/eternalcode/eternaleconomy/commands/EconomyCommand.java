@@ -25,6 +25,7 @@ public class EconomyCommand {
         this.configuration = configuration;
     }
 
+
     @Execute
     public void execute(@Context Player sender, @Arg("type") String type, @Arg("target") Player target, @Arg @OptionalArg("amount") BigDecimal amount) {
         Optional<User> targetUser = userService.findUser(target.getUniqueId());
