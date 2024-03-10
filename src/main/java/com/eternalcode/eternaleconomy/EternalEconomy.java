@@ -5,6 +5,7 @@ import com.eternalcode.commons.adventure.AdventureLegacyColorPreProcessor;
 import com.eternalcode.eternaleconomy.configuration.ConfigurationService;
 import com.eternalcode.eternaleconomy.configuration.implementation.PluginConfiguration;
 import com.eternalcode.eternaleconomy.database.DatabaseService;
+import com.eternalcode.eternaleconomy.listeners.PlayerJoinListener;
 import com.eternalcode.eternaleconomy.notification.NotificationSender;
 import com.eternalcode.eternaleconomy.user.UserRepositoryImpl;
 import com.zaxxer.hikari.HikariDataSource;
@@ -46,6 +47,10 @@ public class EternalEconomy extends JavaPlugin {
         if (this.audiences != null) {
             this.audiences.close();
         }
+    }
+
+    private void registerEvents(){
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
     }
 
 }
