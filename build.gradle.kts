@@ -20,6 +20,7 @@ repositories {
     maven("https://jitpack.io")
     maven("https://storehouse.okaeri.eu/repository/maven-public/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    maven("https://repo.panda-lang.org/releases")
 }
 
 dependencies {
@@ -52,6 +53,10 @@ dependencies {
     // unit test
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+
+    // litecommands
+    val litecommandsVersion = "3.4.0"
+    implementation("dev.rollczi:litecommands-bukkit:${litecommandsVersion}")
 }
 
 java {

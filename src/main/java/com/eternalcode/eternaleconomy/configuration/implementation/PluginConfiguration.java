@@ -8,6 +8,8 @@ import eu.okaeri.configs.annotation.NameModifier;
 import eu.okaeri.configs.annotation.NameStrategy;
 import eu.okaeri.configs.annotation.Names;
 
+import java.math.BigDecimal;
+
 @Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
 @Header("# ")
 @Header("# EternalEconomy configuration file")
@@ -23,7 +25,28 @@ public class PluginConfiguration extends OkaeriConfig {
 
 
     @Comment("Starting balance")
-    public int starting_balance = 250;
+    public BigDecimal starting_balance = BigDecimal.valueOf(250);
+
+    @Comment("Checking balance message")
+    public String checking_balance_message = "<green>Your current balance: %balance%";
+
+    @Comment("Checking another player balance message")
+    public String checking_balance_other_message = "<green>%target%'s current balance: %balance%";
+
+    @Comment("Add balance message")
+    public String adding_balance_message = "<green>You sucesfully added %amount% to %player%";
+
+    @Comment("Remove balance message")
+    public String removing_balance_message = "<green>You sucesfully removed %amount% from %player%";
+
+    @Comment("Set balance message")
+    public String set_balance_message = "<green>You sucesfully set %players%'s balance to %player%";
+
+    @Comment("Reset balance message")
+    public String reset_balance_message = "<green>You sucesfully reset %player%'s balance";
+
+    @Comment("Incorrect usage of economy command message")
+    public String incorrect_economy_usage = "<red>Incorrect usage! Use /economt <set/add/remove/reset> <plyaer> <amount>";
     public static class Database extends OkaeriConfig {
         public DatabaseType type = DatabaseType.SQLITE;
 

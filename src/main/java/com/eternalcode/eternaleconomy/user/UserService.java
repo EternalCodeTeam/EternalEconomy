@@ -1,16 +1,22 @@
 package com.eternalcode.eternaleconomy.user;
 
+import com.eternalcode.eternaleconomy.configuration.implementation.PluginConfiguration;
+
 import java.math.BigDecimal;
 import java.util.*;
 
 public class UserService {
+
+    private final PluginConfiguration configuration;
+
 
     private final Map<UUID, User> usersByUniqueId = new HashMap<>();
     private final Map<String, User> usersByName = new HashMap<>();
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(PluginConfiguration configuration, UserRepository userRepository) {
+        this.configuration = configuration;
         this.userRepository = userRepository;
     }
 
@@ -23,7 +29,7 @@ public class UserService {
     }
 
     public void create(UUID uuid, String name) {
-        this.usersByUniqueId.put(uuid, new User(uuid, name, BigDecimal.ZERO));
+        this.usersByUniqueId.put(uuid, new User(uuid, name, configuration.starting_balance));
         this.usersByName.put(name, this.usersByUniqueId.get(uuid));
     }
 
