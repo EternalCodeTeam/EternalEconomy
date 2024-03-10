@@ -2,17 +2,22 @@ package com.eternalcode.eternaleconomy;
 
 import com.eternalcode.commons.adventure.AdventureLegacyColorPostProcessor;
 import com.eternalcode.commons.adventure.AdventureLegacyColorPreProcessor;
+import com.eternalcode.eternaleconomy.commands.EconomyCommand;
+import com.eternalcode.eternaleconomy.commands.MoneyCommand;
+import com.eternalcode.eternaleconomy.commands.PayCommand;
 import com.eternalcode.eternaleconomy.configuration.ConfigurationService;
 import com.eternalcode.eternaleconomy.configuration.implementation.PluginConfiguration;
 import com.eternalcode.eternaleconomy.database.DatabaseService;
-import com.eternalcode.eternaleconomy.listeners.PlayerJoinListener;
 import com.eternalcode.eternaleconomy.notification.NotificationSender;
 import com.eternalcode.eternaleconomy.user.UserRepositoryImpl;
 import com.zaxxer.hikari.HikariDataSource;
+import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Server;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -20,6 +25,7 @@ import java.io.File;
 public class EternalEconomy extends JavaPlugin {
 
     private AudienceProvider audiences;
+    private LiteCommands<CommandSender> liteCommands;
 
     @Override
     public void onEnable() {
@@ -40,6 +46,8 @@ public class EternalEconomy extends JavaPlugin {
             .build();
 
         NotificationSender notificationSender = new NotificationSender(this.audiences, miniMessage);
+
+
     }
 
     @Override
@@ -47,10 +55,6 @@ public class EternalEconomy extends JavaPlugin {
         if (this.audiences != null) {
             this.audiences.close();
         }
-    }
-
-    private void registerEvents(){
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
     }
 
 }

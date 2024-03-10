@@ -23,12 +23,27 @@ public class PluginConfiguration extends OkaeriConfig {
     public Database database = new Database();
 
 
-
     @Comment("Starting balance")
     public BigDecimal starting_balance = BigDecimal.valueOf(250);
 
+    @Comment("Minimal pay ammount")
+    public BigDecimal minimal_pay_ammount = BigDecimal.valueOf(1);
+
+    @Comment("Player doesnt have enought money message")
+    public String not_enough_money_message = "<red>Error! You dont have enough money to do this!";
+
+
+    @Comment("Pay sent message")
+    public String pay_sent_message = "<green>You sent %ammount% to %player%";
+
+    @Comment("Receive pay message")
+    public String receive_pay_message = "<green> Your received %balance% from %player%";
+
     @Comment("Checking balance message")
     public String checking_balance_message = "<green>Your current balance: %balance%";
+
+    @Comment("Minimal pay ammount message")
+    public String minimal_pay_ammount_message = "<red>Error! The mimnal pay ammount is: %ammount%";
 
     @Comment("Checking another player balance message")
     public String checking_balance_other_message = "<green>%target%'s current balance: %balance%";
@@ -47,6 +62,7 @@ public class PluginConfiguration extends OkaeriConfig {
 
     @Comment("Incorrect usage of economy command message")
     public String incorrect_economy_usage = "<red>Incorrect usage! Use /economt <set/add/remove/reset> <plyaer> <amount>";
+
     public static class Database extends OkaeriConfig {
         public DatabaseType type = DatabaseType.SQLITE;
 
