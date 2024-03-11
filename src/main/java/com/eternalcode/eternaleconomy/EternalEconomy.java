@@ -66,7 +66,7 @@ public class EternalEconomy extends JavaPlugin {
 
 
         userService = new UserService(config, userRepository);
-        this.noticeService = new NoticeService(audiences, userService, server, messageProvider);
+        this.noticeService = new NoticeService(audiences, userService, server, messageProvider, this.miniMessage);
 
 
 

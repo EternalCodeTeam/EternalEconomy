@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.UUID;
 
 @Command(name = "pay")
 public class PayCommand {
@@ -33,12 +34,15 @@ public class PayCommand {
 
     @Execute
     public void execute(@Context Player sender, @Arg("target") Player target, @Arg("amount") BigDecimal amount) {
+
+        UUID senderUUID = sender.getUniqueId();
+
         if (!(amount.compareTo(configuration.minimalPayAmount) >= 0)) {
 
             this.noticeService.create()
                 .notice(configInterface -> configInterface.economy().minimalPayAmmountMessage())
                 .placeholder("%ammount%", configuration.minimalPayAmount.toString())
-                .player(sender.getUniqueId())
+                .player(senderUUID)
                 .send();
 
             return;
@@ -51,6 +55,7 @@ public class PayCommand {
 
             this.noticeService.create()
                 .notice(configInterface -> configInterface.economy().notEnoughMoneyMessage())
+                .player(senderUUID)
                 .send();
 
             return;
@@ -72,7 +77,7 @@ public class PayCommand {
             .notice(configInterface -> configInterface.economy().paySentMessage())
             .placeholder("%amount%", amountString)
             .placeholder("%player%", target.getName())
-            .player(sender.getUniqueId())
+            .player(senderUUID)
             .send();
 
     }
