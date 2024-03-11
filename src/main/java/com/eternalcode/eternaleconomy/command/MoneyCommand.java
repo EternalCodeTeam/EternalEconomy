@@ -43,7 +43,7 @@ public class MoneyCommand {
         }
 
         this.noticeService.create()
-            .notice(configInterface -> configInterface.economy().checking_balance_message())
+            .notice(configInterface -> configInterface.economy().checkBalanceMessage())
             .placeholder("%balance%", userService.findUser(uuid).map(user -> user.getBalance()).orElse(BigDecimal.ZERO).toString())
             .player(uuid)
             .send();
@@ -58,7 +58,7 @@ public class MoneyCommand {
         }
 
         this.noticeService.create()
-            .notice(configInterface -> configInterface.economy().checking_balance_other_message())
+            .notice(configInterface -> configInterface.economy().checkBalanceOtherMessage())
             .placeholder("%balance%", targetUser.map(user -> user.getBalance()).orElse(BigDecimal.ZERO).toString())
             .placeholder("%target%", target.getName())
             .player(sender.getUniqueId())

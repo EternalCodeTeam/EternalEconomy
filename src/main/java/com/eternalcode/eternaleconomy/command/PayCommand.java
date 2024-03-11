@@ -5,8 +5,6 @@ import com.eternalcode.eternaleconomy.configuration.implementation.PluginConfigu
 import com.eternalcode.eternaleconomy.notification.NoticeService;
 import com.eternalcode.eternaleconomy.user.User;
 import com.eternalcode.eternaleconomy.user.UserService;
-import com.eternalcode.multification.notice.NoticePart;
-import com.eternalcode.multification.platform.PlatformBroadcaster;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
@@ -35,11 +33,11 @@ public class PayCommand {
 
     @Execute
     public void execute(@Context Player sender, @Arg("target") Player target, @Arg("amount") BigDecimal amount) {
-        if (!(amount.compareTo(configuration.minimal_pay_ammount) >= 0)) {
+        if (!(amount.compareTo(configuration.minimalPayAmount) >= 0)) {
 
             this.noticeService.create()
-                .notice(configInterface -> configInterface.economy().minimal_pay_ammount_message())
-                .placeholder("%ammount%", configuration.minimal_pay_ammount.toString())
+                .notice(configInterface -> configInterface.economy().minimalPayAmmountMessage())
+                .placeholder("%ammount%", configuration.minimalPayAmount.toString())
                 .player(sender.getUniqueId())
                 .send();
 
@@ -52,7 +50,7 @@ public class PayCommand {
         if (!(has(sender, amount))) {
 
             this.noticeService.create()
-                .notice(configInterface -> configInterface.economy().not_enough_money_message())
+                .notice(configInterface -> configInterface.economy().notEnoughMoneyMessage())
                 .send();
 
             return;
@@ -64,14 +62,14 @@ public class PayCommand {
         String amountString = amount.toString();
 
         this.noticeService.create()
-            .notice(configInterface -> configInterface.economy().pay_received_message())
+            .notice(configInterface -> configInterface.economy().receivePayMessage())
             .placeholder("%amount%", amountString)
             .placeholder("%player%", sender.getName())
             .player(target.getUniqueId())
             .send();
 
         this.noticeService.create()
-            .notice(configInterface -> configInterface.economy().pay_sent_message())
+            .notice(configInterface -> configInterface.economy().paySentMessage())
             .placeholder("%amount%", amountString)
             .placeholder("%player%", target.getName())
             .player(sender.getUniqueId())

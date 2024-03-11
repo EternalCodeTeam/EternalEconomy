@@ -2,7 +2,6 @@ package com.eternalcode.eternaleconomy.user;
 
 import com.eternalcode.eternaleconomy.configuration.implementation.PluginConfiguration;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,7 +29,7 @@ public class UserService {
     }
 
     public void create(UUID uuid, String name) {
-        this.usersByUniqueId.put(uuid, new User(uuid, name, configuration.starting_balance));
+        this.usersByUniqueId.put(uuid, new User(uuid, name, configuration.startingBalance));
         this.usersByName.put(name, this.usersByUniqueId.get(uuid));
     }
 

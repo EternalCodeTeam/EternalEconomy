@@ -26,10 +26,10 @@ public class PluginConfiguration extends OkaeriConfig implements ConfigInterface
 
 
     @Comment("Starting balance")
-    public BigDecimal starting_balance = BigDecimal.valueOf(250);
+    public BigDecimal startingBalance = BigDecimal.valueOf(250);
 
     @Comment("Minimal pay ammount")
-    public BigDecimal minimal_pay_ammount = BigDecimal.valueOf(1);
+    public BigDecimal minimalPayAmount = BigDecimal.valueOf(1);
 
     @Override
     public EconomyConfiguration economy() {
@@ -44,91 +44,91 @@ public class PluginConfiguration extends OkaeriConfig implements ConfigInterface
     public static class EconomyConfigurationMessages implements ConfigInterface.EconomyConfiguration {
 
         @Comment("Player doesnt have enough money message")
-        public Notice not_enough_money_message = Notice.chat("<red>Error! You dont have enough money to do this!");
+        public Notice notEnoughMoneyMessage = Notice.chat("<red>Error! You dont have enough money to do this!");
 
         @Comment("Pay sent message")
-        public Notice pay_sent_message = Notice.chat("<green>You sent %amount% to %player%");
+        public Notice paySentMessage = Notice.chat("<green>You sent %amount% to %player%");
 
         @Comment("Receive pay message")
-        public Notice receive_pay_message = Notice.chat("<green>You received %amount% from %player%");
+        public Notice receivePayMessage = Notice.chat("<green>You received %amount% from %player%");
 
         @Comment("Checking balance message")
-        public Notice checking_balance_message = Notice.chat("<green>Your current balance: %balance%");
+        public Notice checkBalanceMessage = Notice.chat("<green>Your current balance: %balance%");
 
         @Comment("Minimal pay ammount message")
-        public Notice minimal_pay_ammount_message = Notice.chat("<red>Error! The mimnal pay ammount is: %ammount%");
+        public Notice minimalPayAmountMessage = Notice.chat("<red>Error! The minimal pay amount is: %amount%");
 
         @Comment("Checking another player balance message")
-        public Notice checking_balance_other_message = Notice.chat("<green>%target%'s current balance: %balance%");
+        public Notice checkBalanceOtherMessage = Notice.chat("<green>%target%'s current balance: %balance%");
 
         @Comment("Add balance message")
-        public Notice adding_balance_message = Notice.chat("<green>You sucesfully added %amount% to %player%");
+        public Notice addBalanceMessage = Notice.chat("<green>You successfully added %amount% to %player%");
 
         @Comment("Remove balance message")
-        public Notice removing_balance_message = Notice.chat("<green>You sucesfully removed %amount% from %player%");
+        public Notice removeBalanceMessage = Notice.chat("<green>You successfully removed %amount% from %player%");
 
         @Comment("Set balance message")
-        public Notice set_balance_message = Notice.chat("<green>You successfully set %player%'s balance to %amount%");
+        public Notice setBalanceMessage = Notice.chat("<green>You successfully set %player%'s balance to %amount%");
 
         @Comment("Reset balance message")
-        public Notice reset_balance_message = Notice.chat("<green>You sucesfully reset %player%'s balance");
+        public Notice resetBalanceMessage = Notice.chat("<green>You successfully reset %player%'s balance");
 
         @Comment("Incorrect usage of economy command message")
-        public Notice incorrect_economy_usage = Notice.chat("<red>Incorrect usage! Use /economt <set/add/remove/reset> <plyaer> <amount>");
+        public Notice incorrectEconomyUsageMessage = Notice.chat("<red>Incorrect usage! Use /economy <set/add/remove/reset> <player> <amount>");
 
         @Override
-        public Notice not_enough_money_message() {
-            return not_enough_money_message;
+        public Notice notEnoughMoneyMessage() {
+            return notEnoughMoneyMessage;
         }
 
         @Override
-        public Notice pay_sent_message() {
-            return pay_sent_message;
+        public Notice paySentMessage() {
+            return paySentMessage;
         }
 
         @Override
-        public Notice pay_received_message() {
-            return receive_pay_message;
+        public Notice receivePayMessage() {
+            return receivePayMessage;
         }
 
         @Override
-        public Notice checking_balance_message() {
-            return checking_balance_message;
+        public Notice checkBalanceMessage() {
+            return checkBalanceMessage;
         }
 
         @Override
-        public Notice checking_balance_other_message() {
-            return checking_balance_other_message;
+        public Notice checkBalanceOtherMessage() {
+            return checkBalanceOtherMessage;
         }
 
         @Override
-        public Notice minimal_pay_ammount_message() {
-            return minimal_pay_ammount_message;
+        public Notice minimalPayAmmountMessage() {
+            return minimalPayAmountMessage;
         }
 
         @Override
-        public Notice adding_balance_message() {
-            return adding_balance_message;
+        public Notice addBalanceMessage() {
+            return addBalanceMessage;
         }
 
         @Override
-        public Notice removing_balance_message() {
-            return removing_balance_message;
+        public Notice removeBalanceMessage() {
+            return removeBalanceMessage;
         }
 
         @Override
-        public Notice set_balance_message() {
-            return set_balance_message;
+        public Notice setBalanceMessage() {
+            return setBalanceMessage;
         }
 
         @Override
-        public Notice reset_balance_message() {
-            return reset_balance_message;
+        public Notice resetBalanceMessage() {
+            return resetBalanceMessage;
         }
 
         @Override
-        public Notice incorrect_economy_usage() {
-            return incorrect_economy_usage;
+        public Notice incorrectEconomyUsageMessage() {
+            return incorrectEconomyUsageMessage;
         }
 
     }

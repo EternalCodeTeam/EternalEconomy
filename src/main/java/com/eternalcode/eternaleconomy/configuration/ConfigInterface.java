@@ -7,27 +7,27 @@ public interface ConfigInterface {
     EconomyConfiguration economy();
     interface EconomyConfiguration {
 
-        Notice not_enough_money_message();
+        Notice notEnoughMoneyMessage();
 
-        Notice pay_sent_message();
+        Notice paySentMessage();
 
-        Notice pay_received_message();
+        Notice receivePayMessage();
 
-        Notice checking_balance_message();
+        Notice checkBalanceMessage();
 
-        Notice checking_balance_other_message();
+        Notice checkBalanceOtherMessage();
 
-        Notice minimal_pay_ammount_message();
+        Notice minimalPayAmmountMessage();
 
-        Notice adding_balance_message();
+        Notice addBalanceMessage();
 
-        Notice removing_balance_message();
+        Notice removeBalanceMessage();
 
-        Notice set_balance_message();
+        Notice setBalanceMessage();
 
-        Notice reset_balance_message();
+        Notice resetBalanceMessage();
 
-        Notice incorrect_economy_usage();
+        Notice incorrectEconomyUsageMessage();
 
     }
 }
