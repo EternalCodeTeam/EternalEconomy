@@ -1,9 +1,11 @@
 package com.eternalcode.eternaleconomy.user;
 
+import com.eternalcode.eternaleconomy.viewer.Viewer;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public class User {
+public class User implements Viewer {
 
     public UUID uniqueId;
     public String name;
@@ -17,6 +19,11 @@ public class User {
 
     public UUID getUniqueId() {
         return uniqueId;
+    }
+
+    @Override
+    public boolean isConsole() {
+        return false;
     }
 
     public String getName() {
