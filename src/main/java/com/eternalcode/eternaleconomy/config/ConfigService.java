@@ -1,4 +1,4 @@
-package com.eternalcode.eternaleconomy.configuration;
+package com.eternalcode.eternaleconomy.config;
 
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.OkaeriConfig;
@@ -15,7 +15,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ConfigurationService {
+public class ConfigService {
 
     private final Set<OkaeriConfig> configs = new HashSet<>();
 

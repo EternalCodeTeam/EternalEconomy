@@ -1,4 +1,4 @@
-package com.eternalcode.eternaleconomy.configuration;
+package com.eternalcode.eternaleconomy.config;
 
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.nodes.Node;

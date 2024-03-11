@@ -1,6 +1,5 @@
-package com.eternalcode.eternaleconomy.configuration.implementation;
+package com.eternalcode.eternaleconomy.config.implementation;
 
-import com.eternalcode.eternaleconomy.configuration.ConfigInterface;
 import com.eternalcode.eternaleconomy.database.DatabaseType;
 import com.eternalcode.multification.notice.Notice;
 import eu.okaeri.configs.OkaeriConfig;
@@ -19,7 +18,7 @@ import java.math.BigDecimal;
 @Header("# - eternaleconomy.admin - admin permissions")
 @Header("# - eternaleconomy.player - player permissions")
 @Header("# ")
-public class PluginConfiguration extends OkaeriConfig implements ConfigInterface {
+public class PluginConfigImpl extends OkaeriConfig implements PluginConfig {
 
     public Database database = new Database();
     public BalanceTop balanceTop = new BalanceTop();
@@ -36,12 +35,12 @@ public class PluginConfiguration extends OkaeriConfig implements ConfigInterface
         return new EconomyConfigurationMessages();
     }
 
-    public ConfigInterface getInterface() {
+    public PluginConfig getInterface() {
         return this;
     }
 
 
-    public static class EconomyConfigurationMessages implements ConfigInterface.EconomyConfiguration {
+    public static class EconomyConfigurationMessages implements PluginConfig.EconomyConfiguration {
 
         @Comment("Player doesnt have enough money message")
         public Notice notEnoughMoneyMessage = Notice.chat("<red>Error! You dont have enough money to do this!");

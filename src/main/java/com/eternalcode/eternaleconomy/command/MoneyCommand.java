@@ -1,7 +1,7 @@
 package com.eternalcode.eternaleconomy.command;
 
 import com.eternalcode.eternaleconomy.EternalEconomy;
-import com.eternalcode.eternaleconomy.configuration.implementation.PluginConfiguration;
+import com.eternalcode.eternaleconomy.config.implementation.PluginConfigImpl;
 import com.eternalcode.eternaleconomy.notification.NoticeService;
 import com.eternalcode.eternaleconomy.user.User;
 import com.eternalcode.eternaleconomy.user.UserService;
@@ -22,11 +22,11 @@ public class MoneyCommand {
 
     private UserService userService;
     private User user;
-    private final PluginConfiguration configuration;
+    private final PluginConfigImpl configuration;
     private final EternalEconomy eternalEconomy;
     private final NoticeService noticeService;
 
-    public MoneyCommand(EternalEconomy eternalEconomy, UserService userService, PluginConfiguration configuration, NoticeService noticeService) {
+    public MoneyCommand(EternalEconomy eternalEconomy, UserService userService, PluginConfigImpl configuration, NoticeService noticeService) {
         this.eternalEconomy = eternalEconomy;
         this.userService = userService;
         this.configuration = configuration;

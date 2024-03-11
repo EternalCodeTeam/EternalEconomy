@@ -1,28 +1,27 @@
 package com.eternalcode.eternaleconomy.notification;
 
-import com.eternalcode.eternaleconomy.configuration.ConfigInterface;
+import com.eternalcode.eternaleconomy.config.implementation.PluginConfig;
 import com.eternalcode.multification.translation.TranslationProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
-public class MessageProvider implements TranslationProvider<ConfigInterface> {
+public class MessageProvider implements TranslationProvider<PluginConfig> {
 
 
-    private final ConfigInterface configInterface;
+    private final PluginConfig pluginConfig;
 
-    public MessageProvider(ConfigInterface configInterface) {
-        this.configInterface = configInterface;
+    public MessageProvider(PluginConfig pluginConfig) {
+        this.pluginConfig = pluginConfig;
     }
 
 
-    public ConfigInterface getMessages() {
-        return this.configInterface;
+    public PluginConfig getMessages() {
+        return this.pluginConfig;
     }
-
 
     @Override
-    public @NotNull ConfigInterface provide(Locale locale) {
+    public @NotNull PluginConfig provide(Locale locale) {
         return this.getMessages();
     }
 }
