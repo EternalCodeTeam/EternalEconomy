@@ -1,5 +1,6 @@
 package com.eternalcode.eternaleconomy.config;
 
+import com.eternalcode.eternaleconomy.notification.serializer.MultificationSerdesPack;
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.serdes.commons.SerdesCommons;
@@ -26,6 +27,7 @@ public class ConfigService {
 
         configFile
             .withConfigurer(yamlConfigurer, new SerdesCommons())
+            .withConfigurer(yamlConfigurer, new MultificationSerdesPack())
             .withBindFile(file)
             .withRemoveOrphans(true)
             .saveDefaults()

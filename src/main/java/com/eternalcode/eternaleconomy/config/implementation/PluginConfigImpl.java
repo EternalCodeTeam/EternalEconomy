@@ -8,8 +8,10 @@ import eu.okaeri.configs.annotation.Header;
 import eu.okaeri.configs.annotation.NameModifier;
 import eu.okaeri.configs.annotation.NameStrategy;
 import eu.okaeri.configs.annotation.Names;
-
 import java.math.BigDecimal;
+import java.time.Duration;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 
 @Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
 @Header("# ")
@@ -23,6 +25,7 @@ public class PluginConfigImpl extends OkaeriConfig implements PluginConfig {
     public Database database = new Database();
     public BalanceTop balanceTop = new BalanceTop();
 
+    public EconomyConfigurationMessages economy = new EconomyConfigurationMessages();
 
     @Comment("Starting balance")
     public BigDecimal startingBalance = BigDecimal.valueOf(250);
@@ -32,21 +35,26 @@ public class PluginConfigImpl extends OkaeriConfig implements PluginConfig {
 
     @Override
     public EconomyConfiguration economy() {
-        return new EconomyConfigurationMessages();
+        return this.economy;
     }
 
-    public PluginConfig getInterface() {
-        return this;
-    }
-
-
-    public static class EconomyConfigurationMessages implements PluginConfig.EconomyConfiguration {
+    public static class EconomyConfigurationMessages extends OkaeriConfig implements EconomyConfiguration {
 
         @Comment("Player doesnt have enough money message")
-        public Notice notEnoughMoneyMessage = Notice.chat("<red>Error! You dont have enough money to do this!");
+        public Notice notEnoughMoneyMessage = Notice.chat("<red>You don't have enough money!");
+
+
+        public Notice test3 = Notice.chat("<red>You don't have enough money!");
+        public Notice test4 = Notice.chat("<red>You don't have enough money!", "<red>You don't have enough money!");
+        public Notice test5 = Notice.builder()
+            .actionBar("test")
+            .chat("test")
+            .sound(Sound.BLOCK_ANVIL_LAND, SoundCategory.MASTER, 1, 1)
+            .title("test", "test")
+            .build();
 
         @Comment("Pay sent message")
-        public Notice paySentMessage = Notice.chat("<green>You sent %amount% to %player%");
+        public Notice paySentMessage = Notice.actionbar("<green>You sent %amount% to %player%");
 
         @Comment("Receive pay message")
         public Notice receivePayMessage = Notice.chat("<green>You received %amount% from %player%");
@@ -73,7 +81,8 @@ public class PluginConfigImpl extends OkaeriConfig implements PluginConfig {
         public Notice resetBalanceMessage = Notice.chat("<green>You successfully reset %player%'s balance");
 
         @Comment("Incorrect usage of economy command message")
-        public Notice incorrectEconomyUsageMessage = Notice.chat("<red>Incorrect usage! Use /economy <set/add/remove/reset> <player> <amount>");
+        public Notice incorrectEconomyUsageMessage =
+            Notice.chat("<red>Incorrect usage! Use /economy <set/add/remove/reset> <player> <amount>");
 
         @Override
         public Notice notEnoughMoneyMessage() {
@@ -129,7 +138,6 @@ public class PluginConfigImpl extends OkaeriConfig implements PluginConfig {
         public Notice incorrectEconomyUsageMessage() {
             return incorrectEconomyUsageMessage;
         }
-
     }
 
     public static class Database extends OkaeriConfig {
@@ -145,7 +153,6 @@ public class PluginConfigImpl extends OkaeriConfig implements PluginConfig {
 
         @Comment("For file based databases.")
         public String file = "economy.db";
-
     }
 
     public static class BalanceTop extends OkaeriConfig {

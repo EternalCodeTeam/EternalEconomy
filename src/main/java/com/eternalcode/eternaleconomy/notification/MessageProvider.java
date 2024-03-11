@@ -8,7 +8,6 @@ import java.util.Locale;
 
 public class MessageProvider implements TranslationProvider<PluginConfig> {
 
-
     private final PluginConfig pluginConfig;
 
     public MessageProvider(PluginConfig pluginConfig) {

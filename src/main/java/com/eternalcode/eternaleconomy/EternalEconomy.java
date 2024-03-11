@@ -47,8 +47,7 @@ public class EternalEconomy extends JavaPlugin {
         File dataFolder = this.getDataFolder();
         ConfigService configService = new ConfigService();
         PluginConfigImpl config = configService.create(PluginConfigImpl.class, new File(dataFolder, "config.yml"));
-        PluginConfig pluginConfig = config.getInterface();
-        MessageProvider messageProvider = new MessageProvider(pluginConfig);
+        MessageProvider messageProvider = new MessageProvider(config);
 
         DatabaseService databaseService = new DatabaseService(config);
         HikariDataSource connect = databaseService.connect(dataFolder);

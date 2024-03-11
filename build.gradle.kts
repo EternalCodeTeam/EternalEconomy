@@ -53,6 +53,8 @@ dependencies {
     // unit test
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.mockito:mockito-core:5.11.0")
+
 
     // litecommands
     val litecommandsVersion = "3.4.0"
@@ -85,7 +87,7 @@ bukkit {
     version = project.version as String
 }
 
-tasks.withType<JavaCompile> {
+tasks.compileJava {
     options.compilerArgs.add("-parameters")
 }
 
