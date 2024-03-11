@@ -5,7 +5,6 @@ import com.eternalcode.eternaleconomy.configuration.implementation.PluginConfigu
 import com.eternalcode.eternaleconomy.notification.NoticeService;
 import com.eternalcode.eternaleconomy.user.User;
 import com.eternalcode.eternaleconomy.user.UserService;
-import com.eternalcode.multification.notice.Notice;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
@@ -31,7 +30,7 @@ public class EconomyCommand {
         this.noticeService = noticeService;
     }
 
-    @Execute(name = "economy add")
+    @Execute(name = "add")
     void executeAdd(@Context Player sender, @Arg("target") Player target, @OptionalArg("amount") BigDecimal amount) {
         Optional<User> targetUser = userService.findUser(target.getUniqueId());
 
@@ -49,8 +48,6 @@ public class EconomyCommand {
             return;
         }
 
-        Notice notice = Notice.builder().build();
-
         targetUser.ifPresent(user -> user.addBalance(amount));
 
         this.noticeService.create()
@@ -62,7 +59,7 @@ public class EconomyCommand {
 
     }
 
-    @Execute(name = "economy set")
+    @Execute(name = "set")
     void executeSet(@Context Player sender, @Arg("target") Player target, @OptionalArg("amount") BigDecimal amount) {
         Optional<User> targetUser = userService.findUser(target.getUniqueId());
 
@@ -89,7 +86,7 @@ public class EconomyCommand {
 
     }
 
-    @Execute(name = "economy remove")
+    @Execute(name = "remove")
     void executeRemove(@Context Player sender, @Arg("target") Player target, @OptionalArg("amount") BigDecimal amount) {
         Optional<User> targetUser = userService.findUser(target.getUniqueId());
 
@@ -117,7 +114,7 @@ public class EconomyCommand {
 
     }
 
-    @Execute(name = "economy reset")
+    @Execute(name = "reset")
     void executeReset(@Context Player sender, @Arg("target") Player target) {
         Optional<User> targetUser = userService.findUser(target.getUniqueId());
 
