@@ -7,9 +7,9 @@ import com.eternalcode.commons.scheduler.Scheduler;
 import com.eternalcode.eternaleconomy.command.EconomyCommand;
 import com.eternalcode.eternaleconomy.command.MoneyCommand;
 import com.eternalcode.eternaleconomy.command.PayCommand;
-import com.eternalcode.eternaleconomy.configuration.ConfigInterface;
-import com.eternalcode.eternaleconomy.configuration.ConfigurationService;
-import com.eternalcode.eternaleconomy.configuration.implementation.PluginConfiguration;
+import com.eternalcode.eternaleconomy.config.implementation.PluginConfig;
+import com.eternalcode.eternaleconomy.config.ConfigService;
+import com.eternalcode.eternaleconomy.config.implementation.PluginConfigImpl;
 import com.eternalcode.eternaleconomy.database.DatabaseService;
 import com.eternalcode.eternaleconomy.notification.MessageProvider;
 import com.eternalcode.eternaleconomy.notification.NoticeService;
@@ -45,10 +45,10 @@ public class EternalEconomy extends JavaPlugin {
         Server server = this.getServer();
 
         File dataFolder = this.getDataFolder();
-        ConfigurationService configurationService = new ConfigurationService();
-        PluginConfiguration config = configurationService.create(PluginConfiguration.class, new File(dataFolder, "config.yml"));
-        ConfigInterface configInterface = config.getInterface();
-        MessageProvider messageProvider = new MessageProvider(configInterface);
+        ConfigService configService = new ConfigService();
+        PluginConfigImpl config = configService.create(PluginConfigImpl.class, new File(dataFolder, "config.yml"));
+        PluginConfig pluginConfig = config.getInterface();
+        MessageProvider messageProvider = new MessageProvider(pluginConfig);
 
         DatabaseService databaseService = new DatabaseService(config);
         HikariDataSource connect = databaseService.connect(dataFolder);
@@ -66,7 +66,7 @@ public class EternalEconomy extends JavaPlugin {
 
 
         userService = new UserService(config, userRepository);
-        this.noticeService = new NoticeService(audiences, userService, server, messageProvider, this.miniMessage);
+        this.noticeService = new NoticeService(audiences, server, messageProvider, this.miniMessage);
 
 
 

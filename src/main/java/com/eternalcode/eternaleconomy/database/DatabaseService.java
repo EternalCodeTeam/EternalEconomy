@@ -1,18 +1,17 @@
 package com.eternalcode.eternaleconomy.database;
 
-import com.eternalcode.eternaleconomy.configuration.implementation.PluginConfiguration;
+import com.eternalcode.eternaleconomy.config.implementation.PluginConfigImpl;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 
 public class DatabaseService {
 
-    private final PluginConfiguration configuration;
+    private final PluginConfigImpl configuration;
 
-    public DatabaseService(PluginConfiguration pluginConfiguration) {
-        this.configuration = pluginConfiguration;
+    public DatabaseService(PluginConfigImpl pluginConfigImpl) {
+        this.configuration = pluginConfigImpl;
     }
 
     public HikariDataSource connect(File dataFolder) {

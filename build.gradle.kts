@@ -100,7 +100,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.20.1")
+        minecraftVersion("1.20.4")
 
         downloadPlugins {
             hangar("PlaceholderAPI", "2.11.5")

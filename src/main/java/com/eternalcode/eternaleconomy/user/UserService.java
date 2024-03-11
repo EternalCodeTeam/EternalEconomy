@@ -1,13 +1,13 @@
 package com.eternalcode.eternaleconomy.user;
 
-import com.eternalcode.eternaleconomy.configuration.implementation.PluginConfiguration;
+import com.eternalcode.eternaleconomy.config.implementation.PluginConfigImpl;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class UserService {
 
-    private final PluginConfiguration configuration;
+    private final PluginConfigImpl configuration;
 
 
     private final Map<UUID, User> usersByUniqueId = new HashMap<>();
@@ -15,7 +15,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserService(PluginConfiguration configuration, UserRepository userRepository) {
+    public UserService(PluginConfigImpl configuration, UserRepository userRepository) {
         this.configuration = configuration;
         this.userRepository = userRepository;
     }

@@ -1,10 +1,11 @@
-package com.eternalcode.eternaleconomy.configuration;
+package com.eternalcode.eternaleconomy.config.implementation;
 
 import com.eternalcode.multification.notice.Notice;
 
-public interface ConfigInterface {
+public interface PluginConfig {
 
     EconomyConfiguration economy();
+
     interface EconomyConfiguration {
 
         Notice notEnoughMoneyMessage();
