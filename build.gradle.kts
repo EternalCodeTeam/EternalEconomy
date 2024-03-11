@@ -60,6 +60,15 @@ dependencies {
 
     // Gui liblary
     implementation("dev.triumphteam:triumph-gui:3.1.7")
+
+    // Multification
+    implementation("com.eternalcode:multification-core:1.0.2")
+    implementation("com.eternalcode:multification-cdn:1.0.2")
+
+    // EternalCode Commons
+    implementation("com.eternalcode:eternalcode-commons-bukkit:1.1.1")
+    implementation("com.eternalcode:eternalcode-commons-adventure:1.1.1")
+
 }
 
 java {
@@ -74,6 +83,10 @@ bukkit {
     name = "EternalEconomy"
     description = project.description
     version = project.version as String
+}
+
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
 }
 
 tasks {

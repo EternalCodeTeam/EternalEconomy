@@ -22,13 +22,13 @@ public class NotificationSender {
         this.send(sender, notification.type(), notification.content());
     }
 
-    public void send(CommandSender commandSender, NotificationType type, String content) {
+    public void send(CommandSender commandSender, NoticeTextType type, String content) {
         Audience audience = this.audience(commandSender);
         Component deserializedContent = this.miniMessage.deserialize(content);
 
         switch (type) {
             case CHAT -> audience.sendMessage(deserializedContent);
-            case ACTIONBAR -> audience.sendActionBar(deserializedContent);
+            case ACTION_BAR -> audience.sendActionBar(deserializedContent);
             case TITLE -> {
                 Title title = Title.title(deserializedContent, Component.empty(), Title.DEFAULT_TIMES);
                 audience.showTitle(title);
@@ -36,8 +36,6 @@ public class NotificationSender {
             case SUBTITLE -> {
                 Title title = Title.title(Component.empty(), deserializedContent, Title.DEFAULT_TIMES);
                 audience.showTitle(title);
-            }
-            case DISABLED -> {
             }
             default -> throw new IllegalStateException("Unexpected notification type: " + type);
         }

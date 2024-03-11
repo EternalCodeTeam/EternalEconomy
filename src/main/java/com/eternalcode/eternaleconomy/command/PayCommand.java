@@ -2,8 +2,11 @@ package com.eternalcode.eternaleconomy.command;
 
 import com.eternalcode.eternaleconomy.EternalEconomy;
 import com.eternalcode.eternaleconomy.configuration.implementation.PluginConfiguration;
+import com.eternalcode.eternaleconomy.notification.NoticeService;
 import com.eternalcode.eternaleconomy.user.User;
 import com.eternalcode.eternaleconomy.user.UserService;
+import com.eternalcode.multification.notice.NoticePart;
+import com.eternalcode.multification.platform.PlatformBroadcaster;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
@@ -20,31 +23,59 @@ public class PayCommand {
     private User user;
     private PluginConfiguration configuration;
     private final EternalEconomy eternalEconomy;
+    private NoticeService noticeService;
 
-    public PayCommand(EternalEconomy eternalEconomy, UserService userService, PluginConfiguration configuration) {
+    public PayCommand(EternalEconomy eternalEconomy, UserService userService, PluginConfiguration configuration, NoticeService noticeService ) {
         this.eternalEconomy = eternalEconomy;
         this.userService = userService;
         this.configuration = configuration;
+        this.noticeService = noticeService;
     }
 
 
     @Execute
     public void execute(@Context Player sender, @Arg("target") Player target, @Arg("amount") BigDecimal amount) {
         if (!(amount.compareTo(configuration.minimal_pay_ammount) >= 0)) {
-            sender.sendMessage(configuration.minimal_pay_ammount_message.replaceAll("%ammount%", configuration.minimal_pay_ammount.toString()));
+
+            this.noticeService.create()
+                .notice(configInterface -> configInterface.economy().minimal_pay_ammount_message())
+                .placeholder("%ammount%", configuration.minimal_pay_ammount.toString())
+                .player(sender.getUniqueId())
+                .send();
+
             return;
         }
         Optional<User> senderUser = userService.findUser(sender.getUniqueId());
         Optional<User> targetUser = userService.findUser(target.getUniqueId());
+
+
         if (!(has(sender, amount))) {
-            sender.sendMessage(configuration.not_enough_money_message);
+
+            this.noticeService.create()
+                .notice(configInterface -> configInterface.economy().not_enough_money_message())
+                .send();
+
             return;
         }
 
         senderUser.ifPresent(user -> user.removeBalance(amount));
         targetUser.ifPresent(user -> user.addBalance(amount));
-        target.sendMessage(configuration.receive_pay_message.replaceAll("%amount%", amount.toString()));
-        sender.sendMessage(configuration.pay_sent_message.replaceAll("%amount%", amount.toString()));
+
+        String amountString = amount.toString();
+
+        this.noticeService.create()
+            .notice(configInterface -> configInterface.economy().pay_received_message())
+            .placeholder("%amount%", amountString)
+            .placeholder("%player%", sender.getName())
+            .player(target.getUniqueId())
+            .send();
+
+        this.noticeService.create()
+            .notice(configInterface -> configInterface.economy().pay_sent_message())
+            .placeholder("%amount%", amountString)
+            .placeholder("%player%", target.getName())
+            .player(sender.getUniqueId())
+            .send();
 
     }
 
