@@ -5,15 +5,12 @@ import com.eternalcode.eternaleconomy.configuration.implementation.PluginConfigu
 import com.eternalcode.eternaleconomy.notification.NoticeService;
 import com.eternalcode.eternaleconomy.user.User;
 import com.eternalcode.eternaleconomy.user.UserService;
-import com.eternalcode.multification.Multification;
 import com.eternalcode.multification.notice.Notice;
-import com.eternalcode.multification.notice.NoticeBroadcast;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.optional.OptionalArg;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
@@ -45,7 +42,7 @@ public class EconomyCommand {
         if (amount == null) {
 
             this.noticeService.create()
-                .notice(configInterface -> configInterface.economy().incorrect_economy_usage())
+                .notice(configInterface -> configInterface.economy().incorrectEconomyUsageMessage())
                 .player(sender.getUniqueId())
                 .send();
 
@@ -57,7 +54,7 @@ public class EconomyCommand {
         targetUser.ifPresent(user -> user.addBalance(amount));
 
         this.noticeService.create()
-            .notice(configInterface -> configInterface.economy().adding_balance_message())
+            .notice(configInterface -> configInterface.economy().addBalanceMessage())
             .placeholder("%amount%", amount.toString())
             .placeholder("%player%", target.getName())
             .player(sender.getUniqueId())
@@ -75,7 +72,7 @@ public class EconomyCommand {
         if (amount == null) {
 
             this.noticeService.create()
-                .notice(configInterface -> configInterface.economy().incorrect_economy_usage())
+                .notice(configInterface -> configInterface.economy().incorrectEconomyUsageMessage())
                 .player(sender.getUniqueId())
                 .send();
 
@@ -84,7 +81,7 @@ public class EconomyCommand {
         targetUser.ifPresent(user -> user.setBalance(amount));
 
         this.noticeService.create()
-            .notice(configInterface -> configInterface.economy().set_balance_message())
+            .notice(configInterface -> configInterface.economy().setBalanceMessage())
             .placeholder("%amount%", amount.toString())
             .placeholder("%player%", target.getName())
             .player(sender.getUniqueId())
@@ -103,7 +100,7 @@ public class EconomyCommand {
         if (amount == null) {
 
             this.noticeService.create()
-                .notice(configInterface -> configInterface.economy().incorrect_economy_usage())
+                .notice(configInterface -> configInterface.economy().incorrectEconomyUsageMessage())
                 .player(sender.getUniqueId())
                 .send();
 
@@ -112,7 +109,7 @@ public class EconomyCommand {
         targetUser.ifPresent(user -> user.removeBalance(amount));
 
         this.noticeService.create()
-            .notice(configInterface -> configInterface.economy().removing_balance_message())
+            .notice(configInterface -> configInterface.economy().removeBalanceMessage())
             .placeholder("%amount%", amount.toString())
             .placeholder("%player%", target.getName())
             .player(sender.getUniqueId())
@@ -128,10 +125,10 @@ public class EconomyCommand {
             userService.create(target.getUniqueId(), target.getName());
         }
 
-        targetUser.ifPresent(user -> user.setBalance(configuration.starting_balance));
+        targetUser.ifPresent(user -> user.setBalance(configuration.startingBalance));
 
         this.noticeService.create()
-            .notice(configInterface -> configInterface.economy().reset_balance_message())
+            .notice(configInterface -> configInterface.economy().resetBalanceMessage())
             .placeholder("%player%", target.getName())
             .player(sender.getUniqueId())
             .send();
