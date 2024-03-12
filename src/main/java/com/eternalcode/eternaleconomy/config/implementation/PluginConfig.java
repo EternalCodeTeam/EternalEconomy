@@ -4,7 +4,15 @@ import com.eternalcode.multification.notice.Notice;
 
 public interface PluginConfig {
 
-    interface EconomyConfiguration {
+    interface Argument {
+        Notice playerNotFound();
+
+        Notice usageMessage();
+        Notice usageMessageHead();
+        Notice usageMessageEntry();
+    }
+
+    interface Messages {
 
         Notice notEnoughMoneyMessage();
 
@@ -28,5 +36,7 @@ public interface PluginConfig {
 
         Notice incorrectEconomyUsageMessage();
     }
-    EconomyConfiguration economy();
+    Messages messages();
+
+    Argument argument();
 }
