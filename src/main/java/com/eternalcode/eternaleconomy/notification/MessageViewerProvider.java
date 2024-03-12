@@ -34,5 +34,4 @@ public class MessageViewerProvider implements ViewerProvider<CommandSender> {
     public Collection<CommandSender> all() {
         return new ArrayList<>(this.server.getOnlinePlayers());
     }
-
 }

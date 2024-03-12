@@ -5,16 +5,15 @@ import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.serdes.commons.SerdesCommons;
 import eu.okaeri.configs.yaml.snakeyaml.YamlSnakeYamlConfigurer;
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
-
-import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
 
 public class ConfigService {
 
@@ -62,5 +61,4 @@ public class ConfigService {
     public void save(OkaeriConfig config) {
         config.save();
     }
-
 }

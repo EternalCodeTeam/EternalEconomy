@@ -2,9 +2,8 @@ package com.eternalcode.eternaleconomy.notification;
 
 import com.eternalcode.eternaleconomy.config.implementation.PluginConfig;
 import com.eternalcode.multification.translation.TranslationProvider;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Locale;
+import org.jetbrains.annotations.NotNull;
 
 public class MessageProvider implements TranslationProvider<PluginConfig> {
 
@@ -13,7 +12,6 @@ public class MessageProvider implements TranslationProvider<PluginConfig> {
     public MessageProvider(PluginConfig pluginConfig) {
         this.pluginConfig = pluginConfig;
     }
-
 
     public PluginConfig getMessages() {
         return this.pluginConfig;

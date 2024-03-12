@@ -9,9 +9,6 @@ import eu.okaeri.configs.annotation.NameModifier;
 import eu.okaeri.configs.annotation.NameStrategy;
 import eu.okaeri.configs.annotation.Names;
 import java.math.BigDecimal;
-import java.time.Duration;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
 
 @Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
 @Header("# ")
@@ -42,16 +39,6 @@ public class PluginConfigImpl extends OkaeriConfig implements PluginConfig {
 
         @Comment("Player doesnt have enough money message")
         public Notice notEnoughMoneyMessage = Notice.chat("<red>You don't have enough money!");
-
-
-        public Notice test3 = Notice.chat("<red>You don't have enough money!");
-        public Notice test4 = Notice.chat("<red>You don't have enough money!", "<red>You don't have enough money!");
-        public Notice test5 = Notice.builder()
-            .actionBar("test")
-            .chat("test")
-            .sound(Sound.BLOCK_ANVIL_LAND, SoundCategory.MASTER, 1, 1)
-            .title("test", "test")
-            .build();
 
         @Comment("Pay sent message")
         public Notice paySentMessage = Notice.actionbar("<green>You sent %amount% to %player%");
@@ -110,7 +97,7 @@ public class PluginConfigImpl extends OkaeriConfig implements PluginConfig {
         }
 
         @Override
-        public Notice minimalPayAmmountMessage() {
+        public Notice minimalPayAmountMessage() {
             return minimalPayAmountMessage;
         }
 

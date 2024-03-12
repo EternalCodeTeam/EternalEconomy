@@ -9,24 +9,25 @@ import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import org.bukkit.entity.Player;
-
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
+import org.bukkit.entity.Player;
 
-
-@Command(name = "money", aliases = {"balance", "bal"})
+@Command(name = "money", aliases = { "balance", "bal" })
 public class MoneyCommand {
 
-
-    private UserService userService;
-    private User user;
+    private final UserService userService;
     private final PluginConfigImpl configuration;
     private final EternalEconomy eternalEconomy;
     private final NoticeService noticeService;
+    private User user;
 
-    public MoneyCommand(EternalEconomy eternalEconomy, UserService userService, PluginConfigImpl configuration, NoticeService noticeService) {
+    public MoneyCommand(
+        EternalEconomy eternalEconomy,
+        UserService userService,
+        PluginConfigImpl configuration,
+        NoticeService noticeService) {
         this.eternalEconomy = eternalEconomy;
         this.userService = userService;
         this.configuration = configuration;
@@ -44,10 +45,11 @@ public class MoneyCommand {
 
         this.noticeService.create()
             .notice(configInterface -> configInterface.economy().checkBalanceMessage())
-            .placeholder("%balance%", userService.findUser(uuid).map(user -> user.getBalance()).orElse(BigDecimal.ZERO).toString())
+            .placeholder(
+                "%balance%",
+                userService.findUser(uuid).map(user -> user.getBalance()).orElse(BigDecimal.ZERO).toString())
             .player(uuid)
             .send();
-
     }
 
     @Execute
@@ -63,6 +65,5 @@ public class MoneyCommand {
             .placeholder("%target%", target.getName())
             .player(sender.getUniqueId())
             .send();
-
     }
 }

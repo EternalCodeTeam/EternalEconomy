@@ -9,28 +9,30 @@ import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import org.bukkit.entity.Player;
-
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
+import org.bukkit.entity.Player;
 
 @Command(name = "pay")
 public class PayCommand {
 
-    private UserService userService;
-    private User user;
-    private PluginConfigImpl configuration;
+    private final UserService userService;
+    private final PluginConfigImpl configuration;
     private final EternalEconomy eternalEconomy;
-    private NoticeService noticeService;
+    private final NoticeService noticeService;
+    private User user;
 
-    public PayCommand(EternalEconomy eternalEconomy, UserService userService, PluginConfigImpl configuration, NoticeService noticeService ) {
+    public PayCommand(
+        EternalEconomy eternalEconomy,
+        UserService userService,
+        PluginConfigImpl configuration,
+        NoticeService noticeService) {
         this.eternalEconomy = eternalEconomy;
         this.userService = userService;
         this.configuration = configuration;
         this.noticeService = noticeService;
     }
-
 
     @Execute
     public void execute(@Context Player sender, @Arg("target") Player target, @Arg("amount") BigDecimal amount) {
@@ -40,7 +42,7 @@ public class PayCommand {
         if (!(amount.compareTo(configuration.minimalPayAmount) >= 0)) {
 
             this.noticeService.create()
-                .notice(configInterface -> configInterface.economy().minimalPayAmmountMessage())
+                .notice(configInterface -> configInterface.economy().minimalPayAmountMessage())
                 .placeholder("%ammount%", configuration.minimalPayAmount.toString())
                 .player(senderUUID)
                 .send();
@@ -49,7 +51,6 @@ public class PayCommand {
         }
         Optional<User> senderUser = userService.findUser(sender.getUniqueId());
         Optional<User> targetUser = userService.findUser(target.getUniqueId());
-
 
         if (!(has(sender, amount))) {
 
@@ -79,7 +80,6 @@ public class PayCommand {
             .placeholder("%player%", target.getName())
             .player(senderUUID)
             .send();
-
     }
 
     private boolean has(Player player, BigDecimal amount) {

@@ -10,20 +10,22 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.optional.OptionalArg;
-import org.bukkit.entity.Player;
-
 import java.math.BigDecimal;
 import java.util.Optional;
+import org.bukkit.entity.Player;
 
 @Command(name = "economy", aliases = "eco")
 public class EconomyCommand {
-    private UserService userService;
+    private final UserService userService;
     private final PluginConfigImpl configuration;
     private final EternalEconomy eternalEconomy;
     private final NoticeService noticeService;
 
-
-    public EconomyCommand(EternalEconomy eternalEconomy, UserService userService, PluginConfigImpl configuration, NoticeService noticeService) {
+    public EconomyCommand(
+        EternalEconomy eternalEconomy,
+        UserService userService,
+        PluginConfigImpl configuration,
+        NoticeService noticeService) {
         this.eternalEconomy = eternalEconomy;
         this.userService = userService;
         this.configuration = configuration;
@@ -56,7 +58,6 @@ public class EconomyCommand {
             .placeholder("%player%", target.getName())
             .player(sender.getUniqueId())
             .send();
-
     }
 
     @Execute(name = "set")
@@ -83,7 +84,6 @@ public class EconomyCommand {
             .placeholder("%player%", target.getName())
             .player(sender.getUniqueId())
             .send();
-
     }
 
     @Execute(name = "remove")
@@ -111,7 +111,6 @@ public class EconomyCommand {
             .placeholder("%player%", target.getName())
             .player(sender.getUniqueId())
             .send();
-
     }
 
     @Execute(name = "reset")
