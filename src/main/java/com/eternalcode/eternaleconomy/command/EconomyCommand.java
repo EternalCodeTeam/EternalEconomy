@@ -43,7 +43,7 @@ public class EconomyCommand {
         if (amount == null) {
 
             this.noticeService.create()
-                .notice(configInterface -> configInterface.economy().incorrectEconomyUsageMessage())
+                .notice(configInterface -> configInterface.messages().incorrectEconomyUsageMessage())
                 .player(sender.getUniqueId())
                 .send();
 
@@ -53,7 +53,7 @@ public class EconomyCommand {
         targetUser.ifPresent(user -> user.addBalance(amount));
 
         this.noticeService.create()
-            .notice(configInterface -> configInterface.economy().addBalanceMessage())
+            .notice(configInterface -> configInterface.messages().addBalanceMessage())
             .placeholder("%amount%", amount.toString())
             .placeholder("%player%", target.getName())
             .player(sender.getUniqueId())
@@ -70,7 +70,7 @@ public class EconomyCommand {
         if (amount == null) {
 
             this.noticeService.create()
-                .notice(configInterface -> configInterface.economy().incorrectEconomyUsageMessage())
+                .notice(configInterface -> configInterface.messages().incorrectEconomyUsageMessage())
                 .player(sender.getUniqueId())
                 .send();
 
@@ -79,7 +79,7 @@ public class EconomyCommand {
         targetUser.ifPresent(user -> user.setBalance(amount));
 
         this.noticeService.create()
-            .notice(configInterface -> configInterface.economy().setBalanceMessage())
+            .notice(configInterface -> configInterface.messages().setBalanceMessage())
             .placeholder("%amount%", amount.toString())
             .placeholder("%player%", target.getName())
             .player(sender.getUniqueId())
@@ -97,7 +97,7 @@ public class EconomyCommand {
         if (amount == null) {
 
             this.noticeService.create()
-                .notice(configInterface -> configInterface.economy().incorrectEconomyUsageMessage())
+                .notice(configInterface -> configInterface.messages().incorrectEconomyUsageMessage())
                 .player(sender.getUniqueId())
                 .send();
 
@@ -106,7 +106,7 @@ public class EconomyCommand {
         targetUser.ifPresent(user -> user.removeBalance(amount));
 
         this.noticeService.create()
-            .notice(configInterface -> configInterface.economy().removeBalanceMessage())
+            .notice(configInterface -> configInterface.messages().removeBalanceMessage())
             .placeholder("%amount%", amount.toString())
             .placeholder("%player%", target.getName())
             .player(sender.getUniqueId())
@@ -124,7 +124,7 @@ public class EconomyCommand {
         targetUser.ifPresent(user -> user.setBalance(configuration.startingBalance));
 
         this.noticeService.create()
-            .notice(configInterface -> configInterface.economy().resetBalanceMessage())
+            .notice(configInterface -> configInterface.messages().resetBalanceMessage())
             .placeholder("%player%", target.getName())
             .player(sender.getUniqueId())
             .send();

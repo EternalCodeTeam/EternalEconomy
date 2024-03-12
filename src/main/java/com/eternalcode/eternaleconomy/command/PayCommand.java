@@ -42,7 +42,7 @@ public class PayCommand {
         if (!(amount.compareTo(configuration.minimalPayAmount) >= 0)) {
 
             this.noticeService.create()
-                .notice(configInterface -> configInterface.economy().minimalPayAmountMessage())
+                .notice(configInterface -> configInterface.messages().minimalPayAmountMessage())
                 .placeholder("%ammount%", configuration.minimalPayAmount.toString())
                 .player(senderUUID)
                 .send();
@@ -55,7 +55,7 @@ public class PayCommand {
         if (!(has(sender, amount))) {
 
             this.noticeService.create()
-                .notice(configInterface -> configInterface.economy().notEnoughMoneyMessage())
+                .notice(configInterface -> configInterface.messages().notEnoughMoneyMessage())
                 .player(senderUUID)
                 .send();
 
@@ -68,14 +68,14 @@ public class PayCommand {
         String amountString = amount.toString();
 
         this.noticeService.create()
-            .notice(configInterface -> configInterface.economy().receivePayMessage())
+            .notice(configInterface -> configInterface.messages().receivePayMessage())
             .placeholder("%amount%", amountString)
             .placeholder("%player%", sender.getName())
             .player(target.getUniqueId())
             .send();
 
         this.noticeService.create()
-            .notice(configInterface -> configInterface.economy().paySentMessage())
+            .notice(configInterface -> configInterface.messages().paySentMessage())
             .placeholder("%amount%", amountString)
             .placeholder("%player%", target.getName())
             .player(senderUUID)

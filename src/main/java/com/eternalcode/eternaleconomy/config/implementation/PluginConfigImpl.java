@@ -20,9 +20,10 @@ import java.math.BigDecimal;
 public class PluginConfigImpl extends OkaeriConfig implements PluginConfig {
 
     public Database database = new Database();
-    public BalanceTop balanceTop = new BalanceTop();
 
-    public EconomyConfigurationMessages economy = new EconomyConfigurationMessages();
+    public MessageSection messages = new MessageSection();
+
+    public ArgumentSection argument = new ArgumentSection();
 
     @Comment("Starting balance")
     public BigDecimal startingBalance = BigDecimal.valueOf(250);
@@ -31,11 +32,46 @@ public class PluginConfigImpl extends OkaeriConfig implements PluginConfig {
     public BigDecimal minimalPayAmount = BigDecimal.valueOf(1);
 
     @Override
-    public EconomyConfiguration economy() {
-        return this.economy;
+    public Messages messages() {
+        return this.messages;
     }
 
-    public static class EconomyConfigurationMessages extends OkaeriConfig implements EconomyConfiguration {
+    @Override
+    public Argument argument() {
+        return this.argument;
+    }
+
+    public static class ArgumentSection extends OkaeriConfig implements Argument {
+
+        @Comment({ " ", "# {USAGE} - Correct usage" })
+        public Notice usageMessage = Notice.chat("<dark_red>✘ <red>Correct usage: <gold>{USAGE}");
+        public Notice usageMessageHead = Notice.chat("<green>► <white>Correct usage:");
+        public Notice usageMessageEntry = Notice.chat("<green>► <white>{USAGE}");
+
+        public Notice playerNotFound = Notice.chat("<dark_red>✘ <red>Player not found!");
+
+        @Override
+        public Notice playerNotFound() {
+            return this.playerNotFound;
+        }
+
+        @Override
+        public Notice usageMessage() {
+            return this.usageMessage;
+        }
+
+        @Override
+        public Notice usageMessageHead() {
+            return this.usageMessageHead;
+        }
+
+        @Override
+        public Notice usageMessageEntry() {
+            return this.usageMessageEntry;
+        }
+    }
+
+    public static class MessageSection extends OkaeriConfig implements Messages {
 
         @Comment("Player doesnt have enough money message")
         public Notice notEnoughMoneyMessage = Notice.chat("<red>You don't have enough money!");

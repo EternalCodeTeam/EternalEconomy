@@ -55,10 +55,4 @@ public class UserService {
     public Collection<User> users() {
         return this.usersByUniqueId.values();
     }
-
-    public List<User> getTopUsersByBalance(int numberOfUsers) {
-        List<User> userList = new ArrayList<>(usersByUniqueId.values());
-        userList.sort(Comparator.comparing(User::getBalance).reversed());
-        return userList.stream().limit(numberOfUsers).collect(Collectors.toList());
-    }
 }
