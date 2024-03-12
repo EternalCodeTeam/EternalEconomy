@@ -2,15 +2,14 @@ package com.eternalcode.eternaleconomy;
 
 import com.eternalcode.eternaleconomy.user.User;
 import com.eternalcode.eternaleconomy.user.UserService;
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
-
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Server;
 
 public class EconomyProvider implements Economy {
 
@@ -340,5 +339,4 @@ public class EconomyProvider implements Economy {
     public boolean createPlayerAccount(OfflinePlayer player, String worldName) {
         return this.userService.findUser(player.getUniqueId()).isPresent();
     }
-
 }

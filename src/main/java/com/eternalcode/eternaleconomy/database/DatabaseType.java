@@ -4,5 +4,4 @@ public enum DatabaseType {
 
     MYSQL,
     SQLITE,
-
 }

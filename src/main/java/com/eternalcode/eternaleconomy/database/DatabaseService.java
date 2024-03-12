@@ -3,7 +3,6 @@ package com.eternalcode.eternaleconomy.database;
 import com.eternalcode.eternaleconomy.config.implementation.PluginConfigImpl;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-
 import java.io.File;
 
 public class DatabaseService {

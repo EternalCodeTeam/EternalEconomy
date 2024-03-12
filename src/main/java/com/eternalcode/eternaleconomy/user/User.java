@@ -23,6 +23,10 @@ public class User {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public BigDecimal getBalance() {
         return balance;
     }
@@ -37,9 +41,5 @@ public class User {
 
     public void removeBalance(BigDecimal balance) {
         this.balance = this.balance.subtract(balance);
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

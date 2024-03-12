@@ -4,16 +4,15 @@ import com.eternalcode.eternaleconomy.config.implementation.PluginConfigImpl;
 import com.eternalcode.eternaleconomy.user.User;
 import com.eternalcode.eternaleconomy.user.UserService;
 import dev.triumphteam.gui.guis.Gui;
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-
 public class BalanceTopInventory {
 
-    private PluginConfigImpl configuration;
-    private User user;
-    private UserService userService;
+    private final PluginConfigImpl configuration;
+    private final User user;
+    private final UserService userService;
 
     public BalanceTopInventory(PluginConfigImpl configuration, User user, UserService userService) {
         this.configuration = configuration;
@@ -22,15 +21,16 @@ public class BalanceTopInventory {
     }
 
     void openTopTen() {
-        Gui gui = Gui.gui().title(Component.text(configuration.balanceTop.inventory_title)).rows(6).disableAllInteractions().create();
+        Gui gui = Gui.gui()
+            .title(Component.text(configuration.balanceTop.inventory_title))
+            .rows(6)
+            .disableAllInteractions()
+            .create();
 
         List<User> leaderboard = userService.getTopUsersByBalance(10);
-
     }
 
     void getPlayerSkull(Player player) {
 
     }
-
-
 }

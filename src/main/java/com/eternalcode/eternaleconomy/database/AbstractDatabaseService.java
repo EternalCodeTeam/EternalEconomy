@@ -1,6 +1,5 @@
 package com.eternalcode.eternaleconomy.database;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -8,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import javax.sql.DataSource;
 
 public abstract class AbstractDatabaseService {
 
@@ -31,7 +31,8 @@ public abstract class AbstractDatabaseService {
                 PreparedStatement statement = connection.prepareStatement(query)
             ) {
                 return function.apply(statement);
-            } catch (SQLException exception) {
+            }
+            catch (SQLException exception) {
                 throw new RuntimeException(exception);
             }
         }).orTimeout(5, TimeUnit.SECONDS);
@@ -43,10 +44,9 @@ public abstract class AbstractDatabaseService {
             PreparedStatement statement = connection.prepareStatement(query)
         ) {
             return function.apply(statement);
-        } catch (SQLException exception) {
+        }
+        catch (SQLException exception) {
             throw new RuntimeException(exception);
         }
     }
-
-
 }

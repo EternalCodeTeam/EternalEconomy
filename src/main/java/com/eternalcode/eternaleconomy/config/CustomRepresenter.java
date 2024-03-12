@@ -1,15 +1,14 @@
 package com.eternalcode.eternaleconomy.config;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Represent;
 import org.yaml.snakeyaml.representer.Representer;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 class CustomRepresenter extends Representer {
 
@@ -58,8 +57,10 @@ class CustomRepresenter extends Representer {
     private class RepresentList implements Represent {
         @Override
         public Node representData(Object data) {
-            return representSequence(getTag(data.getClass(), Tag.SEQ), (Iterable<?>) data, DumperOptions.FlowStyle.BLOCK);
+            return representSequence(
+                getTag(data.getClass(), Tag.SEQ),
+                (Iterable<?>) data,
+                DumperOptions.FlowStyle.BLOCK);
         }
     }
-
 }

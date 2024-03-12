@@ -4,8 +4,6 @@ import com.eternalcode.multification.notice.Notice;
 
 public interface PluginConfig {
 
-    EconomyConfiguration economy();
-
     interface EconomyConfiguration {
 
         Notice notEnoughMoneyMessage();
@@ -18,7 +16,7 @@ public interface PluginConfig {
 
         Notice checkBalanceOtherMessage();
 
-        Notice minimalPayAmmountMessage();
+        Notice minimalPayAmountMessage();
 
         Notice addBalanceMessage();
 
@@ -29,6 +27,6 @@ public interface PluginConfig {
         Notice resetBalanceMessage();
 
         Notice incorrectEconomyUsageMessage();
-
     }
+    EconomyConfiguration economy();
 }

@@ -7,7 +7,6 @@ import com.eternalcode.commons.scheduler.Scheduler;
 import com.eternalcode.eternaleconomy.command.EconomyCommand;
 import com.eternalcode.eternaleconomy.command.MoneyCommand;
 import com.eternalcode.eternaleconomy.command.PayCommand;
-import com.eternalcode.eternaleconomy.config.implementation.PluginConfig;
 import com.eternalcode.eternaleconomy.config.ConfigService;
 import com.eternalcode.eternaleconomy.config.implementation.PluginConfigImpl;
 import com.eternalcode.eternaleconomy.database.DatabaseService;
@@ -19,14 +18,13 @@ import com.eternalcode.eternaleconomy.user.UserService;
 import com.zaxxer.hikari.HikariDataSource;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.LiteCommandsBukkit;
+import java.io.File;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
 
 public class EternalEconomy extends JavaPlugin {
 
@@ -37,8 +35,6 @@ public class EternalEconomy extends JavaPlugin {
     private NoticeService noticeService;
     private Scheduler scheduler;
     private MiniMessage miniMessage;
-
-
 
     @Override
     public void onEnable() {
@@ -53,29 +49,23 @@ public class EternalEconomy extends JavaPlugin {
         HikariDataSource connect = databaseService.connect(dataFolder);
         UserRepositoryImpl userRepository = new UserRepositoryImpl(connect);
 
-
         this.scheduler = new BukkitSchedulerImpl(this);
         this.audiences = BukkitAudiences.create(this);
-
 
         this.miniMessage = MiniMessage.builder()
             .preProcessor(new AdventureLegacyColorPreProcessor())
             .postProcessor(new AdventureLegacyColorPostProcessor())
             .build();
 
-
         userService = new UserService(config, userRepository);
         this.noticeService = new NoticeService(audiences, server, messageProvider, this.miniMessage);
 
-
-
         this.liteCommands = LiteCommandsBukkit.builder("EternalEconomy")
-            .commands(new EconomyCommand(this, userService, config, noticeService),
+            .commands(
+                new EconomyCommand(this, userService, config, noticeService),
                 new MoneyCommand(this, userService, config, noticeService),
                 new PayCommand(this, userService, config, noticeService))
             .build();
-
-
     }
 
     @Override
@@ -84,6 +74,5 @@ public class EternalEconomy extends JavaPlugin {
             this.audiences.close();
         }
     }
-
 }
 

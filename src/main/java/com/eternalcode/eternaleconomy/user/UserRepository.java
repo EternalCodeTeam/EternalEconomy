@@ -10,5 +10,4 @@ public interface UserRepository {
     CompletableFuture<Void> saveUser(User user);
 
     CompletableFuture<Void> removeUser(User user);
-
 }

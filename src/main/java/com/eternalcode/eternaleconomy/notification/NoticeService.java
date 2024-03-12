@@ -1,7 +1,6 @@
 package com.eternalcode.eternaleconomy.notification;
 
 import com.eternalcode.eternaleconomy.config.implementation.PluginConfig;
-import com.eternalcode.eternaleconomy.user.UserService;
 import com.eternalcode.multification.Multification;
 import com.eternalcode.multification.adventure.AudienceConverter;
 import com.eternalcode.multification.platform.PlatformBroadcaster;
