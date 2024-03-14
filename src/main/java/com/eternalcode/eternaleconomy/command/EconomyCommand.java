@@ -13,6 +13,7 @@ import dev.rollczi.litecommands.annotations.optional.OptionalArg;
 import java.math.BigDecimal;
 import java.util.Optional;
 import org.bukkit.entity.Player;
+import pl.auroramc.commons.decimal.DecimalFormatter;
 
 @Command(name = "economy", aliases = "eco")
 public class EconomyCommand {
@@ -20,6 +21,7 @@ public class EconomyCommand {
     private final PluginConfigImpl configuration;
     private final EternalEconomy eternalEconomy;
     private final NoticeService noticeService;
+    DecimalFormatter decimalFormatter;
 
     public EconomyCommand(
         EternalEconomy eternalEconomy,
@@ -54,8 +56,8 @@ public class EconomyCommand {
 
         this.noticeService.create()
             .notice(configInterface -> configInterface.messages().addBalanceMessage())
-            .placeholder("%amount%", amount.toString())
-            .placeholder("%player%", target.getName())
+            .placeholder("{amount}", decimalFormatter.getFormattedDecimal(amount.doubleValue()))
+            .placeholder("{player}", target.getName())
             .player(sender.getUniqueId())
             .send();
     }
@@ -80,8 +82,8 @@ public class EconomyCommand {
 
         this.noticeService.create()
             .notice(configInterface -> configInterface.messages().setBalanceMessage())
-            .placeholder("%amount%", amount.toString())
-            .placeholder("%player%", target.getName())
+            .placeholder("{amount}", decimalFormatter.getFormattedDecimal(amount.doubleValue()))
+            .placeholder("{player}", target.getName())
             .player(sender.getUniqueId())
             .send();
     }
@@ -107,8 +109,8 @@ public class EconomyCommand {
 
         this.noticeService.create()
             .notice(configInterface -> configInterface.messages().removeBalanceMessage())
-            .placeholder("%amount%", amount.toString())
-            .placeholder("%player%", target.getName())
+            .placeholder("{amount}", decimalFormatter.getFormattedDecimal(amount.doubleValue()))
+            .placeholder("{player}", target.getName())
             .player(sender.getUniqueId())
             .send();
     }
@@ -125,7 +127,7 @@ public class EconomyCommand {
 
         this.noticeService.create()
             .notice(configInterface -> configInterface.messages().resetBalanceMessage())
-            .placeholder("%player%", target.getName())
+            .placeholder("{player}", target.getName())
             .player(sender.getUniqueId())
             .send();
     }
