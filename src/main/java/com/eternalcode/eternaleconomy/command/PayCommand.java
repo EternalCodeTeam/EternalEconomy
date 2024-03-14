@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 import org.bukkit.entity.Player;
+import pl.auroramc.commons.decimal.DecimalFormatter;
 
 @Command(name = "pay")
 public class PayCommand {
@@ -22,6 +23,7 @@ public class PayCommand {
     private final EternalEconomy eternalEconomy;
     private final NoticeService noticeService;
     private User user;
+    private DecimalFormatter decimalFormatter;
 
     public PayCommand(
         EternalEconomy eternalEconomy,
@@ -43,7 +45,7 @@ public class PayCommand {
 
             this.noticeService.create()
                 .notice(configInterface -> configInterface.messages().minimalPayAmountMessage())
-                .placeholder("%ammount%", configuration.minimalPayAmount.toString())
+                .placeholder("{ammount}", configuration.minimalPayAmount.toString())
                 .player(senderUUID)
                 .send();
 
@@ -65,19 +67,19 @@ public class PayCommand {
         senderUser.ifPresent(user -> user.removeBalance(amount));
         targetUser.ifPresent(user -> user.addBalance(amount));
 
-        String amountString = amount.toString();
+        String amountString = decimalFormatter.getFormattedDecimal(amount.doubleValue());
 
         this.noticeService.create()
             .notice(configInterface -> configInterface.messages().receivePayMessage())
-            .placeholder("%amount%", amountString)
-            .placeholder("%player%", sender.getName())
+            .placeholder("{amount}", amountString)
+            .placeholder("{player}", sender.getName())
             .player(target.getUniqueId())
             .send();
 
         this.noticeService.create()
             .notice(configInterface -> configInterface.messages().paySentMessage())
-            .placeholder("%amount%", amountString)
-            .placeholder("%player%", target.getName())
+            .placeholder("{amount}", amountString)
+            .placeholder("{player}", target.getName())
             .player(senderUUID)
             .send();
     }

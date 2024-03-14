@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 import org.bukkit.entity.Player;
+import pl.auroramc.commons.decimal.DecimalFormatter;
 
 @Command(name = "money", aliases = { "balance", "bal" })
 public class MoneyCommand {
@@ -22,6 +23,7 @@ public class MoneyCommand {
     private final EternalEconomy eternalEconomy;
     private final NoticeService noticeService;
     private User user;
+    DecimalFormatter decimalFormatter;
 
     public MoneyCommand(
         EternalEconomy eternalEconomy,
@@ -46,8 +48,8 @@ public class MoneyCommand {
         this.noticeService.create()
             .notice(configInterface -> configInterface.messages().checkBalanceMessage())
             .placeholder(
-                "%balance%",
-                userService.findUser(uuid).map(user -> user.getBalance()).orElse(BigDecimal.ZERO).toString())
+                "{balance}",
+                userService.findUser(uuid).map(user -> decimalFormatter.getFormattedDecimal(user.getBalance())))
             .player(uuid)
             .send();
     }
@@ -61,8 +63,8 @@ public class MoneyCommand {
 
         this.noticeService.create()
             .notice(configInterface -> configInterface.messages().checkBalanceOtherMessage())
-            .placeholder("%balance%", targetUser.map(user -> user.getBalance()).orElse(BigDecimal.ZERO).toString())
-            .placeholder("%target%", target.getName())
+            .placeholder("{balance}", targetUser.map(user -> decimalFormatter.getFormattedDecimal(user.getBalance())))
+            .placeholder("{target}", target.getName())
             .player(sender.getUniqueId())
             .send();
     }
