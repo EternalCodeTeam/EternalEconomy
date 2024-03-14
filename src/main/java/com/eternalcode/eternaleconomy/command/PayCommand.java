@@ -23,7 +23,6 @@ public class PayCommand {
     private final EternalEconomy eternalEconomy;
     private final NoticeService noticeService;
     private User user;
-    private DecimalFormatter decimalFormatter;
 
     public PayCommand(
         EternalEconomy eternalEconomy,
@@ -45,7 +44,7 @@ public class PayCommand {
 
             this.noticeService.create()
                 .notice(configInterface -> configInterface.messages().minimalPayAmountMessage())
-                .placeholder("{ammount}", configuration.minimalPayAmount.toString())
+                .placeholder("{AMOUNT}", configuration.minimalPayAmount.toString())
                 .player(senderUUID)
                 .send();
 
@@ -67,19 +66,19 @@ public class PayCommand {
         senderUser.ifPresent(user -> user.removeBalance(amount));
         targetUser.ifPresent(user -> user.addBalance(amount));
 
-        String amountString = decimalFormatter.getFormattedDecimal(amount.doubleValue());
+        String amountString = DecimalFormatter.getFormattedDecimal(amount);
 
         this.noticeService.create()
             .notice(configInterface -> configInterface.messages().receivePayMessage())
-            .placeholder("{amount}", amountString)
-            .placeholder("{player}", sender.getName())
+            .placeholder("{AMOUNT}", amountString)
+            .placeholder("{PLAYER}", sender.getName())
             .player(target.getUniqueId())
             .send();
 
         this.noticeService.create()
             .notice(configInterface -> configInterface.messages().paySentMessage())
-            .placeholder("{amount}", amountString)
-            .placeholder("{player}", target.getName())
+            .placeholder("{AMOUNT}", amountString)
+            .placeholder("{PLAYER}", target.getName())
             .player(senderUUID)
             .send();
     }

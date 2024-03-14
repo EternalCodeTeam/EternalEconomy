@@ -21,7 +21,6 @@ public class EconomyCommand {
     private final PluginConfigImpl configuration;
     private final EternalEconomy eternalEconomy;
     private final NoticeService noticeService;
-    DecimalFormatter decimalFormatter;
 
     public EconomyCommand(
         EternalEconomy eternalEconomy,
@@ -56,8 +55,8 @@ public class EconomyCommand {
 
         this.noticeService.create()
             .notice(configInterface -> configInterface.messages().addBalanceMessage())
-            .placeholder("{amount}", decimalFormatter.getFormattedDecimal(amount.doubleValue()))
-            .placeholder("{player}", target.getName())
+            .placeholder("{AMOUNT}", DecimalFormatter.getFormattedDecimal(amount))
+            .placeholder("{PLAYER}", target.getName())
             .player(sender.getUniqueId())
             .send();
     }
@@ -82,8 +81,8 @@ public class EconomyCommand {
 
         this.noticeService.create()
             .notice(configInterface -> configInterface.messages().setBalanceMessage())
-            .placeholder("{amount}", decimalFormatter.getFormattedDecimal(amount.doubleValue()))
-            .placeholder("{player}", target.getName())
+            .placeholder("{AMOUNT}", DecimalFormatter.getFormattedDecimal(amount))
+            .placeholder("{PLAYER}", target.getName())
             .player(sender.getUniqueId())
             .send();
     }
@@ -109,8 +108,8 @@ public class EconomyCommand {
 
         this.noticeService.create()
             .notice(configInterface -> configInterface.messages().removeBalanceMessage())
-            .placeholder("{amount}", decimalFormatter.getFormattedDecimal(amount.doubleValue()))
-            .placeholder("{player}", target.getName())
+            .placeholder("{AMOUNT}", DecimalFormatter.getFormattedDecimal(amount))
+            .placeholder("{PLAYER}", target.getName())
             .player(sender.getUniqueId())
             .send();
     }
@@ -127,7 +126,7 @@ public class EconomyCommand {
 
         this.noticeService.create()
             .notice(configInterface -> configInterface.messages().resetBalanceMessage())
-            .placeholder("{player}", target.getName())
+            .placeholder("{PLAYER}", target.getName())
             .player(sender.getUniqueId())
             .send();
     }

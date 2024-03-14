@@ -77,31 +77,31 @@ public class PluginConfigImpl extends OkaeriConfig implements PluginConfig {
         public Notice notEnoughMoneyMessage = Notice.chat("<red>You don't have enough money!");
 
         @Comment("Pay sent message")
-        public Notice paySentMessage = Notice.actionbar("<green>You sent {amount} to {player}");
+        public Notice paySentMessage = Notice.actionbar("<green>You sent {AMOUNT} to {PLAYER}");
 
         @Comment("Receive pay message")
-        public Notice receivePayMessage = Notice.chat("<green>You received {amount} from {player}");
+        public Notice receivePayMessage = Notice.chat("<green>You received {AMOUNT} from {PLAYER}");
 
         @Comment("Checking balance message")
-        public Notice checkBalanceMessage = Notice.chat("<green>Your current balance: {balance}");
+        public Notice checkBalanceMessage = Notice.chat("<green>Your current balance: {BALANCE}");
 
         @Comment("Minimal pay ammount message")
-        public Notice minimalPayAmountMessage = Notice.chat("<red>Error! The minimal pay amount is: {amount}");
+        public Notice minimalPayAmountMessage = Notice.chat("<red>Error! The minimal pay amount is: {AMOUNT}");
 
         @Comment("Checking another player balance message")
-        public Notice checkBalanceOtherMessage = Notice.chat("<green>{target}'s current balance: {balance}");
+        public Notice checkBalanceOtherMessage = Notice.chat("<green>{TARGET}'s current balance: {BALANCE}");
 
         @Comment("Add balance message")
-        public Notice addBalanceMessage = Notice.chat("<green>You successfully added {amount} to {player}");
+        public Notice addBalanceMessage = Notice.chat("<green>You successfully added {AMOUNT} to {PLAYER}");
 
         @Comment("Remove balance message")
-        public Notice removeBalanceMessage = Notice.chat("<green>You successfully removed {amount} from {player}");
+        public Notice removeBalanceMessage = Notice.chat("<green>You successfully removed {AMOUNT} from {PLAYER}");
 
         @Comment("Set balance message")
-        public Notice setBalanceMessage = Notice.chat("<green>You successfully set {player}'s balance to {amount}");
+        public Notice setBalanceMessage = Notice.chat("<green>You successfully set {PLAYER}'s balance to {AMOUNT}");
 
         @Comment("Reset balance message")
-        public Notice resetBalanceMessage = Notice.chat("<green>You successfully reset {player}'s balance");
+        public Notice resetBalanceMessage = Notice.chat("<green>You successfully reset {PLAYER}'s balance");
 
         @Comment("Incorrect usage of economy command message")
         public Notice incorrectEconomyUsageMessage =
