@@ -23,7 +23,6 @@ public class MoneyCommand {
     private final EternalEconomy eternalEconomy;
     private final NoticeService noticeService;
     private User user;
-    DecimalFormatter decimalFormatter;
 
     public MoneyCommand(
         EternalEconomy eternalEconomy,
@@ -48,8 +47,8 @@ public class MoneyCommand {
         this.noticeService.create()
             .notice(configInterface -> configInterface.messages().checkBalanceMessage())
             .placeholder(
-                "{balance}",
-                userService.findUser(uuid).map(user -> decimalFormatter.getFormattedDecimal(user.getBalance())))
+                "{BALANCE}",
+                userService.findUser(uuid).map(user -> DecimalFormatter.getFormattedDecimal(user.getBalance())))
             .player(uuid)
             .send();
     }
@@ -63,8 +62,8 @@ public class MoneyCommand {
 
         this.noticeService.create()
             .notice(configInterface -> configInterface.messages().checkBalanceOtherMessage())
-            .placeholder("{balance}", targetUser.map(user -> decimalFormatter.getFormattedDecimal(user.getBalance())))
-            .placeholder("{target}", target.getName())
+            .placeholder("{BALANCE}", targetUser.map(user -> DecimalFormatter.getFormattedDecimal(user.getBalance())))
+            .placeholder("{TARGET}", target.getName())
             .player(sender.getUniqueId())
             .send();
     }
