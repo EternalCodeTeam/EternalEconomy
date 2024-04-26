@@ -55,7 +55,6 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.mockito:mockito-core:5.11.0")
 
-
     // litecommands
     val litecommandsVersion = "3.4.0"
     implementation("dev.rollczi:litecommands-bukkit:${litecommandsVersion}")
@@ -70,7 +69,6 @@ dependencies {
     // EternalCode Commons
     implementation("com.eternalcode:eternalcode-commons-bukkit:1.1.1")
     implementation("com.eternalcode:eternalcode-commons-adventure:1.1.1")
-
 }
 
 java {
@@ -88,45 +86,39 @@ bukkit {
 }
 
 tasks.compileJava {
-    options.compilerArgs.add("-parameters")
+    options.compilerArgs = listOf("-Xlint:deprecation", "-parameters")
+    options.encoding = "UTF-8"
 }
 
-tasks {
-    compileJava {
-        options.compilerArgs = listOf("-Xlint:deprecation")
-        options.encoding = "UTF-8"
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.runServer {
+    minecraftVersion("1.20.4")
+
+    downloadPlugins {
+        hangar("PlaceholderAPI", "2.11.5")
+        github("MilkBowl", "Vault", "1.7.3", "Vault.jar")
     }
+}
 
-    test {
-        useJUnitPlatform()
-    }
+tasks.shadowJar {
+    archiveFileName.set("EternalEconomy v${project.version} (MC 1.8 - 1.20.4).jar")
 
-    runServer {
-        minecraftVersion("1.20.4")
+    exclude(
+        "org/intellij/lang/annotations/**",
+        "org/jetbrains/annotations/**",
+        "META-INF/**",
+    )
 
-        downloadPlugins {
-            hangar("PlaceholderAPI", "2.11.5")
-            github("MilkBowl", "Vault", "1.7.3", "Vault.jar")
-        }
-    }
+    mergeServiceFiles()
 
-    shadowJar {
-        archiveFileName.set("EternalEconomy v${project.version} (MC 1.8 - 1.20.4).jar")
-
-        exclude(
-            "org/intellij/lang/annotations/**",
-            "org/jetbrains/annotations/**",
-            "META-INF/**",
-        )
-
-        mergeServiceFiles()
-
-        val prefix = "com.eternalcode.eternaleconomy.libs"
-        listOf(
-            "eu.okaeri",
-            "org.yaml",
-        ).forEach { relocate(it, prefix) }
-    }
+    val prefix = "com.eternalcode.eternaleconomy.libs"
+    listOf(
+        "eu.okaeri",
+        "org.yaml",
+    ).forEach { relocate(it, prefix) }
 }
 
 

@@ -35,9 +35,9 @@ public class EconomyCommand {
 
     @Execute(name = "add")
     void executeAdd(@Context Player sender, @Arg("target") Player target, @OptionalArg("amount") BigDecimal amount) {
-        Optional<User> targetUser = userService.findUser(target.getUniqueId());
+        Optional<User> targetUser = userService.getUser(target.getUniqueId());
 
-        if (userService.findUser(target.getUniqueId()).isEmpty()) {
+        if (userService.getUser(target.getUniqueId()).isEmpty()) {
             userService.create(target.getUniqueId(), target.getName());
         }
 
@@ -63,9 +63,9 @@ public class EconomyCommand {
 
     @Execute(name = "set")
     void executeSet(@Context Player sender, @Arg("target") Player target, @OptionalArg("amount") BigDecimal amount) {
-        Optional<User> targetUser = userService.findUser(target.getUniqueId());
+        Optional<User> targetUser = userService.getUser(target.getUniqueId());
 
-        if (userService.findUser(target.getUniqueId()).isEmpty()) {
+        if (userService.getUser(target.getUniqueId()).isEmpty()) {
             userService.create(target.getUniqueId(), target.getName());
         }
         if (amount == null) {
@@ -89,9 +89,9 @@ public class EconomyCommand {
 
     @Execute(name = "remove")
     void executeRemove(@Context Player sender, @Arg("target") Player target, @OptionalArg("amount") BigDecimal amount) {
-        Optional<User> targetUser = userService.findUser(target.getUniqueId());
+        Optional<User> targetUser = userService.getUser(target.getUniqueId());
 
-        if (userService.findUser(target.getUniqueId()).isEmpty()) {
+        if (userService.getUser(target.getUniqueId()).isEmpty()) {
             userService.create(target.getUniqueId(), target.getName());
         }
 
@@ -116,9 +116,9 @@ public class EconomyCommand {
 
     @Execute(name = "reset")
     void executeReset(@Context Player sender, @Arg("target") Player target) {
-        Optional<User> targetUser = userService.findUser(target.getUniqueId());
+        Optional<User> targetUser = userService.getUser(target.getUniqueId());
 
-        if (userService.findUser(target.getUniqueId()).isEmpty()) {
+        if (userService.getUser(target.getUniqueId()).isEmpty()) {
             userService.create(target.getUniqueId(), target.getName());
         }
 
