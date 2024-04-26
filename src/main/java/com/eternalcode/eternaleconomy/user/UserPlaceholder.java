@@ -49,13 +49,10 @@ public class UserPlaceholder extends PlaceholderExpansion {
         String action = args[0];
         UUID uniqueId = player.getUniqueId();
 
-        switch (action) {
-            case "balance":
-                return this.userMoneyService.getFormattedBalance(uniqueId);
-            case "balance_raw":
-                return this.userMoneyService.getBalance(uniqueId).toString();
-            default:
-                return "";
-        }
+        return switch (action) {
+            case "balance" -> this.userMoneyService.getFormattedBalance(uniqueId);
+            case "balance_raw" -> this.userMoneyService.getBalance(uniqueId).toString();
+            default -> "";
+        };
     }
 }
