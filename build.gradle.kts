@@ -35,7 +35,7 @@ dependencies {
 
     // kyori adventure & minimessage
     implementation("net.kyori:adventure-platform-bukkit:4.3.1")
-    implementation("net.kyori:adventure-text-minimessage:4.14.0")
+    implementation("net.kyori:adventure-text-minimessage:4.17.0")
 
     // hikari
     implementation("com.zaxxer:HikariCP:5.1.0")
