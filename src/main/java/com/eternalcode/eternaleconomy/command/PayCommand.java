@@ -50,8 +50,8 @@ public class PayCommand {
 
             return;
         }
-        Optional<User> senderUser = userService.findUser(sender.getUniqueId());
-        Optional<User> targetUser = userService.findUser(target.getUniqueId());
+        Optional<User> senderUser = userService.getUser(sender.getUniqueId());
+        Optional<User> targetUser = userService.getUser(target.getUniqueId());
 
         if (!(has(sender, amount))) {
 
@@ -84,7 +84,7 @@ public class PayCommand {
     }
 
     private boolean has(Player player, BigDecimal amount) {
-        Optional<User> targetUser = userService.findUser(player.getUniqueId());
+        Optional<User> targetUser = userService.getUser(player.getUniqueId());
         BigDecimal playerBalance = targetUser.map(user -> user.getBalance()).orElse(BigDecimal.ZERO);
         return playerBalance.compareTo(amount) >= 0;
     }

@@ -5,12 +5,14 @@ import java.util.UUID;
 
 public class User {
 
-    public UUID uniqueId;
+    public final UUID uniqueId;
+
     public String name;
     public BigDecimal balance;
 
     public User(UUID uniqueId, String name, BigDecimal balance) {
         this.uniqueId = uniqueId;
+
         this.name = name;
         this.balance = balance;
     }

@@ -1,15 +1,11 @@
 package com.eternalcode.eternaleconomy.user;
 
 import com.eternalcode.eternaleconomy.config.implementation.PluginConfigImpl;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class UserService {
 
@@ -25,11 +21,11 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public Optional<User> findUser(UUID uuid) {
+    public Optional<User> getUser(UUID uuid) {
         return Optional.ofNullable(this.usersByUniqueId.get(uuid));
     }
 
-    public Optional<User> findUser(String name) {
+    public Optional<User> getUser(String name) {
         return Optional.ofNullable(this.usersByName.get(name));
     }
 

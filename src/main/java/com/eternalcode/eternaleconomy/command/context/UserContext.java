@@ -22,7 +22,7 @@ public class UserContext implements ContextProvider<CommandSender, User> {
     @Override
     public ContextResult<User> provide(Invocation<CommandSender> invocation) {
         if (invocation.sender() instanceof Player player) {
-            return ContextResult.ok(() -> this.userService.findUser(player.getUniqueId())
+            return ContextResult.ok(() -> this.userService.getUser(player.getUniqueId())
                 .orElseThrow(() -> new IllegalStateException("Player " + player.getName() + " is not registered!")));
         }
 

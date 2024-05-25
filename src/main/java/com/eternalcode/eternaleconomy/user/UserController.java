@@ -7,11 +7,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class UserListener implements Listener {
+public class UserController implements Listener {
 
     private final UserService userService;
 
-    public UserListener(UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
@@ -20,7 +20,7 @@ public class UserListener implements Listener {
         Player player = event.getPlayer();
         UUID uniqueId = player.getUniqueId();
 
-        this.userService.findUser(uniqueId)
+        this.userService.getUser(uniqueId)
             .ifPresentOrElse(
                 user -> user.setName(player.getName()),
                 () -> this.userService.create(uniqueId, player.getName()));
@@ -31,6 +31,6 @@ public class UserListener implements Listener {
         Player player = event.getPlayer();
         UUID uniqueId = player.getUniqueId();
 
-        this.userService.findUser(uniqueId).ifPresent(this.userService::saveUser);
+        this.userService.getUser(uniqueId).ifPresent(this.userService::saveUser);
     }
 }

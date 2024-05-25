@@ -9,7 +9,6 @@ import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 import org.bukkit.entity.Player;
@@ -40,7 +39,7 @@ public class MoneyCommand {
 
         UUID uuid = sender.getUniqueId();
 
-        if (userService.findUser(uuid).isEmpty()) {
+        if (userService.getUser(uuid).isEmpty()) {
             userService.create(uuid, sender.getName());
         }
 
@@ -48,15 +47,15 @@ public class MoneyCommand {
             .notice(configInterface -> configInterface.messages().checkBalanceMessage())
             .placeholder(
                 "{BALANCE}",
-                userService.findUser(uuid).map(user -> DecimalFormatter.getFormattedDecimal(user.getBalance())))
+                userService.getUser(uuid).map(user -> DecimalFormatter.getFormattedDecimal(user.getBalance())))
             .player(uuid)
             .send();
     }
 
     @Execute
     public void executeOthers(@Context Player sender, @Arg Player target) {
-        Optional<User> targetUser = userService.findUser(sender.getUniqueId());
-        if (userService.findUser(target.getUniqueId()).isEmpty()) {
+        Optional<User> targetUser = userService.getUser(sender.getUniqueId());
+        if (userService.getUser(target.getUniqueId()).isEmpty()) {
             userService.create(target.getUniqueId(), target.getName());
         }
 

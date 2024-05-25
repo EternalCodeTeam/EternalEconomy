@@ -78,35 +78,35 @@ public class EconomyProvider implements Economy {
 
     @Override
     public double getBalance(String playerName) {
-        return this.userService.findUser(playerName)
+        return this.userService.getUser(playerName)
             .map(user -> user.balance.doubleValue())
             .orElse(0.0);
     }
 
     @Override
     public double getBalance(OfflinePlayer player) {
-        return this.userService.findUser(player.getUniqueId())
+        return this.userService.getUser(player.getUniqueId())
             .map(user -> user.balance.doubleValue())
             .orElse(0.0);
     }
 
     @Override
     public double getBalance(String playerName, String world) {
-        return this.userService.findUser(playerName)
+        return this.userService.getUser(playerName)
             .map(user -> user.balance.doubleValue())
             .orElse(0.0);
     }
 
     @Override
     public double getBalance(OfflinePlayer player, String world) {
-        return this.userService.findUser(player.getUniqueId())
+        return this.userService.getUser(player.getUniqueId())
             .map(user -> user.balance.doubleValue())
             .orElse(0.0);
     }
 
     @Override
     public boolean has(String playerName, double amount) {
-        Optional<User> user = this.userService.findUser(playerName);
+        Optional<User> user = this.userService.getUser(playerName);
 
         if (user.isEmpty()) {
             return false;
@@ -117,7 +117,7 @@ public class EconomyProvider implements Economy {
 
     @Override
     public boolean has(OfflinePlayer player, double amount) {
-        Optional<User> user = this.userService.findUser(player.getUniqueId());
+        Optional<User> user = this.userService.getUser(player.getUniqueId());
 
         if (user.isEmpty()) {
             return false;
@@ -128,7 +128,7 @@ public class EconomyProvider implements Economy {
 
     @Override
     public boolean has(String playerName, String worldName, double amount) {
-        Optional<User> user = this.userService.findUser(playerName);
+        Optional<User> user = this.userService.getUser(playerName);
 
         if (user.isEmpty()) {
             return false;
@@ -139,7 +139,7 @@ public class EconomyProvider implements Economy {
 
     @Override
     public boolean has(OfflinePlayer player, String worldName, double amount) {
-        Optional<User> user = this.userService.findUser(player.getUniqueId());
+        Optional<User> user = this.userService.getUser(player.getUniqueId());
 
         if (user.isEmpty()) {
             return false;
@@ -150,7 +150,7 @@ public class EconomyProvider implements Economy {
 
     @Override
     public EconomyResponse withdrawPlayer(String playerName, double amount) {
-        Optional<User> user = this.userService.findUser(playerName);
+        Optional<User> user = this.userService.getUser(playerName);
 
         if (user.isEmpty()) {
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "User not found");
@@ -164,7 +164,7 @@ public class EconomyProvider implements Economy {
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
-        Optional<User> user = this.userService.findUser(player.getUniqueId());
+        Optional<User> user = this.userService.getUser(player.getUniqueId());
 
         if (user.isEmpty()) {
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "User not found");
@@ -178,7 +178,7 @@ public class EconomyProvider implements Economy {
 
     @Override
     public EconomyResponse withdrawPlayer(String playerName, String worldName, double amount) {
-        Optional<User> user = this.userService.findUser(playerName);
+        Optional<User> user = this.userService.getUser(playerName);
 
         if (user.isEmpty()) {
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "User not found");
@@ -192,7 +192,7 @@ public class EconomyProvider implements Economy {
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, String worldName, double amount) {
-        Optional<User> user = this.userService.findUser(player.getUniqueId());
+        Optional<User> user = this.userService.getUser(player.getUniqueId());
 
         if (user.isEmpty()) {
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "User not found");
@@ -206,7 +206,7 @@ public class EconomyProvider implements Economy {
 
     @Override
     public EconomyResponse depositPlayer(String playerName, double amount) {
-        Optional<User> user = this.userService.findUser(playerName);
+        Optional<User> user = this.userService.getUser(playerName);
 
         if (user.isEmpty()) {
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "User not found");
@@ -220,7 +220,7 @@ public class EconomyProvider implements Economy {
 
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
-        Optional<User> user = this.userService.findUser(player.getUniqueId());
+        Optional<User> user = this.userService.getUser(player.getUniqueId());
 
         if (user.isEmpty()) {
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "User not found");
@@ -234,7 +234,7 @@ public class EconomyProvider implements Economy {
 
     @Override
     public EconomyResponse depositPlayer(String playerName, String worldName, double amount) {
-        Optional<User> user = this.userService.findUser(playerName);
+        Optional<User> user = this.userService.getUser(playerName);
 
         if (user.isEmpty()) {
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "User not found");
@@ -248,7 +248,7 @@ public class EconomyProvider implements Economy {
 
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer player, String worldName, double amount) {
-        Optional<User> user = this.userService.findUser(player.getUniqueId());
+        Optional<User> user = this.userService.getUser(player.getUniqueId());
 
         if (user.isEmpty()) {
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "User not found");
@@ -322,21 +322,21 @@ public class EconomyProvider implements Economy {
 
     @Override
     public boolean createPlayerAccount(String playerName) {
-        return this.userService.findUser(playerName).isPresent();
+        return this.userService.getUser(playerName).isPresent();
     }
 
     @Override
     public boolean createPlayerAccount(OfflinePlayer player) {
-        return this.userService.findUser(player.getUniqueId()).isPresent();
+        return this.userService.getUser(player.getUniqueId()).isPresent();
     }
 
     @Override
     public boolean createPlayerAccount(String playerName, String worldName) {
-        return this.userService.findUser(playerName).isPresent();
+        return this.userService.getUser(playerName).isPresent();
     }
 
     @Override
     public boolean createPlayerAccount(OfflinePlayer player, String worldName) {
-        return this.userService.findUser(player.getUniqueId()).isPresent();
+        return this.userService.getUser(player.getUniqueId()).isPresent();
     }
 }
