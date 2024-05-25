@@ -4,6 +4,7 @@ import com.eternalcode.commons.adventure.AdventureLegacyColorPostProcessor;
 import com.eternalcode.commons.adventure.AdventureLegacyColorPreProcessor;
 import com.eternalcode.commons.bukkit.scheduler.BukkitSchedulerImpl;
 import com.eternalcode.commons.scheduler.Scheduler;
+import com.eternalcode.eternaleconomy.command.BalancetopCommand;
 import com.eternalcode.eternaleconomy.command.EconomyCommand;
 import com.eternalcode.eternaleconomy.command.MoneyCommand;
 import com.eternalcode.eternaleconomy.command.PayCommand;
@@ -12,6 +13,7 @@ import com.eternalcode.eternaleconomy.config.implementation.PluginConfigImpl;
 import com.eternalcode.eternaleconomy.database.DatabaseService;
 import com.eternalcode.eternaleconomy.notification.MessageProvider;
 import com.eternalcode.eternaleconomy.notification.NoticeService;
+import com.eternalcode.eternaleconomy.system.BalancetopSystem;
 import com.eternalcode.eternaleconomy.user.User;
 import com.eternalcode.eternaleconomy.user.UserRepositoryImpl;
 import com.eternalcode.eternaleconomy.user.UserService;
@@ -59,12 +61,14 @@ public class EternalEconomy extends JavaPlugin {
 
         userService = new UserService(config, userRepository);
         this.noticeService = new NoticeService(audiences, server, messageProvider, this.miniMessage);
+        BalancetopSystem balancetopSystem = new BalancetopSystem(userService);
 
         this.liteCommands = LiteCommandsBukkit.builder("EternalEconomy")
             .commands(
                 new EconomyCommand(this, userService, config, noticeService),
                 new MoneyCommand(this, userService, config, noticeService),
-                new PayCommand(this, userService, config, noticeService))
+                new PayCommand(this, userService, config, noticeService),
+                new BalancetopCommand(noticeService, config, balancetopSystem))
             .build();
     }
 
