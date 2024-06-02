@@ -31,12 +31,5 @@ public class BalancetopCommand {
     @Execute
     public void execute(@Context Player sender, @OptionalArg("number of results") Integer number) {
         balancetopSystem.openGui(sender, balancetopSystem.balanceTopGui());
-
-        List<User> users = balancetopSystem.tempGetUsers(10);
-        sender.sendMessage("s");
-        for(User user : users){
-            sender.sendMessage(user.getName() + "");
-            sender.sendMessage("s");
-        }
     }
 }

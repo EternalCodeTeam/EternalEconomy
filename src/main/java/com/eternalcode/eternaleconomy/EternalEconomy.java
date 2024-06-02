@@ -15,6 +15,7 @@ import com.eternalcode.eternaleconomy.notification.MessageProvider;
 import com.eternalcode.eternaleconomy.notification.NoticeService;
 import com.eternalcode.eternaleconomy.system.BalancetopSystem;
 import com.eternalcode.eternaleconomy.user.User;
+import com.eternalcode.eternaleconomy.user.UserController;
 import com.eternalcode.eternaleconomy.user.UserRepositoryImpl;
 import com.eternalcode.eternaleconomy.user.UserService;
 import com.zaxxer.hikari.HikariDataSource;
@@ -62,6 +63,8 @@ public class EternalEconomy extends JavaPlugin {
         userService = new UserService(config, userRepository);
         this.noticeService = new NoticeService(audiences, server, messageProvider, this.miniMessage);
         BalancetopSystem balancetopSystem = new BalancetopSystem(userService);
+
+        server.getPluginManager().registerEvents(new UserController(userService), this);
 
         this.liteCommands = LiteCommandsBukkit.builder("EternalEconomy")
             .commands(
