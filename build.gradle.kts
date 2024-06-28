@@ -60,7 +60,7 @@ dependencies {
     implementation("dev.rollczi:litecommands-bukkit:${litecommandsVersion}")
 
     // Gui lib
-    implementation("dev.triumphteam:triumph-gui:3.1.7")
+    implementation("dev.triumphteam:triumph-gui:3.1.10")
 
     // Multification
     implementation("com.eternalcode:multification-core:1.0.2")
