@@ -62,7 +62,7 @@ public class EternalEconomy extends JavaPlugin {
 
         userService = new UserService(config, userRepository);
         this.noticeService = new NoticeService(audiences, server, messageProvider, this.miniMessage);
-        BalancetopSystem balancetopSystem = new BalancetopSystem(userService);
+        BalancetopSystem balancetopSystem = new BalancetopSystem(userService, config);
 
         server.getPluginManager().registerEvents(new UserController(userService), this);
 

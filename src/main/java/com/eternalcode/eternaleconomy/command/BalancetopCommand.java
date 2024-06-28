@@ -30,6 +30,12 @@ public class BalancetopCommand {
 
     @Execute
     public void execute(@Context Player sender, @OptionalArg("number of results") Integer number) {
-        balancetopSystem.openGui(sender, balancetopSystem.balanceTopGui());
+        if (number == null || number >= 10) {
+            balancetopSystem.openGui(sender, balancetopSystem.balanceTopGui());
+        } else {
+            balancetopSystem.openPaginatedGui(sender, balancetopSystem.balanceTopGui(number));
+        }
+
+
     }
 }

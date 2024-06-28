@@ -8,7 +8,10 @@ import eu.okaeri.configs.annotation.Header;
 import eu.okaeri.configs.annotation.NameModifier;
 import eu.okaeri.configs.annotation.NameStrategy;
 import eu.okaeri.configs.annotation.Names;
+
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
 @Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
 @Header("# ")
@@ -20,6 +23,8 @@ import java.math.BigDecimal;
 public class PluginConfigImpl extends OkaeriConfig implements PluginConfig {
 
     public Database database = new Database();
+
+    public BalanceTop balanceTop = new BalanceTop();
 
     public MessageSection messages = new MessageSection();
 
@@ -43,12 +48,13 @@ public class PluginConfigImpl extends OkaeriConfig implements PluginConfig {
 
     public static class ArgumentSection extends OkaeriConfig implements Argument {
 
-        @Comment({ " ", "# {USAGE} - Correct usage" })
+        @Comment({" ", "# {USAGE} - Correct usage"})
         public Notice usageMessage = Notice.chat("<dark_red>✘ <red>Correct usage: <gold>{USAGE}");
         public Notice usageMessageHead = Notice.chat("<green>► <white>Correct usage:");
         public Notice usageMessageEntry = Notice.chat("<green>► <white>{USAGE}");
 
         public Notice playerNotFound = Notice.chat("<dark_red>✘ <red>Player not found!");
+
 
         @Override
         public Notice playerNotFound() {
@@ -181,5 +187,8 @@ public class PluginConfigImpl extends OkaeriConfig implements PluginConfig {
     public static class BalanceTop extends OkaeriConfig {
         @Comment("Inventory title")
         public String inventory_title = "<yellow>Balance Top";
+
+        @Comment("Balance Top Slots")
+        public List<Integer> balance_top_slots = Arrays.asList(4, 12, 14, 19, 20, 21, 22, 23, 24, 25);
     }
 }
