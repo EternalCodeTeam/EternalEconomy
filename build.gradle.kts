@@ -68,7 +68,7 @@ dependencies {
 
     // EternalCode Commons
     implementation("com.eternalcode:eternalcode-commons-bukkit:1.1.3")
-    implementation("com.eternalcode:eternalcode-commons-adventure:1.1.1")
+    implementation("com.eternalcode:eternalcode-commons-adventure:1.1.3")
 }
 
 java {
