@@ -34,7 +34,7 @@ dependencies {
     implementation("com.eternalcode:eternalcode-commons-bukkit:${eternalcodeCommonsVersion}")
 
     // kyori adventure & minimessage
-    implementation("net.kyori:adventure-platform-bukkit:4.3.1")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.3")
     implementation("net.kyori:adventure-text-minimessage:4.17.0")
 
     // hikari
