@@ -45,7 +45,7 @@ dependencies {
     testImplementation("org.spigotmc:spigot-api:1.20.2-experimental-SNAPSHOT")
 
     // PlaceholerAPI
-    compileOnly("me.clip:placeholderapi:2.11.4")
+    compileOnly("me.clip:placeholderapi:2.11.6")
 
     // VaultAPI
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
