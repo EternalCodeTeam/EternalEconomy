@@ -41,8 +41,8 @@ dependencies {
     implementation("com.zaxxer:HikariCP:5.1.0")
 
     // spigot api
-    compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
-    testImplementation("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.20.2-experimental-SNAPSHOT")
+    testImplementation("org.spigotmc:spigot-api:1.20.2-experimental-SNAPSHOT")
 
     // PlaceholerAPI
     compileOnly("me.clip:placeholderapi:2.11.4")
