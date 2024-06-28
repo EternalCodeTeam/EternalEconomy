@@ -29,7 +29,7 @@ dependencies {
     implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:${okaeriConfigsVersion}")
     implementation("eu.okaeri:okaeri-configs-serdes-commons:${okaeriConfigsVersion}")
 
-    val eternalcodeCommonsVersion = "1.1.1"
+    val eternalcodeCommonsVersion = "1.1.3"
     implementation("com.eternalcode:eternalcode-commons-adventure:${eternalcodeCommonsVersion}")
     implementation("com.eternalcode:eternalcode-commons-bukkit:${eternalcodeCommonsVersion}")
 
