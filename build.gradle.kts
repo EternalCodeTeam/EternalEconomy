@@ -25,7 +25,7 @@ repositories {
 
 dependencies {
     // okaeri configs
-    val okaeriConfigsVersion = "5.0.2"
+    val okaeriConfigsVersion = "5.0.3"
     implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:${okaeriConfigsVersion}")
     implementation("eu.okaeri:okaeri-configs-serdes-commons:${okaeriConfigsVersion}")
 
