@@ -63,7 +63,7 @@ dependencies {
     implementation("dev.triumphteam:triumph-gui:3.1.10")
 
     // Multification
-    implementation("com.eternalcode:multification-core:1.0.2")
+    implementation("com.eternalcode:multification-core:1.1.3")
     implementation("com.eternalcode:multification-cdn:1.0.2")
 
     // EternalCode Commons
