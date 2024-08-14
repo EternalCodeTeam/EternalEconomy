@@ -64,7 +64,7 @@ dependencies {
 
     // Multification
     implementation("com.eternalcode:multification-core:1.1.3")
-    implementation("com.eternalcode:multification-cdn:1.0.2")
+    implementation("com.eternalcode:multification-cdn:1.1.3")
 
     // EternalCode Commons
     implementation("com.eternalcode:eternalcode-commons-bukkit:1.1.3")
