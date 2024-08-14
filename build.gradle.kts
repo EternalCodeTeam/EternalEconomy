@@ -56,7 +56,7 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.11.0")
 
     // litecommands
-    val litecommandsVersion = "3.4.2"
+    val litecommandsVersion = "3.4.3"
     implementation("dev.rollczi:litecommands-bukkit:${litecommandsVersion}")
 
     // Gui lib
