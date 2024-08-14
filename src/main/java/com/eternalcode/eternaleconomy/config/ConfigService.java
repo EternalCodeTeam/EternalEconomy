@@ -53,9 +53,7 @@ public class ConfigService {
     }
 
     public void reload() {
-        for (OkaeriConfig config : this.configs) {
-            config.load();
-        }
+        this.configs.forEach(OkaeriConfig::load);
     }
 
     public void save(OkaeriConfig config) {

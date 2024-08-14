@@ -108,44 +108,28 @@ public class EconomyProvider implements Economy {
     public boolean has(String playerName, double amount) {
         Optional<User> user = this.userService.getUser(playerName);
 
-        if (user.isEmpty()) {
-            return false;
-        }
-
-        return user.get().balance.doubleValue() >= amount;
+        return user.filter(value -> value.balance.doubleValue() >= amount).isPresent();
     }
 
     @Override
     public boolean has(OfflinePlayer player, double amount) {
         Optional<User> user = this.userService.getUser(player.getUniqueId());
 
-        if (user.isEmpty()) {
-            return false;
-        }
-
-        return user.get().balance.doubleValue() >= amount;
+        return user.filter(value -> value.balance.doubleValue() >= amount).isPresent();
     }
 
     @Override
     public boolean has(String playerName, String worldName, double amount) {
         Optional<User> user = this.userService.getUser(playerName);
 
-        if (user.isEmpty()) {
-            return false;
-        }
-
-        return user.get().balance.doubleValue() >= amount;
+        return user.filter(value -> value.balance.doubleValue() >= amount).isPresent();
     }
 
     @Override
     public boolean has(OfflinePlayer player, String worldName, double amount) {
         Optional<User> user = this.userService.getUser(player.getUniqueId());
 
-        if (user.isEmpty()) {
-            return false;
-        }
-
-        return user.get().balance.doubleValue() >= amount;
+        return user.filter(value -> value.balance.doubleValue() >= amount).isPresent();
     }
 
     @Override
