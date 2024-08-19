@@ -15,9 +15,17 @@ object Versions {
     const val ADVENTURE_PLATFORM_BUKKIT = "4.3.3"
     const val ADVENTURE_API = "4.17.0"
 
+    const val MARIA_DB = "3.4.1"
+    const val POSTGRESQL = "42.7.3"
+    const val H2 = "2.1.214"
+    const val ORMLITE = "6.1"
+    const val HIKARI_CP = "5.1.0"
+
     // gradle :-: plugin's
     const val GRADLE_UP_SHADOW = "8.3.0"
     const val MINECRELL_PLUGIN_YML = "0.6.0"
     const val JPENILLA_RUN_TASK = "2.3.1"
+
+
 
 }

@@ -1,4 +1,6 @@
 package com.eternalcode.economy.config.implementation;
 
-public class PluginConfig {
+import eu.okaeri.configs.OkaeriConfig;
+
+public class PluginConfig extends OkaeriConfig {
 }

@@ -22,6 +22,13 @@ dependencies {
     implementation("com.eternalcode:eternalcode-commons-bukkit:${Versions.ETERNALCODE_COMMONS}")
     implementation("com.eternalcode:eternalcode-commons-shared:${Versions.ETERNALCODE_COMMONS}")
 
+    implementation("org.mariadb.jdbc:mariadb-java-client:${Versions.MARIA_DB}")
+    implementation("org.postgresql:postgresql:${Versions.POSTGRESQL}")
+    implementation("com.h2database:h2:${Versions.H2}")
+    implementation("com.j256.ormlite:ormlite-core:${Versions.ORMLITE}")
+    implementation("com.j256.ormlite:ormlite-jdbc:${Versions.ORMLITE}")
+    implementation("com.zaxxer:HikariCP:${Versions.HIKARI_CP}")
+
     // multification
     implementation("com.eternalcode:multification-bukkit:${Versions.MULTIFICATION}")
     implementation("com.eternalcode:multification-okaeri:${Versions.MULTIFICATION}")

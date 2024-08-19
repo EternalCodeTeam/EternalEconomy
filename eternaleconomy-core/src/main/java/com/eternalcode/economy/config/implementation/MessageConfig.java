@@ -1,4 +1,6 @@
 package com.eternalcode.economy.config.implementation;
 
-public class MessageConfig {
+import eu.okaeri.configs.OkaeriConfig;
+
+public class MessageConfig extends OkaeriConfig {
 }
