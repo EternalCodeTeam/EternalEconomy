@@ -8,7 +8,7 @@ dependencies {
     testImplementation("org.mockito:mockito-core:${Versions.MOCKITO_CORE}")
 }
 
-tasks.getByName<Test>("test") {
+tasks.test {
     useJUnitPlatform()
 }
 

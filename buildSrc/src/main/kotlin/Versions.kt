@@ -12,6 +12,8 @@ object Versions {
     const val JUNIT_BOM = "5.11.0"
     const val MOCKITO_CORE = "5.12.0"
 
+    const val ADVENTURE_PLATFORM_BUKKIT = "4.3.3"
+    const val ADVENTURE_API = "4.17.0"
 
     // gradle :-: plugin's
     const val GRADLE_UP_SHADOW = "8.3.0"

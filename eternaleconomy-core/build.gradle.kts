@@ -22,11 +22,17 @@ dependencies {
     implementation("com.eternalcode:eternalcode-commons-bukkit:${Versions.ETERNALCODE_COMMONS}")
     implementation("com.eternalcode:eternalcode-commons-shared:${Versions.ETERNALCODE_COMMONS}")
 
+    // multification
+    implementation("com.eternalcode:multification-bukkit:${Versions.MULTIFICATION}")
+    implementation("com.eternalcode:multification-okaeri:${Versions.MULTIFICATION}")
+
+    // kyori
+    implementation("net.kyori:adventure-platform-bukkit:${Versions.ADVENTURE_PLATFORM_BUKKIT}")
+    implementation("net.kyori:adventure-text-minimessage:${Versions.ADVENTURE_API}")
+
     // okaeri configs
     implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:${Versions.OKAERI_CONFIGS}")
     implementation("eu.okaeri:okaeri-configs-serdes-commons:${Versions.OKAERI_CONFIGS}")
-
-
 }
 
 bukkit {
