@@ -1,5 +1,6 @@
-package com.eternalcode.economy.account;
+package com.eternalcode.economy.account.database;
 
+import com.eternalcode.economy.account.Account;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import java.math.BigDecimal;
@@ -27,7 +28,7 @@ public class AccountWrapper {
     }
 
     public static AccountWrapper fromAccount(Account account) {
-        return new AccountWrapper(account.getUuid(), account.getName(), account.getAccountBalance());
+        return new AccountWrapper(account.uuid(), account.name(), account.balance());
     }
 
     public Account toAccount() {

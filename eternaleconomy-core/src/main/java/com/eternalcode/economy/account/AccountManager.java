@@ -1,5 +1,6 @@
 package com.eternalcode.economy.account;
 
+import com.eternalcode.economy.account.database.AccountRepository;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;

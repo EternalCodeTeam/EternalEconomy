@@ -15,6 +15,11 @@ object Versions {
     const val ADVENTURE_PLATFORM_BUKKIT = "4.3.3"
     const val ADVENTURE_API = "4.17.0"
 
+    const val VAULT_API = "1.7.1"
+
+    const val EXPRESSIBLE = "1.3.6"
+    const val PANDA_UTILITIES = "0.5.3-alpha"
+
     const val MARIA_DB = "3.4.1"
     const val POSTGRESQL = "42.7.3"
     const val H2 = "2.1.214"

@@ -29,6 +29,13 @@ dependencies {
     implementation("com.j256.ormlite:ormlite-jdbc:${Versions.ORMLITE}")
     implementation("com.zaxxer:HikariCP:${Versions.HIKARI_CP}")
 
+    // expressible
+    implementation("org.panda-lang:expressible:${Versions.EXPRESSIBLE}")
+    implementation("org.panda-lang:panda-utilities:${Versions.PANDA_UTILITIES}")
+
+    implementation("dev.rollczi:litecommands-bukkit:${Versions.LITE_COMMANDS}")
+    implementation("dev.rollczi:litecommands-adventure:${Versions.LITE_COMMANDS}")
+
     // multification
     implementation("com.eternalcode:multification-bukkit:${Versions.MULTIFICATION}")
     implementation("com.eternalcode:multification-okaeri:${Versions.MULTIFICATION}")
@@ -36,6 +43,9 @@ dependencies {
     // kyori
     implementation("net.kyori:adventure-platform-bukkit:${Versions.ADVENTURE_PLATFORM_BUKKIT}")
     implementation("net.kyori:adventure-text-minimessage:${Versions.ADVENTURE_API}")
+
+    // vault
+    compileOnly("com.github.MilkBowl:VaultAPI:${Versions.VAULT_API}")
 
     // okaeri configs
     implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:${Versions.OKAERI_CONFIGS}")

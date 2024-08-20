@@ -1,6 +1,6 @@
-package com.eternalcode.economy.account;
+package com.eternalcode.economy.account.database;
 
-import java.util.UUID;
+import com.eternalcode.economy.account.Account;
 import java.util.concurrent.CompletableFuture;
 
 public interface AccountRepository {
@@ -8,8 +8,4 @@ public interface AccountRepository {
     CompletableFuture<Void> save(Account account);
 
     CompletableFuture<Void> delete(Account account);
-
-    CompletableFuture<Account> save(UUID uuid);
-
-    CompletableFuture<Account> delete(UUID uuid);
 }
