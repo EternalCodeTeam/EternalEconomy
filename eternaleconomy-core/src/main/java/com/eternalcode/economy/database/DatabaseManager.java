@@ -1,5 +1,7 @@
 package com.eternalcode.economy.database;
 
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.*;
+
 import com.google.common.base.Stopwatch;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -15,10 +17,14 @@ import java.util.logging.Logger;
 
 public class DatabaseManager {
 
+    public static final String PREPARED_STATEMENT_CACHE_SIZE = "250";
+    public static final String MAX_SQL_CACHE_LIMIT = "2048";
+
     private final Logger logger;
     private final File dataFolder;
     private final DatabaseSettings databaseSettings;
     private final Map<Class<?>, Dao<?, ?>> cachedDao = new ConcurrentHashMap<>();
+
     private HikariDataSource dataSource;
     private ConnectionSource connectionSource;
 
@@ -28,7 +34,7 @@ public class DatabaseManager {
         this.databaseSettings = databaseSettings;
     }
 
-    public void connect() throws SQLException {
+    public void connect() throws DatabaseException {
         Stopwatch stopwatch = Stopwatch.createStarted();
 
         this.dataSource = new HikariDataSource();
@@ -36,8 +42,8 @@ public class DatabaseManager {
         DatabaseSettings settings = this.databaseSettings;
 
         this.dataSource.addDataSourceProperty("cachePrepStmts", "true");
-        this.dataSource.addDataSourceProperty("prepStmtCacheSize", "250");
-        this.dataSource.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        this.dataSource.addDataSourceProperty("prepStmtCacheSize", PREPARED_STATEMENT_CACHE_SIZE);
+        this.dataSource.addDataSourceProperty("prepStmtCacheSqlLimit", MAX_SQL_CACHE_LIMIT);
         this.dataSource.addDataSourceProperty("useServerPrepStmts", "true");
 
         this.dataSource.setMaximumPoolSize(settings.poolSize());
@@ -46,40 +52,58 @@ public class DatabaseManager {
         this.dataSource.setPassword(settings.getPassword());
 
         DatabaseDriverType driverType = settings.getDriverType();
-        switch (driverType) {
-            case MY_SQL -> {
-                this.dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-                this.dataSource.setJdbcUrl("jdbc:mysql://" + settings.getHostname() + ":" + settings.getPort() + "/"
-                        + settings.getDatabase());
+        try {
+            switch (driverType) {
+                case MY_SQL -> {
+                    this.dataSource.setDriverClassName(MYSQL_DRIVER);
+                    this.dataSource.setJdbcUrl(String.format(
+                            MYSQL_JDBC_URL,
+                            settings.getHostname(), settings.getPort(), settings.getDatabase())
+                    );
+                }
+
+                case MARIA_DB -> {
+                    this.dataSource.setDriverClassName(MARIADB_DRIVER);
+                    this.dataSource.setJdbcUrl(String.format(
+                            MARIADB_JDBC_URL,
+                            settings.getHostname(), settings.getPort(), settings.getDatabase())
+                    );
+                }
+
+                case H2 -> {
+                    this.dataSource.setDriverClassName(H2_DRIVER);
+                    this.dataSource.setJdbcUrl(String.format(
+                            H2_JDBC_URL,
+                            this.dataFolder)
+                    );
+                }
+
+                case SQLITE -> {
+                    this.dataSource.setDriverClassName(SQLITE_DRIVER);
+                    this.dataSource.setJdbcUrl(String.format(
+                            SQLITE_JDBC_URL,
+                            this.dataFolder)
+                    );
+                }
+
+                case POSTGRE_SQL -> {
+                    this.dataSource.setDriverClassName(POSTGRESQL_DRIVER);
+                    this.dataSource.setJdbcUrl(String.format(
+                            POSTGRESQL_JDBC_URL,
+                            settings.getHostname(), settings.getPort())
+                    );
+                }
+
+                default -> throw new DatabaseException("SQL type '" + driverType + "' not found");
             }
 
-            case MARIA_DB -> {
-                this.dataSource.setDriverClassName("org.mariadb.jdbc.Driver");
-                this.dataSource.setJdbcUrl("jdbc:mariadb://" + settings.getHostname() + ":" + settings.getPort() +
-                        "/" + settings.getDatabase());
-            }
-
-            case H2 -> {
-                this.dataSource.setDriverClassName("org.h2.Driver");
-                this.dataSource.setJdbcUrl("jdbc:h2:./" + this.dataFolder + "/database");
-            }
-
-            case SQLITE -> {
-                this.dataSource.setDriverClassName("org.sqlite.JDBC");
-                this.dataSource.setJdbcUrl("jdbc:sqlite:" + this.dataFolder + "/database.db");
-            }
-
-            case POSTGRE_SQL -> {
-                this.dataSource.setDriverClassName("org.postgresql.Driver");
-                this.dataSource.setJdbcUrl("jdbc:postgresql://" + settings.getHostname() + ":" + settings.getPort() +
-                        "/");
-            }
-
-            default -> throw new SQLException("SQL type '" + driverType + "' not found");
+            this.connectionSource = new DataSourceConnectionSource(this.dataSource, this.dataSource.getJdbcUrl());
+            this.logger.info(
+                    "Loaded database " + driverType + " in " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms");
         }
-
-        this.connectionSource = new DataSourceConnectionSource(this.dataSource, this.dataSource.getJdbcUrl());
-        this.logger.info("Loaded database " + driverType + " in " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms");
+        catch (SQLException exception) {
+            throw new DatabaseException("Failed to connect to the database", exception);
+        }
     }
 
     public void close() {
@@ -88,7 +112,7 @@ public class DatabaseManager {
             this.connectionSource.close();
         }
         catch (Exception exception) {
-            exception.printStackTrace();
+            logger.severe("Failed to close database connection: " + exception.getMessage());
         }
     }
 
