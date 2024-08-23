@@ -57,13 +57,13 @@ public class DecimalFormatterImpl implements DecimalFormatter {
         final int integralPartLength = getLengthOfIntegralPart(integralPart) - INTEGRAL_PART_INIT_OFFSET;
         final int nearestScaleDivider = integralPartLength / 3 - 1;
 
-        List<EconomyUnit> units = this.pluginConfig.units.units;
+        List<EconomyUnit> units = this.pluginConfig.units.format;
         EconomyUnit economyUnit = units.get(nearestScaleDivider);
 
         return getFormattedAmountWithSuffix(
                 amount,
-                economyUnit.factor(),
-                economyUnit.suffix());
+                economyUnit.getFactor(),
+                economyUnit.getSuffix());
     }
 
     @Override

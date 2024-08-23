@@ -18,10 +18,10 @@ public class PluginConfig extends OkaeriConfig {
 
     public static class Database extends OkaeriConfig implements DatabaseSettings {
         @Comment("Database driver type, available: SQLITE, H2, MY_SQL, POSTGRE_SQL, MARIA_DB")
-        private final DatabaseDriverType driverType = DatabaseDriverType.SQLITE;
+        private DatabaseDriverType driverType = DatabaseDriverType.SQLITE;
 
         @Comment("Database hostname")
-        private final String hostname = "localhost";
+        private String hostname = "localhost";
 
         @Comment({
                 "Database port",
@@ -30,25 +30,25 @@ public class PluginConfig extends OkaeriConfig {
                 "For PostgreSQL set to 5432",
                 "For MariaDB and MySQL set to 3306"
         })
-        private final int port = 3306;
+        private int port = 3306;
 
         @Comment("Database name")
-        private final String database = "eternal_economy";
+        private String database = "eternal_economy";
 
         @Comment("Database username")
-        private final String username = "root";
+        private String username = "root";
 
         @Comment("Database password")
-        private final String password = "password";
+        private String password = "password";
 
         @Comment("Use SSL connection")
-        private final boolean ssl = false;
+        private boolean ssl = false;
 
         @Comment("Connection pool size")
-        private final int poolSize = 16;
+        private int poolSize = 16;
 
         @Comment("Connection timeout")
-        private final int timeout = 30000;
+        private int timeout = 30000;
 
         @Override
         public DatabaseDriverType getDriverType() {
@@ -97,10 +97,10 @@ public class PluginConfig extends OkaeriConfig {
     }
 
     public static class Units extends OkaeriConfig {
-        public List<EconomyUnit> units = Arrays.asList(
-                new EconomyUnit(1_000, 'k'),
-                new EconomyUnit(1_000_000, 'm'),
-                new EconomyUnit(1_000_000_000, 'g'),
+        public List<EconomyUnit> format = Arrays.asList(
+                new EconomyUnit(1_000L, 'k'),
+                new EconomyUnit(1_000_000L, 'm'),
+                new EconomyUnit(1_000_000_000L, 'g'),
                 new EconomyUnit(1_000_000_000_000L, 't'),
                 new EconomyUnit(1_000_000_000_000_000L, 'p'),
                 new EconomyUnit(1_000_000_000_000_000_000L, 'e')

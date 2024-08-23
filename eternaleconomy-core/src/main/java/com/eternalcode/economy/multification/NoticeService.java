@@ -3,6 +3,7 @@ package com.eternalcode.economy.multification;
 import com.eternalcode.economy.config.implementation.MessageConfig;
 import com.eternalcode.multification.adventure.AudienceConverter;
 import com.eternalcode.multification.bukkit.BukkitMultification;
+import com.eternalcode.multification.platform.PlatformBroadcaster;
 import com.eternalcode.multification.translation.TranslationProvider;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.text.Component;
@@ -32,6 +33,11 @@ public class NoticeService extends BukkitMultification<MessageConfig> {
     @Override
     protected @NotNull ComponentSerializer<Component, Component, String> serializer() {
         return this.miniMessage;
+    }
+
+    @Override
+    public PlatformBroadcaster platformBroadcaster() {
+        return PlatformBroadcaster.create(this.serializer(), this.noticeRegistry);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.eternalcode.economy.account;
 
-import com.eternalcode.economy.account.database.AccountRepository;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import java.math.BigDecimal;
@@ -8,16 +7,16 @@ import java.math.BigDecimal;
 public class AccountPaymentService {
 
     private final NoticeService noticeService;
-    private final AccountRepository accountRepository;
+    private final AccountManager accountManager;
     private final DecimalFormatter formatter;
 
     public AccountPaymentService(
             NoticeService noticeService,
-            AccountRepository accountRepository,
+            AccountManager accountManager,
             DecimalFormatter formatter
     ) {
         this.noticeService = noticeService;
-        this.accountRepository = accountRepository;
+        this.accountManager = accountManager;
         this.formatter = formatter;
     }
 
@@ -46,11 +45,11 @@ public class AccountPaymentService {
             return false;
         }
 
-        BigDecimal subtractedBalance = payer.balance().subtract(amount);
-        BigDecimal addedBalance = receiver.balance().add(amount);
+        payer = new Account(payer.uuid(), payer.name(), payer.balance().subtract(amount));
+        receiver = new Account(receiver.uuid(), receiver.name(), receiver.balance().add(amount));
 
-        this.update(payer, subtractedBalance);
-        this.update(receiver, addedBalance);
+        this.accountManager.save(payer);
+        this.accountManager.save(receiver);
 
         String formattedAmount = this.formatter.format(amount);
 
@@ -80,7 +79,9 @@ public class AccountPaymentService {
             return false;
         }
 
-        this.update(account, amount);
+        account = new Account(account.uuid(), account.name(), amount);
+        this.accountManager.save(account);
+
         this.noticeService.create()
                 .notice(notice -> notice.setBalance)
                 .placeholder("{ADDED}", this.formatter.format(amount))
@@ -99,8 +100,9 @@ public class AccountPaymentService {
             return false;
         }
 
-        BigDecimal added = account.balance().add(amount);
-        this.update(account, added);
+        account = new Account(account.uuid(), account.name(), account.balance().add(amount));
+        this.accountManager.save(account);
+
         this.noticeService.create()
                 .notice(notice -> notice.addBalance)
                 .placeholder("{ADDED}", this.formatter.format(amount))
@@ -128,8 +130,9 @@ public class AccountPaymentService {
             return false;
         }
 
-        BigDecimal subtracted = account.balance().subtract(amount);
-        this.update(account, subtracted);
+        account = new Account(account.uuid(), account.name(), account.balance().subtract(amount));
+        this.accountManager.save(account);
+
         this.noticeService.create()
                 .notice(notice -> notice.removeBalance)
                 .placeholder("{REMOVED}", this.formatter.format(amount))
@@ -137,10 +140,5 @@ public class AccountPaymentService {
                 .send();
 
         return true;
-    }
-
-    private void update(Account account, BigDecimal newBalance) {
-        Account updatedAccount = new Account(account.uuid(), account.name(), newBalance);
-        this.accountRepository.save(updatedAccount);
     }
 }

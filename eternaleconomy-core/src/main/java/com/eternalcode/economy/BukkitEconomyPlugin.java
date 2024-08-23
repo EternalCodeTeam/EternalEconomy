@@ -5,14 +5,31 @@ import com.eternalcode.commons.adventure.AdventureLegacyColorPreProcessor;
 import com.eternalcode.commons.adventure.AdventureUrlPostProcessor;
 import com.eternalcode.commons.bukkit.scheduler.BukkitSchedulerImpl;
 import com.eternalcode.commons.scheduler.Scheduler;
+import com.eternalcode.economy.account.Account;
+import com.eternalcode.economy.account.AccountController;
+import com.eternalcode.economy.account.AccountManager;
+import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.account.database.AccountRepository;
 import com.eternalcode.economy.account.database.AccountRepositoryImpl;
+import com.eternalcode.economy.command.MonetSetCommand;
+import com.eternalcode.economy.command.MoneyBalanceCommand;
+import com.eternalcode.economy.command.argument.AccountArgument;
+import com.eternalcode.economy.command.context.AccountContext;
 import com.eternalcode.economy.config.ConfigService;
 import com.eternalcode.economy.config.implementation.MessageConfig;
 import com.eternalcode.economy.config.implementation.PluginConfig;
+import com.eternalcode.economy.database.DatabaseException;
 import com.eternalcode.economy.database.DatabaseManager;
+import com.eternalcode.economy.format.DecimalFormatter;
+import com.eternalcode.economy.format.DecimalFormatterImpl;
+import com.eternalcode.economy.multification.NoticeBroadcastHandler;
+import com.eternalcode.economy.multification.NoticeHandler;
 import com.eternalcode.economy.multification.NoticeService;
+import com.eternalcode.multification.notice.Notice;
+import com.eternalcode.multification.notice.NoticeBroadcast;
 import com.google.common.base.Stopwatch;
+import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import java.io.File;
 import java.sql.SQLException;
 import java.time.Duration;
@@ -20,6 +37,7 @@ import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Server;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class BukkitEconomyPlugin extends JavaPlugin {
@@ -28,6 +46,8 @@ public class BukkitEconomyPlugin extends JavaPlugin {
 
     private AudienceProvider audienceProvider;
     private DatabaseManager databaseManager;
+
+    private LiteCommands<CommandSender> liteCommands;
 
     @Override
     public void onEnable() {
@@ -55,11 +75,42 @@ public class BukkitEconomyPlugin extends JavaPlugin {
 
         this.databaseManager = new DatabaseManager(this.getLogger(), dataFolder, pluginConfig.database);
         try {
-            AccountRepository accountRepository = new AccountRepositoryImpl(this.databaseManager, scheduler);
+            this.databaseManager.connect();
+        }
+        catch (DatabaseException exception) {
+            throw new RuntimeException(exception);
+        }
+
+        AccountManager accountManager;
+        AccountRepository accountRepository;
+        try {
+            accountRepository = new AccountRepositoryImpl(this.databaseManager, scheduler);
+            accountManager = new AccountManager(accountRepository);
+            accountManager.loadAccounts();
         }
         catch (SQLException exception) {
             throw new RuntimeException(exception);
         }
+
+        DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
+        AccountPaymentService accountPaymentService =
+                new AccountPaymentService(noticeService, accountManager, decimalFormatter);
+
+        this.liteCommands = LiteBukkitFactory.builder("eternaleconomy", this, server)
+                .commands(
+                        new MoneyBalanceCommand(noticeService, decimalFormatter),
+                        new MonetSetCommand(accountPaymentService)
+                )
+
+                .context(Account.class, new AccountContext(accountManager, messageConfig))
+                .argument(Account.class, new AccountArgument(accountManager, noticeService, server))
+
+                .result(Notice.class, new NoticeHandler(noticeService))
+                .result(NoticeBroadcast.class, new NoticeBroadcastHandler())
+
+                .build();
+
+        server.getPluginManager().registerEvents(new AccountController(accountManager), this);
 
         Duration elapsed = started.elapsed();
         server.getLogger().info(String.format(PLUGIN_STARTED, elapsed.toMillis()));
@@ -69,6 +120,10 @@ public class BukkitEconomyPlugin extends JavaPlugin {
     public void onDisable() {
         if (this.audienceProvider != null) {
             this.audienceProvider.close();
+        }
+
+        if (this.liteCommands != null) {
+            this.liteCommands.unregister();
         }
 
         if (this.databaseManager != null) {

@@ -107,8 +107,8 @@ public class DatabaseManager {
             }
 
             this.connectionSource = new DataSourceConnectionSource(this.dataSource, this.dataSource.getJdbcUrl());
-            this.logger.info(
-                    "Loaded database " + driverType + " in " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms");
+            this.logger.info("Loaded database " + driverType + " in " +
+                    stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms");
         }
         catch (SQLException exception) {
             throw new DatabaseException("Failed to connect to the database", exception);

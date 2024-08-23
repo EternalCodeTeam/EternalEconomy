@@ -22,6 +22,15 @@ public class AccountManager {
         return this.accountByUniqueId.get(uuid);
     }
 
+    public void loadAccounts() {
+        this.accountRepository.getAllAccounts().thenAccept(accounts -> {
+            accounts.forEach(account -> {
+                this.accountByUniqueId.put(account.uuid(), account);
+                this.accountByName.put(account.name(), account);
+            });
+        });
+    }
+
     public Account getAccount(String name) {
         return this.accountByName.get(name);
     }
@@ -50,12 +59,17 @@ public class AccountManager {
         Account account = new Account(uuid, name, BigDecimal.ZERO);
         this.accountByUniqueId.put(uuid, account);
         this.accountByName.put(name, account);
-        this.accountRepository.save(account);
 
         return account;
     }
 
-    public Collection<Account> accounts() {
+    public void save(Account account) {
+        this.accountByUniqueId.put(account.uuid(), account);
+        this.accountByName.put(account.name(), account);
+        this.accountRepository.save(account);
+    }
+
+    public Collection<Account> getAccounts() {
         return this.accountByUniqueId.values();
     }
 }

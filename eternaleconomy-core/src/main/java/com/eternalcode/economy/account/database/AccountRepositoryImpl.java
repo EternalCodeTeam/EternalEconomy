@@ -6,6 +6,7 @@ import com.eternalcode.economy.database.AbstractRepositoryOrmLite;
 import com.eternalcode.economy.database.DatabaseManager;
 import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class AccountRepositoryImpl extends AbstractRepositoryOrmLite implements AccountRepository {
@@ -27,4 +28,13 @@ public class AccountRepositoryImpl extends AbstractRepositoryOrmLite implements 
     public CompletableFuture<Void> delete(Account account) {
         return this.delete(AccountWrapper.class, AccountWrapper.fromAccount(account)).thenApply(status -> null);
     }
+
+    @Override
+    public CompletableFuture<List<Account>> getAllAccounts() {
+        return this.selectAll(AccountWrapper.class)
+                .thenApply(accountWrappers -> accountWrappers.stream()
+                        .map(AccountWrapper::toAccount)
+                        .toList());
+    }
 }
+
