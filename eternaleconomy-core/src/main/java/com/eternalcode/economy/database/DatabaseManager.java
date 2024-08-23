@@ -1,6 +1,15 @@
 package com.eternalcode.economy.database;
 
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.*;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.H2_DRIVER;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.H2_JDBC_URL;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MARIADB_DRIVER;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MARIADB_JDBC_URL;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MYSQL_DRIVER;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MYSQL_JDBC_URL;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.POSTGRESQL_DRIVER;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.POSTGRESQL_JDBC_URL;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.SQLITE_DRIVER;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.SQLITE_JDBC_URL;
 
 import com.google.common.base.Stopwatch;
 import com.j256.ormlite.dao.Dao;
@@ -17,14 +26,12 @@ import java.util.logging.Logger;
 
 public class DatabaseManager {
 
-    public static final String PREPARED_STATEMENT_CACHE_SIZE = "250";
-    public static final String MAX_SQL_CACHE_LIMIT = "2048";
-
     private final Logger logger;
     private final File dataFolder;
     private final DatabaseSettings databaseSettings;
     private final Map<Class<?>, Dao<?, ?>> cachedDao = new ConcurrentHashMap<>();
-
+    private final boolean useSSL;
+    private final boolean requireSSL;
     private HikariDataSource dataSource;
     private ConnectionSource connectionSource;
 
@@ -32,6 +39,8 @@ public class DatabaseManager {
         this.logger = logger;
         this.dataFolder = dataFolder;
         this.databaseSettings = databaseSettings;
+        this.useSSL = databaseSettings.isSSL();
+        this.requireSSL = databaseSettings.isSSL();
     }
 
     public void connect() throws DatabaseException {
@@ -42,8 +51,8 @@ public class DatabaseManager {
         DatabaseSettings settings = this.databaseSettings;
 
         this.dataSource.addDataSourceProperty("cachePrepStmts", "true");
-        this.dataSource.addDataSourceProperty("prepStmtCacheSize", PREPARED_STATEMENT_CACHE_SIZE);
-        this.dataSource.addDataSourceProperty("prepStmtCacheSqlLimit", MAX_SQL_CACHE_LIMIT);
+        this.dataSource.addDataSourceProperty("prepStmtCacheSize", "250");
+        this.dataSource.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
         this.dataSource.addDataSourceProperty("useServerPrepStmts", "true");
 
         this.dataSource.setMaximumPoolSize(settings.poolSize());
@@ -58,7 +67,7 @@ public class DatabaseManager {
                     this.dataSource.setDriverClassName(MYSQL_DRIVER);
                     this.dataSource.setJdbcUrl(String.format(
                             MYSQL_JDBC_URL,
-                            settings.getHostname(), settings.getPort(), settings.getDatabase())
+                            settings.getHostname(), settings.getPort(), settings.getDatabase(), useSSL, requireSSL)
                     );
                 }
 
@@ -66,7 +75,7 @@ public class DatabaseManager {
                     this.dataSource.setDriverClassName(MARIADB_DRIVER);
                     this.dataSource.setJdbcUrl(String.format(
                             MARIADB_JDBC_URL,
-                            settings.getHostname(), settings.getPort(), settings.getDatabase())
+                            settings.getHostname(), settings.getPort(), settings.getDatabase(), useSSL, requireSSL)
                     );
                 }
 
@@ -90,7 +99,7 @@ public class DatabaseManager {
                     this.dataSource.setDriverClassName(POSTGRESQL_DRIVER);
                     this.dataSource.setJdbcUrl(String.format(
                             POSTGRESQL_JDBC_URL,
-                            settings.getHostname(), settings.getPort())
+                            settings.getHostname(), settings.getPort(), useSSL)
                     );
                 }
 
