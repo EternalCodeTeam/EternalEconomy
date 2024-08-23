@@ -3,6 +3,7 @@ package com.eternalcode.economy.account.database;
 import com.eternalcode.commons.scheduler.Scheduler;
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.database.AbstractRepositoryOrmLite;
+import com.eternalcode.economy.database.DatabaseException;
 import com.eternalcode.economy.database.DatabaseManager;
 import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
@@ -14,9 +15,15 @@ public class AccountRepositoryImpl extends AbstractRepositoryOrmLite implements 
     public AccountRepositoryImpl(
             DatabaseManager databaseManager,
             Scheduler scheduler
-    ) throws SQLException {
+    ) throws DatabaseException {
         super(databaseManager, scheduler);
-        TableUtils.createTableIfNotExists(databaseManager.connectionSource(), AccountWrapper.class);
+
+        try {
+            TableUtils.createTableIfNotExists(databaseManager.connectionSource(), AccountWrapper.class);
+        }
+        catch (SQLException exception) {
+            throw new DatabaseException("Failed to create table for AccountWrapper.", exception);
+        }
     }
 
     @Override

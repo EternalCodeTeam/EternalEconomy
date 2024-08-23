@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 /**
  * @author Rafał "shitzuu" Chomczyk
  **/
-public final class DecimalFormatterUtil {
+final class DecimalFormatterUtil {
 
     private DecimalFormatterUtil() {
         throw new UnsupportedOperationException("This class cannot be instantiated");

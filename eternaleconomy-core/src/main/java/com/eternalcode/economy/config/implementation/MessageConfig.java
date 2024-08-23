@@ -3,6 +3,7 @@ package com.eternalcode.economy.config.implementation;
 import com.eternalcode.multification.notice.Notice;
 import eu.okaeri.configs.OkaeriConfig;
 
+@SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
 public class MessageConfig extends OkaeriConfig {
 
     public Notice invalidAmount = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY/gradient></b> "

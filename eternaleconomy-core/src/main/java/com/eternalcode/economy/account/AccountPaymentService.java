@@ -1,5 +1,7 @@
 package com.eternalcode.economy.account;
 
+import static com.eternalcode.economy.account.AccountUtil.isNegative;
+
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import java.math.BigDecimal;
@@ -21,7 +23,7 @@ public class AccountPaymentService {
     }
 
     public boolean payment(Account payer, Account receiver, BigDecimal amount) {
-        if (isProfitable(payer, amount)) {
+        if (isNegative(noticeService, payer, amount)) {
             return false;
         }
 
@@ -63,7 +65,7 @@ public class AccountPaymentService {
     }
 
     public boolean setBalance(Account account, BigDecimal amount) {
-        if (isProfitable(account, amount)) {
+        if (isNegative(this.noticeService, account, amount)) {
             return false;
         }
 
@@ -80,7 +82,7 @@ public class AccountPaymentService {
     }
 
     public boolean addBalance(Account account, BigDecimal amount) {
-        if (isProfitable(account, amount)) {
+        if (isNegative(this.noticeService, account, amount)) {
             return false;
         }
 
@@ -97,7 +99,7 @@ public class AccountPaymentService {
     }
 
     public boolean removeBalance(Account account, BigDecimal amount) {
-        if (isProfitable(account, amount)) {
+        if (isNegative(this.noticeService, account, amount)) {
             return false;
         }
 
@@ -116,19 +118,6 @@ public class AccountPaymentService {
         this.noticeService.create()
                 .notice(notice -> notice.removeBalance)
                 .placeholder("{REMOVED}", this.formatter.format(amount))
-                .player(account.uuid())
-                .send();
-
-        return true;
-    }
-
-    boolean isProfitable(Account account, BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) < 0) {
-            return false;
-        }
-
-        this.noticeService.create()
-                .notice(notice -> notice.invalidAmount)
                 .player(account.uuid())
                 .send();
 

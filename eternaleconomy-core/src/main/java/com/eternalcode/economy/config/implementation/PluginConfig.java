@@ -7,6 +7,7 @@ import eu.okaeri.configs.annotation.Comment;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
 public class PluginConfig extends OkaeriConfig {
 
     @Comment("Units settings")

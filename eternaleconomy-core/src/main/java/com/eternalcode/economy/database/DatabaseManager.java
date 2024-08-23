@@ -43,25 +43,25 @@ public class DatabaseManager {
         this.requireSSL = databaseSettings.isSSL();
     }
 
-    public void connect() throws DatabaseException {
-        Stopwatch stopwatch = Stopwatch.createStarted();
-
-        this.dataSource = new HikariDataSource();
-
-        DatabaseSettings settings = this.databaseSettings;
-
-        this.dataSource.addDataSourceProperty("cachePrepStmts", "true");
-        this.dataSource.addDataSourceProperty("prepStmtCacheSize", "250");
-        this.dataSource.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        this.dataSource.addDataSourceProperty("useServerPrepStmts", "true");
-
-        this.dataSource.setMaximumPoolSize(settings.poolSize());
-        this.dataSource.setConnectionTimeout(settings.timeout());
-        this.dataSource.setUsername(settings.getUsername());
-        this.dataSource.setPassword(settings.getPassword());
-
-        DatabaseDriverType driverType = settings.getDriverType();
+    public void connect() {
         try {
+            Stopwatch stopwatch = Stopwatch.createStarted();
+
+            this.dataSource = new HikariDataSource();
+
+            DatabaseSettings settings = this.databaseSettings;
+
+            this.dataSource.addDataSourceProperty("cachePrepStmts", "true");
+            this.dataSource.addDataSourceProperty("prepStmtCacheSize", "250");
+            this.dataSource.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+            this.dataSource.addDataSourceProperty("useServerPrepStmts", "true");
+
+            this.dataSource.setMaximumPoolSize(settings.poolSize());
+            this.dataSource.setConnectionTimeout(settings.timeout());
+            this.dataSource.setUsername(settings.getUsername());
+            this.dataSource.setPassword(settings.getPassword());
+
+            DatabaseDriverType driverType = settings.getDriverType();
             switch (driverType) {
                 case MY_SQL -> {
                     this.dataSource.setDriverClassName(MYSQL_DRIVER);
@@ -110,8 +110,8 @@ public class DatabaseManager {
             this.logger.info("Loaded database " + driverType + " in " +
                     stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms");
         }
-        catch (SQLException exception) {
-            throw new DatabaseException("Failed to connect to the database", exception);
+        catch (DatabaseException | SQLException exception) {
+            throw new RuntimeException("Failed to connect to the database", exception);
         }
     }
 

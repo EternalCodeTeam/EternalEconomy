@@ -12,7 +12,7 @@ import org.bukkit.OfflinePlayer;
  **/
 abstract class VaultEconomyAdapter implements Economy {
 
-    static final String BANK_NOT_SUPPORTED_MESSAGE = "EternalEconomy does not support bank accounts!";
+    private static final String BANK_NOT_SUPPORTED_MESSAGE = "EternalEconomy does not support bank accounts!";
 
     @Deprecated
     @Override

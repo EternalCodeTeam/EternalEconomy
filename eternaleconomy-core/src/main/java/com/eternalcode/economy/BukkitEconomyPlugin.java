@@ -74,12 +74,7 @@ public class BukkitEconomyPlugin extends JavaPlugin {
         Scheduler scheduler = new BukkitSchedulerImpl(this);
 
         this.databaseManager = new DatabaseManager(this.getLogger(), dataFolder, pluginConfig.database);
-        try {
-            this.databaseManager.connect();
-        }
-        catch (DatabaseException exception) {
-            throw new RuntimeException(exception);
-        }
+        this.databaseManager.connect();
 
         AccountManager accountManager;
         AccountRepository accountRepository;
@@ -88,7 +83,7 @@ public class BukkitEconomyPlugin extends JavaPlugin {
             accountManager = new AccountManager(accountRepository);
             accountManager.loadAccounts();
         }
-        catch (SQLException exception) {
+        catch (DatabaseException exception) {
             throw new RuntimeException(exception);
         }
 
