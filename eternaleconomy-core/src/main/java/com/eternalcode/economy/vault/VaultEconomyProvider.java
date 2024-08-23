@@ -3,7 +3,7 @@ package com.eternalcode.economy.vault;
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.AccountManager;
 import com.eternalcode.economy.account.AccountPaymentService;
-import com.eternalcode.economy.format.EconomyFormatter;
+import com.eternalcode.economy.format.DecimalFormatter;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
@@ -15,14 +15,14 @@ import org.bukkit.plugin.Plugin;
 public class VaultEconomyProvider extends VaultEconomyAdapter {
 
     private final Plugin plugin;
-    private final EconomyFormatter formatter;
+    private final DecimalFormatter formatter;
 
     private final AccountManager accountManager;
     private final AccountPaymentService accountPaymentService;
 
     public VaultEconomyProvider(
             Plugin plugin,
-            EconomyFormatter formatter,
+            DecimalFormatter formatter,
             AccountManager accountManager,
             AccountPaymentService accountPaymentService
     ) {

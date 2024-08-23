@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class AccountRepositoryImpl extends AbstractRepositoryOrmLite implements AccountRepository {
 
-    protected AccountRepositoryImpl(
+    public AccountRepositoryImpl(
             DatabaseManager databaseManager,
             Scheduler scheduler
     ) throws SQLException {

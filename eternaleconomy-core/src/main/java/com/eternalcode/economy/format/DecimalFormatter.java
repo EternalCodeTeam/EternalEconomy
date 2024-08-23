@@ -2,7 +2,7 @@ package com.eternalcode.economy.format;
 
 import java.math.BigDecimal;
 
-public interface EconomyFormatter {
+public interface DecimalFormatter {
 
     String format(BigDecimal amount);
 

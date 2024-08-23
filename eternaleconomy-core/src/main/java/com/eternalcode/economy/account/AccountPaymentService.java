@@ -1,7 +1,7 @@
 package com.eternalcode.economy.account;
 
 import com.eternalcode.economy.account.database.AccountRepository;
-import com.eternalcode.economy.format.EconomyFormatter;
+import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import java.math.BigDecimal;
 
@@ -9,12 +9,12 @@ public class AccountPaymentService {
 
     private final NoticeService noticeService;
     private final AccountRepository accountRepository;
-    private final EconomyFormatter formatter;
+    private final DecimalFormatter formatter;
 
     public AccountPaymentService(
             NoticeService noticeService,
             AccountRepository accountRepository,
-            EconomyFormatter formatter
+            DecimalFormatter formatter
     ) {
         this.noticeService = noticeService;
         this.accountRepository = accountRepository;
