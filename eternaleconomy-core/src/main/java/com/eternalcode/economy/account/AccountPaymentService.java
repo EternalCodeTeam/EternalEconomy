@@ -20,16 +20,8 @@ public class AccountPaymentService {
         this.formatter = formatter;
     }
 
-    private static boolean validateBalance(BigDecimal amount) {
-        return amount.compareTo(BigDecimal.ZERO) < 0;
-    }
-
     public boolean payment(Account payer, Account receiver, BigDecimal amount) {
-        if (!validateBalance(amount)) {
-            this.noticeService.create()
-                    .notice(notice -> notice.invalidAmount)
-                    .player(payer.uuid())
-                    .send();
+        if (isProfitable(payer, amount)) {
             return false;
         }
 
@@ -71,11 +63,7 @@ public class AccountPaymentService {
     }
 
     public boolean setBalance(Account account, BigDecimal amount) {
-        if (validateBalance(amount)) {
-            this.noticeService.create()
-                    .notice(notice -> notice.invalidAmount)
-                    .player(account.uuid())
-                    .send();
+        if (isProfitable(account, amount)) {
             return false;
         }
 
@@ -92,11 +80,7 @@ public class AccountPaymentService {
     }
 
     public boolean addBalance(Account account, BigDecimal amount) {
-        if (validateBalance(amount)) {
-            this.noticeService.create()
-                    .notice(notice -> notice.invalidAmount)
-                    .player(account.uuid())
-                    .send();
+        if (isProfitable(account, amount)) {
             return false;
         }
 
@@ -113,11 +97,7 @@ public class AccountPaymentService {
     }
 
     public boolean removeBalance(Account account, BigDecimal amount) {
-        if (validateBalance(amount)) {
-            this.noticeService.create()
-                    .notice(notice -> notice.invalidAmount)
-                    .player(account.uuid())
-                    .send();
+        if (isProfitable(account, amount)) {
             return false;
         }
 
@@ -136,6 +116,19 @@ public class AccountPaymentService {
         this.noticeService.create()
                 .notice(notice -> notice.removeBalance)
                 .placeholder("{REMOVED}", this.formatter.format(amount))
+                .player(account.uuid())
+                .send();
+
+        return true;
+    }
+
+    boolean isProfitable(Account account, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            return false;
+        }
+
+        this.noticeService.create()
+                .notice(notice -> notice.invalidAmount)
                 .player(account.uuid())
                 .send();
 
