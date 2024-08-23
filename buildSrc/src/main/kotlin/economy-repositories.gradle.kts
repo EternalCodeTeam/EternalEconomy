@@ -9,4 +9,5 @@ repositories {
     maven("https://repo.panda-lang.org/releases/")
     maven("https://repo.eternalcode.pl/releases/")
     maven("https://storehouse.okaeri.eu/repository/maven-public/")
+    maven("https://jitpack.io")
 }
