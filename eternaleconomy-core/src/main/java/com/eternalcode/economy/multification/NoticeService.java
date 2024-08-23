@@ -36,11 +36,6 @@ public class NoticeService extends BukkitMultification<MessageConfig> {
     }
 
     @Override
-    public PlatformBroadcaster platformBroadcaster() {
-        return PlatformBroadcaster.create(this.serializer(), this.noticeRegistry);
-    }
-
-    @Override
     protected @NotNull AudienceConverter<CommandSender> audienceConverter() {
         return  commandSender -> {
             if (commandSender instanceof Player player) {
