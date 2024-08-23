@@ -2,12 +2,12 @@ package com.eternalcode.economy.format;
 
 import java.io.Serializable;
 
-public class EconomyUnit implements Serializable {
+public class DecimalUnit implements Serializable {
 
     private final long factor;
     private final char suffix;
 
-    public EconomyUnit(long factor, char suffix) {
+    public DecimalUnit(long factor, char suffix) {
         this.factor = factor;
         this.suffix = suffix;
     }

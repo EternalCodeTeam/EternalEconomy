@@ -21,4 +21,5 @@ class DatabaseConnectionDriverConstant {
     // postgresql
     static final String POSTGRESQL_DRIVER = "org.postgresql.Driver";
     static final String POSTGRESQL_JDBC_URL = "jdbc:postgresql://%s:%s/?ssl=%s";
+
 }
