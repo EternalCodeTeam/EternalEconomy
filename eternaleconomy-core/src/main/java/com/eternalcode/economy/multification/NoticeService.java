@@ -3,7 +3,6 @@ package com.eternalcode.economy.multification;
 import com.eternalcode.economy.config.implementation.MessageConfig;
 import com.eternalcode.multification.adventure.AudienceConverter;
 import com.eternalcode.multification.bukkit.BukkitMultification;
-import com.eternalcode.multification.platform.PlatformBroadcaster;
 import com.eternalcode.multification.translation.TranslationProvider;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.text.Component;
@@ -37,7 +36,7 @@ public class NoticeService extends BukkitMultification<MessageConfig> {
 
     @Override
     protected @NotNull AudienceConverter<CommandSender> audienceConverter() {
-        return  commandSender -> {
+        return commandSender -> {
             if (commandSender instanceof Player player) {
                 return this.audienceProvider.player(player.getUniqueId());
             }
@@ -45,5 +44,4 @@ public class NoticeService extends BukkitMultification<MessageConfig> {
             return this.audienceProvider.console();
         };
     }
-
 }

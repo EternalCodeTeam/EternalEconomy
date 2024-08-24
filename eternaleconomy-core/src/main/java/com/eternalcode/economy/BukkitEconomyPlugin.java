@@ -31,7 +31,6 @@ import com.google.common.base.Stopwatch;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import java.io.File;
-import java.sql.SQLException;
 import java.time.Duration;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -40,6 +39,7 @@ import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
+@SuppressWarnings("unused")
 public class BukkitEconomyPlugin extends JavaPlugin {
 
     private static final String PLUGIN_STARTED = "EternalEconomy has been enabled in %dms.";

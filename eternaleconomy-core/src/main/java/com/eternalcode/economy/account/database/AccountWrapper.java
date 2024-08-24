@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @DatabaseTable(tableName = "eternaleconomy_accounts")
-public class AccountWrapper {
+class AccountWrapper {
 
     @DatabaseField(id = true)
     private UUID uuid;
