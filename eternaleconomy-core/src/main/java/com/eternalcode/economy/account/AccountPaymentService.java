@@ -23,7 +23,7 @@ public class AccountPaymentService {
     }
 
     public boolean payment(Account payer, Account receiver, BigDecimal amount) {
-        if (isNegative(noticeService, payer, amount)) {
+        if (isNegative(this.noticeService, payer, amount)) {
             return false;
         }
 
@@ -32,7 +32,7 @@ public class AccountPaymentService {
             String formattedMissingBalance = formatter.format(missingBalance);
 
             this.noticeService.create()
-                    .notice(notice -> notice.insufficientBalance)
+                    .notice(notice -> notice.player.insufficientBalance)
                     .placeholder("{MISSING_BALANCE}", formattedMissingBalance)
                     .player(payer.uuid())
                     .send();
@@ -48,15 +48,15 @@ public class AccountPaymentService {
         String formattedAmount = this.formatter.format(amount);
 
         this.noticeService.create()
-                .notice(notice -> notice.transferSuccess)
+                .notice(notice -> notice.player.transferSuccess)
                 .placeholder("{RECEIVER}", receiver.name())
                 .placeholder("{AMOUNT}", formattedAmount)
                 .player(payer.uuid())
                 .send();
 
         this.noticeService.create()
-                .notice(notice -> notice.transferReceived)
-                .placeholder("{PAYER}", payer.name())
+                .notice(notice -> notice.player.transferReceived)
+                .placeholder("{RECEIVER}", payer.name())
                 .placeholder("{AMOUNT}", formattedAmount)
                 .player(receiver.uuid())
                 .send();
@@ -73,8 +73,8 @@ public class AccountPaymentService {
         this.accountManager.save(account);
 
         this.noticeService.create()
-                .notice(notice -> notice.setBalance)
-                .placeholder("{ADDED}", this.formatter.format(amount))
+                .notice(notice -> notice.admin.set)
+                .placeholder("{AMOUNT}", this.formatter.format(amount))
                 .player(account.uuid())
                 .send();
 
@@ -90,7 +90,7 @@ public class AccountPaymentService {
         this.accountManager.save(account);
 
         this.noticeService.create()
-                .notice(notice -> notice.addBalance)
+                .notice(notice -> notice.admin.added)
                 .placeholder("{ADDED}", this.formatter.format(amount))
                 .player(account.uuid())
                 .send();
@@ -105,7 +105,8 @@ public class AccountPaymentService {
 
         if (account.balance().compareTo(amount) < 0) {
             this.noticeService.create()
-                    .notice(notice -> notice.insufficientBalance)
+                    .notice(notice -> notice.admin.insufficientFunds)
+                    .placeholder("{PLAYER}", account.name())
                     .placeholder("{MISSING_BALANCE}", amount.subtract(account.balance()).toString())
                     .player(account.uuid())
                     .send();
@@ -116,8 +117,21 @@ public class AccountPaymentService {
         this.accountManager.save(account);
 
         this.noticeService.create()
-                .notice(notice -> notice.removeBalance)
+                .notice(notice -> notice.admin.removed)
                 .placeholder("{REMOVED}", this.formatter.format(amount))
+                .player(account.uuid())
+                .send();
+
+        return true;
+    }
+
+    public boolean resetBalance(Account account) {
+        account = new Account(account.uuid(), account.name(), BigDecimal.ZERO);
+        this.accountManager.save(account);
+
+        this.noticeService.create()
+                .notice(notice -> notice.admin.reset)
+                .placeholder("{PLAYER}", account.name())
                 .player(account.uuid())
                 .send();
 

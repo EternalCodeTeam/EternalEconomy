@@ -120,11 +120,6 @@ public class VaultEconomyProvider extends VaultEconomyAdapter {
         return new EconomyResponse(amount, account.balance().doubleValue(), responseType, "");
     }
 
-    @Override
-    public List<String> getBanks() {
-        return Collections.emptyList();
-    }
-
     // TODO: Zwróćcie uwage na te metody w Review, nie wiem czy to ma sens?
     @Override
     public boolean createPlayerAccount(OfflinePlayer offlinePlayer) {

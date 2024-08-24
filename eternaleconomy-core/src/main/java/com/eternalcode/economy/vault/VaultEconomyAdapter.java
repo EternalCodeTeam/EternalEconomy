@@ -1,5 +1,7 @@
 package com.eternalcode.economy.vault;
 
+import java.util.Collections;
+import java.util.List;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
@@ -167,5 +169,10 @@ abstract class VaultEconomyAdapter implements Economy {
     @Override
     public EconomyResponse isBankMember(String s, OfflinePlayer offlinePlayer) {
         return new EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, BANK_NOT_SUPPORTED_MESSAGE);
+    }
+
+    @Override
+    public List<String> getBanks() {
+        return Collections.emptyList();
     }
 }

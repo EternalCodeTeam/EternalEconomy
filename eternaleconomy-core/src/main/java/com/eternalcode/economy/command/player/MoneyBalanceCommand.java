@@ -1,13 +1,16 @@
-package com.eternalcode.economy.command;
+package com.eternalcode.economy.command.player;
 
+import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
+import dev.rollczi.litecommands.annotations.permission.Permission;
 
-@Command(name = "balance")
+@Command(name = "balance", aliases = {"economy balance"})
+@Permission(EconomyPermissionConstant.PLAYER_BALANCE_PERMISSION)
 public class MoneyBalanceCommand {
 
     private final NoticeService noticeService;
@@ -21,7 +24,7 @@ public class MoneyBalanceCommand {
     @Execute
     void execute(@Context Account account) {
         this.noticeService.create()
-                .notice(messageConfig -> messageConfig.balance)
+                .notice(messageConfig -> messageConfig.player.balance)
                 .placeholder("{BALANCE}", this.decimalFormatter.format(account.balance()))
                 .player(account.uuid())
                 .send();

@@ -11,16 +11,17 @@ import com.eternalcode.economy.account.AccountManager;
 import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.account.database.AccountRepository;
 import com.eternalcode.economy.account.database.AccountRepositoryImpl;
-import com.eternalcode.economy.command.MoneyAddCommand;
-import com.eternalcode.economy.command.MoneyBalanceCommand;
-import com.eternalcode.economy.command.MoneyRemoveCommand;
-import com.eternalcode.economy.command.MoneyResetCommand;
-import com.eternalcode.economy.command.MoneySetCommand;
+import com.eternalcode.economy.command.admin.AdminAddCommand;
+import com.eternalcode.economy.command.admin.AdminBalanceCommand;
+import com.eternalcode.economy.command.admin.AdminRemoveCommand;
+import com.eternalcode.economy.command.admin.AdminResetCommand;
 import com.eternalcode.economy.command.argument.AccountArgument;
 import com.eternalcode.economy.command.context.AccountContext;
+import com.eternalcode.economy.command.player.MoneyBalanceCommand;
+import com.eternalcode.economy.command.player.MoneyTransferCommand;
 import com.eternalcode.economy.config.ConfigService;
-import com.eternalcode.economy.config.implementation.MessageConfig;
 import com.eternalcode.economy.config.implementation.PluginConfig;
+import com.eternalcode.economy.config.implementation.messages.MessageConfig;
 import com.eternalcode.economy.database.DatabaseException;
 import com.eternalcode.economy.database.DatabaseManager;
 import com.eternalcode.economy.format.DecimalFormatter;
@@ -33,6 +34,8 @@ import com.eternalcode.multification.notice.NoticeBroadcast;
 import com.google.common.base.Stopwatch;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
+import java.io.File;
+import java.time.Duration;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -40,11 +43,8 @@ import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.time.Duration;
-
 @SuppressWarnings("unused")
-public class BukkitEconomyPlugin extends JavaPlugin {
+public class EconomyBukkitPlugin extends JavaPlugin {
 
     private static final String PLUGIN_STARTED = "EternalEconomy has been enabled in %dms.";
 
@@ -86,7 +86,8 @@ public class BukkitEconomyPlugin extends JavaPlugin {
             accountRepository = new AccountRepositoryImpl(this.databaseManager, scheduler);
             accountManager = new AccountManager(accountRepository);
             accountManager.loadAccounts();
-        } catch (DatabaseException exception) {
+        }
+        catch (DatabaseException exception) {
             throw new RuntimeException(exception);
         }
 
@@ -96,11 +97,12 @@ public class BukkitEconomyPlugin extends JavaPlugin {
 
         this.liteCommands = LiteBukkitFactory.builder("eternaleconomy", this, server)
                 .commands(
-                        new MoneyAddCommand(accountPaymentService, noticeService, decimalFormatter),
+                        new AdminAddCommand(accountPaymentService),
+                        new AdminRemoveCommand(accountPaymentService),
+                        new AdminResetCommand(accountPaymentService),
+                        new AdminBalanceCommand(noticeService, decimalFormatter),
                         new MoneyBalanceCommand(noticeService, decimalFormatter),
-                        new MoneySetCommand(accountPaymentService, noticeService, decimalFormatter),
-                        new MoneyRemoveCommand(accountPaymentService, noticeService, decimalFormatter),
-                        new MoneyResetCommand(accountPaymentService, noticeService, decimalFormatter)
+                        new MoneyTransferCommand(accountPaymentService)
                 )
 
                 .context(Account.class, new AccountContext(accountManager, messageConfig))

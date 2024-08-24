@@ -1,6 +1,6 @@
 package com.eternalcode.economy.multification;
 
-import com.eternalcode.economy.config.implementation.MessageConfig;
+import com.eternalcode.economy.config.implementation.messages.MessageConfig;
 import com.eternalcode.multification.adventure.AudienceConverter;
 import com.eternalcode.multification.bukkit.BukkitMultification;
 import com.eternalcode.multification.translation.TranslationProvider;
