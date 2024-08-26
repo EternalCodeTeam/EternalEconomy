@@ -12,7 +12,7 @@ import dev.rollczi.litecommands.annotations.permission.Permission;
 import org.bukkit.command.CommandSender;
 
 @Command(name = "economy admin balance")
-@Permission(EconomyPermissionConstant.ADMIN_ADD_PERMISSION)
+@Permission(EconomyPermissionConstant.ADMIN_BALANCE_PERMISSION)
 public class AdminBalanceCommand {
 
     private final NoticeService noticeService;

@@ -22,6 +22,10 @@ public class AccountManager {
         return this.accountByUniqueId.get(uuid);
     }
 
+    public Account getAccount(String name) {
+        return this.accountByName.get(name);
+    }
+
     public void loadAccounts() {
         this.accountRepository.getAllAccounts().thenAccept(accounts -> {
             accounts.forEach(account -> {
@@ -29,10 +33,6 @@ public class AccountManager {
                 this.accountByName.put(account.name(), account);
             });
         });
-    }
-
-    public Account getAccount(String name) {
-        return this.accountByName.get(name);
     }
 
     public Account getOrCreate(UUID uuid, String name) {

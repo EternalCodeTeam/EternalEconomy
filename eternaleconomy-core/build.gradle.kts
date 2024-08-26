@@ -53,7 +53,7 @@ dependencies {
 }
 
 bukkit {
-    main = "com.eternalcode.economy.BukkitEconomyPlugin"
+    main = "com.eternalcode.economy.EconomyBukkitPlugin"
     apiVersion = "1.13"
     prefix = "EternalEconomy"
     author = "EternalCodeTeam"

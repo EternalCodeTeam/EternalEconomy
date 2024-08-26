@@ -29,6 +29,7 @@ import com.eternalcode.economy.format.DecimalFormatterImpl;
 import com.eternalcode.economy.multification.NoticeBroadcastHandler;
 import com.eternalcode.economy.multification.NoticeHandler;
 import com.eternalcode.economy.multification.NoticeService;
+import com.eternalcode.economy.vault.VaultEconomyProvider;
 import com.eternalcode.multification.notice.Notice;
 import com.eternalcode.multification.notice.NoticeBroadcast;
 import com.google.common.base.Stopwatch;
@@ -92,17 +93,18 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         }
 
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
-        AccountPaymentService accountPaymentService =
-                new AccountPaymentService(noticeService, accountManager, decimalFormatter);
+        AccountPaymentService accountPaymentService = new AccountPaymentService(noticeService, accountManager, decimalFormatter);
+
+        VaultEconomyProvider vaultEconomyProvider = new VaultEconomyProvider(this, decimalFormatter, accountPaymentService, accountManager);
 
         this.liteCommands = LiteBukkitFactory.builder("eternaleconomy", this, server)
                 .commands(
-                        new AdminAddCommand(accountPaymentService),
-                        new AdminRemoveCommand(accountPaymentService),
-                        new AdminResetCommand(accountPaymentService),
+                        new AdminAddCommand(accountPaymentService, decimalFormatter, noticeService),
+                        new AdminRemoveCommand(accountPaymentService, decimalFormatter, noticeService),
+                        new AdminResetCommand(accountPaymentService, noticeService),
                         new AdminBalanceCommand(noticeService, decimalFormatter),
                         new MoneyBalanceCommand(noticeService, decimalFormatter),
-                        new MoneyTransferCommand(accountPaymentService)
+                        new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService)
                 )
 
                 .context(Account.class, new AccountContext(accountManager, messageConfig))

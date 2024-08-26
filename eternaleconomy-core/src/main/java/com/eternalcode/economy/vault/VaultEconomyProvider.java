@@ -5,9 +5,6 @@ import com.eternalcode.economy.account.AccountManager;
 import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.format.DecimalFormatter;
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
@@ -17,19 +14,19 @@ public class VaultEconomyProvider extends VaultEconomyAdapter {
     private final Plugin plugin;
     private final DecimalFormatter formatter;
 
-    private final AccountManager accountManager;
     private final AccountPaymentService accountPaymentService;
+    private final AccountManager accountManager;
 
     public VaultEconomyProvider(
             Plugin plugin,
             DecimalFormatter formatter,
-            AccountManager accountManager,
-            AccountPaymentService accountPaymentService
+            AccountPaymentService accountPaymentService,
+            AccountManager accountManager
     ) {
         this.plugin = plugin;
         this.formatter = formatter;
-        this.accountManager = accountManager;
         this.accountPaymentService = accountPaymentService;
+        this.accountManager = accountManager;
     }
 
     @Override
@@ -89,15 +86,8 @@ public class VaultEconomyProvider extends VaultEconomyAdapter {
     public EconomyResponse withdrawPlayer(OfflinePlayer offlinePlayer, double amount) {
         Account account = this.accountManager.getAccount(offlinePlayer.getUniqueId());
 
-        EconomyResponse.ResponseType responseType = Optional.of(account)
-                .filter(balance -> {
-                    BigDecimal decimal = BigDecimal.valueOf(amount);
-                    return this.accountPaymentService.removeBalance(balance, decimal);
-                })
-                .map(player -> EconomyResponse.ResponseType.SUCCESS)
-                .orElse(EconomyResponse.ResponseType.FAILURE);
-
-        return new EconomyResponse(amount, account.balance().doubleValue(), responseType, "");
+        this.accountPaymentService.removeBalance(account, BigDecimal.valueOf(amount));
+        return new EconomyResponse(amount, account.balance().doubleValue(), EconomyResponse.ResponseType.SUCCESS, "");
     }
 
     @Override
@@ -109,15 +99,8 @@ public class VaultEconomyProvider extends VaultEconomyAdapter {
     public EconomyResponse depositPlayer(OfflinePlayer offlinePlayer, double amount) {
         Account account = this.accountManager.getAccount(offlinePlayer.getUniqueId());
 
-        EconomyResponse.ResponseType responseType = Optional.of(account)
-                .filter(balance -> {
-                    BigDecimal decimal = BigDecimal.valueOf(amount);
-                    return this.accountPaymentService.addBalance(balance, decimal);
-                })
-                .map(player -> EconomyResponse.ResponseType.SUCCESS)
-                .orElse(EconomyResponse.ResponseType.FAILURE);
-
-        return new EconomyResponse(amount, account.balance().doubleValue(), responseType, "");
+        this.accountPaymentService.addBalance(account, BigDecimal.valueOf(amount));
+        return new EconomyResponse(amount, account.balance().doubleValue(), EconomyResponse.ResponseType.SUCCESS, "");
     }
 
     // TODO: Zwróćcie uwage na te metody w Review, nie wiem czy to ma sens?

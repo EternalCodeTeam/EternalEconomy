@@ -9,7 +9,7 @@ import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 
-@Command(name = "balance", aliases = {"economy balance"})
+@Command(name = "balance")
 @Permission(EconomyPermissionConstant.PLAYER_BALANCE_PERMISSION)
 public class MoneyBalanceCommand {
 

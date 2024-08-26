@@ -12,7 +12,7 @@ public class MessagesPlayerSubSection extends OkaeriConfig {
     public Notice set = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> "
             + "<white>Set your balance to <gradient:#00FFA2:#34AE00>{AMOUNT}</gradient>.</white>");
     public Notice reset = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> "
-            + "<white>Reset your balance.</white>");
+            + "<white>Resetted your balance.</white>");
     public Notice balance = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
             + " <white>Your balance is <gradient:#00FFA2:#34AE00>{BALANCE}</gradient>.</white>");
     public Notice insufficientBalance = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> "
@@ -20,8 +20,8 @@ public class MessagesPlayerSubSection extends OkaeriConfig {
             + " you are missing <gradient:#00FFA2:#34AE00> {MISSING_BALANCE}</gradient>.</white>");
     public Notice transferSuccess = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray"
             + ">➤</dark_gray> <white>Successfully transferred <gradient:#00FFA2:#34AE00>{AMOUNT}</gradient> to "
-            + "<gradient:#00FFA2:#34AE00>{RECEIVER}</gradient>.</white>");
+            + "<gradient:#00FFA2:#34AE00>{PLAYER}</gradient>.</white>");
     public Notice transferReceived = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> "
             + "<dark_gray>➤</dark_gray> <white>Received <gradient:#00FFA2:#34AE00>{AMOUNT}</gradient> from "
-            + "<gradient:#00FFA2:#34AE00>{RECEIVER}</gradient>.</white>");
+            + "<gradient:#00FFA2:#34AE00>{PLAYER}</gradient>.</white>");
 }

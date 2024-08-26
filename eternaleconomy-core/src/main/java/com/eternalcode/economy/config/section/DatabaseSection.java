@@ -12,7 +12,7 @@ public class DatabaseSection extends OkaeriConfig implements DatabaseSettings {
             + "database type "
             + "to be used."})
     private DatabaseDriverType driverType = DatabaseDriverType.SQLITE;
-
+ 
     @Comment({"Hostname of the database server.", "For local databases, this is usually 'localhost'."})
     private String hostname = "localhost";
 
