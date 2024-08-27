@@ -3,6 +3,7 @@ package com.eternalcode.economy.command.player;
 import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.AccountPaymentService;
+import com.eternalcode.economy.command.validator.notyourself.NotYourself;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import dev.rollczi.litecommands.annotations.argument.Arg;
@@ -10,6 +11,7 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
+import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 @Command(name = "pay")
@@ -31,17 +33,7 @@ public class MoneyTransferCommand {
     }
 
     @Execute
-    void execute(@Context Account payer, @Arg Account receiver, @Arg BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) < 1) {
-            this.noticeService.create()
-                    .notice(notice -> notice.invalidAmount)
-                    .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-                    .player(payer.uuid())
-                    .send();
-
-            return;
-        }
-
+    void execute(@Context Account payer, @Arg @NotYourself Account receiver, @Arg @Positive BigDecimal amount) {
         if (payer.balance().compareTo(amount) < 1) {
             BigDecimal subtract = amount.subtract(payer.balance());
             this.noticeService.create()

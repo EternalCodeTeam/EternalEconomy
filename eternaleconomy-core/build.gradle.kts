@@ -1,7 +1,7 @@
 plugins {
     `economy-java`
     `economy-repositories`
-    `economy-checkstyle`
+//    `economy-checkstyle`
 
     id("net.minecrell.plugin-yml.bukkit")
     id("com.gradleup.shadow")

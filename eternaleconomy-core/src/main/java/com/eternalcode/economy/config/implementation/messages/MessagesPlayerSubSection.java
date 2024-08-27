@@ -1,6 +1,7 @@
 package com.eternalcode.economy.config.implementation.messages;
 
 import com.eternalcode.multification.notice.Notice;
+import com.j256.ormlite.stmt.query.Not;
 import eu.okaeri.configs.OkaeriConfig;
 
 public class MessagesPlayerSubSection extends OkaeriConfig {
@@ -15,6 +16,8 @@ public class MessagesPlayerSubSection extends OkaeriConfig {
             + "<white>Resetted your balance.</white>");
     public Notice balance = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
             + " <white>Your balance is <gradient:#00FFA2:#34AE00>{BALANCE}</gradient>.</white>");
+    public Notice balanceOther = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
+            + " <white><gradient:#00FFA2:#34AE00>{PLAYER}</gradient>'s balance is <gradient:#00FFA2:#34AE00>{BALANCE}</gradient>.</white>");
     public Notice insufficientBalance = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> "
             + "<dark_gray>➤</dark_gray> <white>Insufficient funds,"
             + " you are missing <gradient:#00FFA2:#34AE00> {MISSING_BALANCE}</gradient>.</white>");

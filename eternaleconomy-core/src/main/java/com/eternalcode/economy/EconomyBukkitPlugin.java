@@ -20,10 +20,12 @@ import com.eternalcode.economy.command.argument.AccountArgument;
 import com.eternalcode.economy.command.context.AccountContext;
 import com.eternalcode.economy.command.player.MoneyBalanceCommand;
 import com.eternalcode.economy.command.player.MoneyTransferCommand;
+import com.eternalcode.economy.command.message.InvalidBigDecimalMessage;
+import com.eternalcode.economy.command.validator.notyourself.NotYourself;
+import com.eternalcode.economy.command.validator.notyourself.NotYourselfValidator;
 import com.eternalcode.economy.config.ConfigService;
 import com.eternalcode.economy.config.implementation.PluginConfig;
 import com.eternalcode.economy.config.implementation.messages.MessageConfig;
-import com.eternalcode.economy.database.DatabaseException;
 import com.eternalcode.economy.database.DatabaseManager;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.format.DecimalFormatterImpl;
@@ -39,13 +41,11 @@ import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.jakarta.LiteJakartaExtension;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
-import java.util.Locale;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -96,24 +96,11 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
         this.liteCommands = LiteBukkitFactory.builder("eternaleconomy", this, server)
             .extension(new LiteJakartaExtension<>(), settings -> settings
-                .violationMessage(Positive.class, (invocation, positive) -> {
-                    Object invalidValue = positive.getViolation().getInvalidValue();
-
-                    if (invalidValue instanceof BigDecimal invalidAmount) {
-                        return noticeService.create()
-                            .notice(notice -> notice.invalidAmount)
-                            .placeholder("{AMOUNT}", invalidAmount.toString())
-                            .viewer(invocation.sender());
-                    }
-
-                    return null;
-                })
-                .constraintViolationsMessage((invocation, violations) -> {
-                    for (String violation : violations.getViolations()) {
-
-                    }
-                })
+                .violationMessage(Positive.class, BigDecimal.class, new InvalidBigDecimalMessage<>(noticeService))
             )
+
+            .annotations(extension -> extension.validator(Account.class, NotYourself.class, new NotYourselfValidator(messageConfig)))
+
             .commands(
                     new AdminAddCommand(accountPaymentService, decimalFormatter, noticeService),
                     new AdminRemoveCommand(accountPaymentService, decimalFormatter, noticeService),
@@ -153,4 +140,5 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             this.databaseManager.close();
         }
     }
+
 }
