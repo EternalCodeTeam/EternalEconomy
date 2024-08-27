@@ -14,7 +14,7 @@ public class EternalEconomyApiProvider {
 
     static void initialize(EternalEconomyApi eternalEconomyApi) {
         if (EternalEconomyApiProvider.eternalEconomyApi != null) {
-            throw new IllegalStateException("LobbyHeadsApi has already been initialized!");
+            throw new IllegalStateException("EternalEconomyApi has already been initialized!");
         }
 
         EternalEconomyApiProvider.eternalEconomyApi = eternalEconomyApi;
@@ -22,7 +22,7 @@ public class EternalEconomyApiProvider {
 
     static void deinitialize() {
         if (eternalEconomyApi == null) {
-            throw new IllegalStateException("LobbyHeadsApi has not been initialized yet!");
+            throw new IllegalStateException("EternalEconomyApi has not been initialized yet!");
         }
 
         eternalEconomyApi = null;
