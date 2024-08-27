@@ -17,20 +17,9 @@ object Versions {
 
     const val VAULT_API = "1.7"
 
-    const val EXPRESSIBLE = "1.3.6"
-    const val PANDA_UTILITIES = "0.5.3-alpha"
-
     const val MARIA_DB = "3.4.1"
     const val POSTGRESQL = "42.7.3"
     const val H2 = "2.1.214"
     const val ORMLITE = "6.1"
     const val HIKARI_CP = "5.1.0"
-
-    // gradle :-: plugin's
-    const val GRADLE_UP_SHADOW = "8.3.0"
-    const val MINECRELL_PLUGIN_YML = "0.6.0"
-    const val JPENILLA_RUN_TASK = "2.3.1"
-
-
-
 }
