@@ -11,27 +11,22 @@ plugins {
 
 dependencies {
     // api module
-    api(project(":eternaleconomy-api"))
+    implementation(project(":eternaleconomy-api"))
 
     // spigot-api
     compileOnly("org.spigotmc:spigot-api:${Versions.SPIGOT_API}")
-    testImplementation("org.spigotmc:spigot-api:${Versions.SPIGOT_API}")
 
     // eternalcode commons
     implementation("com.eternalcode:eternalcode-commons-adventure:${Versions.ETERNALCODE_COMMONS}")
     implementation("com.eternalcode:eternalcode-commons-bukkit:${Versions.ETERNALCODE_COMMONS}")
     implementation("com.eternalcode:eternalcode-commons-shared:${Versions.ETERNALCODE_COMMONS}")
 
-    implementation("org.mariadb.jdbc:mariadb-java-client:${Versions.MARIA_DB}")
-    implementation("org.postgresql:postgresql:${Versions.POSTGRESQL}")
-    implementation("com.h2database:h2:${Versions.H2}")
-    implementation("com.j256.ormlite:ormlite-core:${Versions.ORMLITE}")
-    implementation("com.j256.ormlite:ormlite-jdbc:${Versions.ORMLITE}")
-    implementation("com.zaxxer:HikariCP:${Versions.HIKARI_CP}")
-
-    // expressible
-    implementation("org.panda-lang:expressible:${Versions.EXPRESSIBLE}")
-    implementation("org.panda-lang:panda-utilities:${Versions.PANDA_UTILITIES}")
+    bukkitLibrary("org.mariadb.jdbc:mariadb-java-client:${Versions.MARIA_DB}")
+    bukkitLibrary("org.postgresql:postgresql:${Versions.POSTGRESQL}")
+    bukkitLibrary("com.h2database:h2:${Versions.H2}")
+    bukkitLibrary("com.j256.ormlite:ormlite-core:${Versions.ORMLITE}")
+    bukkitLibrary("com.j256.ormlite:ormlite-jdbc:${Versions.ORMLITE}")
+    bukkitLibrary("com.zaxxer:HikariCP:${Versions.HIKARI_CP}")
 
     implementation("dev.rollczi:litecommands-bukkit:${Versions.LITE_COMMANDS}")
     implementation("dev.rollczi:litecommands-adventure:${Versions.LITE_COMMANDS}")
