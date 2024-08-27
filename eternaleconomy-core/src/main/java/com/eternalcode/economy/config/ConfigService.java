@@ -1,5 +1,7 @@
 package com.eternalcode.economy.config;
 
+import com.eternalcode.multification.bukkit.notice.resolver.sound.SoundBukkitResolver;
+import com.eternalcode.multification.notice.resolver.NoticeResolverDefaults;
 import com.eternalcode.multification.notice.resolver.NoticeResolverRegistry;
 import com.eternalcode.multification.okaeri.MultificationSerdesPack;
 import eu.okaeri.configs.ConfigManager;
@@ -20,20 +22,16 @@ public class ConfigService {
 
     private final Set<OkaeriConfig> configs = new HashSet<>();
 
-    private final NoticeResolverRegistry noticeResolverRegistry;
-
-    public ConfigService(NoticeResolverRegistry noticeResolverRegistry) {
-        this.noticeResolverRegistry = noticeResolverRegistry;
-    }
-
     public <T extends OkaeriConfig> T create(Class<T> config, File file) {
         T configFile = ConfigManager.create(config);
 
         YamlSnakeYamlConfigurer yamlConfigurer = new YamlSnakeYamlConfigurer(this.createYaml());
 
+        NoticeResolverRegistry noticeRegistry = NoticeResolverDefaults.createRegistry()
+                        .registerResolver(new SoundBukkitResolver());
         configFile
                 .withConfigurer(yamlConfigurer, new SerdesCommons())
-                .withConfigurer(yamlConfigurer, new MultificationSerdesPack(this.noticeResolverRegistry))
+                .withConfigurer(yamlConfigurer, new MultificationSerdesPack(noticeRegistry))
                 .withBindFile(file)
                 .withRemoveOrphans(true)
                 .saveDefaults()

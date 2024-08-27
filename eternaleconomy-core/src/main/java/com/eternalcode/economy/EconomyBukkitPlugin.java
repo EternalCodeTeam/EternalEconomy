@@ -15,6 +15,7 @@ import com.eternalcode.economy.command.admin.AdminAddCommand;
 import com.eternalcode.economy.command.admin.AdminBalanceCommand;
 import com.eternalcode.economy.command.admin.AdminRemoveCommand;
 import com.eternalcode.economy.command.admin.AdminResetCommand;
+import com.eternalcode.economy.command.admin.AdminSetCommand;
 import com.eternalcode.economy.command.argument.AccountArgument;
 import com.eternalcode.economy.command.context.AccountContext;
 import com.eternalcode.economy.command.player.MoneyBalanceCommand;
@@ -69,13 +70,11 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
         File dataFolder = this.getDataFolder();
 
-        MessageConfig messageConfig = new MessageConfig();
-        PluginConfig pluginConfig = new PluginConfig();
+        ConfigService configService = new ConfigService();
+        MessageConfig messageConfig = configService.create(MessageConfig.class, new File(dataFolder, "messages.yml"));
+        PluginConfig pluginConfig = configService.create(PluginConfig.class, new File(dataFolder, "config.yml"));
 
         NoticeService noticeService = new NoticeService(messageConfig, this.audienceProvider, miniMessage);
-        ConfigService configService = new ConfigService(noticeService.getNoticeRegistry());
-        configService.create(messageConfig.getClass(), new File(dataFolder, "messages.yml"));
-        configService.create(pluginConfig.getClass(), new File(dataFolder, "config.yml"));
 
         Scheduler scheduler = new BukkitSchedulerImpl(this);
 
@@ -102,10 +101,12 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 .commands(
                         new AdminAddCommand(accountPaymentService, decimalFormatter, noticeService),
                         new AdminRemoveCommand(accountPaymentService, decimalFormatter, noticeService),
+                        new AdminSetCommand(accountPaymentService, decimalFormatter, noticeService),
                         new AdminResetCommand(accountPaymentService, noticeService),
                         new AdminBalanceCommand(noticeService, decimalFormatter),
                         new MoneyBalanceCommand(noticeService, decimalFormatter),
-                        new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService)
+                        new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService),
+                        new EconomyReloadCommand(configService, noticeService)
                 )
 
                 .context(Account.class, new AccountContext(accountManager, messageConfig))
