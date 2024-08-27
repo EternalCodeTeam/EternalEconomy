@@ -18,7 +18,7 @@ public class EconomyReloadCommand {
 
     private static final Notice RELOADED = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> "
             + "<dark_gray>➤</dark_gray> <white>Reloaded "
-            + "eternaleconomy in <gradient:#00FFA2:#34AE00>{TIME}</gradient></white>");
+            + "eternaleconomy in <gradient:#00FFA2:#34AE00>{TIME}ms!</gradient></white>");
 
     private final ConfigService configService;
     private final NoticeService noticeService;
