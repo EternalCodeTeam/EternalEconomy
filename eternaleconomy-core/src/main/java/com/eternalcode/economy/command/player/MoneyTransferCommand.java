@@ -5,12 +5,10 @@ import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
-import com.eternalcode.multification.notice.Notice;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import java.math.BigDecimal;
 
@@ -55,22 +53,20 @@ public class MoneyTransferCommand {
             return;
         }
 
-        boolean successful = this.accountPaymentService.payment(payer, receiver, amount);
+        this.accountPaymentService.payment(payer, receiver, amount);
 
-        if (successful) {
-            this.noticeService.create()
-                    .notice(notice -> notice.player.transferSuccess)
-                    .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-                    .placeholder("{PLAYER}", receiver.name())
-                    .player(payer.uuid())
-                    .send();
+        this.noticeService.create()
+                .notice(notice -> notice.player.transferSuccess)
+                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+                .placeholder("{PLAYER}", receiver.name())
+                .player(payer.uuid())
+                .send();
 
-            this.noticeService.create()
-                    .notice(notice -> notice.player.transferReceived)
-                    .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-                    .placeholder("{PLAYER}", payer.name())
-                    .player(receiver.uuid())
-                    .send();
-        }
+        this.noticeService.create()
+                .notice(notice -> notice.player.transferReceived)
+                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+                .placeholder("{PLAYER}", payer.name())
+                .player(receiver.uuid())
+                .send();
     }
 }
