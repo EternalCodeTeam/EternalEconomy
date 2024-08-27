@@ -28,10 +28,10 @@ public class AccountManager {
 
     public void loadAccounts() {
         this.accountRepository.getAllAccounts().thenAccept(accounts -> {
-            accounts.forEach(account -> {
+            for (Account account : accounts) {
                 this.accountByUniqueId.put(account.uuid(), account);
                 this.accountByName.put(account.name(), account);
-            });
+            }
         });
     }
 
