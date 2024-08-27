@@ -34,7 +34,7 @@ public class MoneyTransferCommand {
 
     @Execute
     void execute(@Context Account payer, @Arg Account receiver, @Arg BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+        if (amount.compareTo(BigDecimal.ZERO) < 1) {
             this.noticeService.create()
                     .notice(notice -> notice.invalidAmount)
                     .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
@@ -44,7 +44,7 @@ public class MoneyTransferCommand {
             return;
         }
 
-        if (payer.balance().compareTo(amount) < 0) {
+        if (payer.balance().compareTo(amount) < 1) {
             BigDecimal subtract = amount.subtract(payer.balance());
             this.noticeService.create()
                     .notice(notice -> notice.player.insufficientBalance)

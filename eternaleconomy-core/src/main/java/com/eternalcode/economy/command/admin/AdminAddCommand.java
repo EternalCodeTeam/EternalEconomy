@@ -34,7 +34,7 @@ public class AdminAddCommand {
 
     @Execute
     void execute(@Context CommandSender sender, @Arg Account receiver, @Arg BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+        if (amount.compareTo(BigDecimal.ZERO) < 1) {
             this.noticeService.create()
                     .notice(notice -> notice.invalidAmount)
                     .placeholder("{AMOUNT}", amount.toString())
