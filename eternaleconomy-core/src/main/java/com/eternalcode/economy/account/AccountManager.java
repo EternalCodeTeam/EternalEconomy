@@ -63,7 +63,7 @@ public class AccountManager {
         return account;
     }
 
-    public void save(Account account) {
+    void save(Account account) {
         this.accountByUniqueId.put(account.uuid(), account);
         this.accountByName.put(account.name(), account);
         this.accountRepository.save(account);

@@ -9,7 +9,6 @@ import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
-
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import java.math.BigDecimal;
 import org.bukkit.command.CommandSender;
@@ -44,22 +43,20 @@ public class AdminAddCommand {
             return;
         }
 
-        boolean successful = this.accountPaymentService.addBalance(receiver, amount);
+        this.accountPaymentService.addBalance(receiver, amount);
 
-        if (successful) {
-            this.noticeService.create()
-                    .notice(notice -> notice.admin.added)
-                    .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-                    .placeholder("{PLAYER}", receiver.name())
-                    .viewer(sender)
-                    .send();
+        this.noticeService.create()
+                .notice(notice -> notice.admin.added)
+                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+                .placeholder("{PLAYER}", receiver.name())
+                .viewer(sender)
+                .send();
 
-            this.noticeService.create()
-                    .notice(notice -> notice.player.added)
-                    .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-                    .placeholder("{PLAYER}", receiver.name())
-                    .player(receiver.uuid())
-                    .send();
-        }
+        this.noticeService.create()
+                .notice(notice -> notice.player.added)
+                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+                .placeholder("{PLAYER}", receiver.name())
+                .player(receiver.uuid())
+                .send();
     }
 }

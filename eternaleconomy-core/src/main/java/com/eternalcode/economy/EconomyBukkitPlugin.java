@@ -93,7 +93,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         }
 
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
-        AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
+        AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager);
 
         VaultEconomyProvider vaultEconomyProvider = new VaultEconomyProvider(this, decimalFormatter, accountPaymentService, accountManager);
 

@@ -28,21 +28,18 @@ public class AdminResetCommand {
 
     @Execute
     void execute(@Context CommandSender sender, @Arg Account receiver) {
-        boolean successful = this.accountPaymentService.resetBalance(receiver);
+        this.accountPaymentService.resetBalance(receiver);
 
-        if (successful) {
-            this.noticeService.create()
-                    .notice(notice -> notice.admin.reset)
-                    .placeholder("{PLAYER}", receiver.name())
-                    .viewer(sender)
-                    .send();
+        this.noticeService.create()
+                .notice(notice -> notice.admin.reset)
+                .placeholder("{PLAYER}", receiver.name())
+                .viewer(sender)
+                .send();
 
-            this.noticeService.create()
-                    .notice(notice -> notice.player.reset)
-                    .placeholder("{PLAYER}", receiver.name())
-                    .player(receiver.uuid())
-                    .send();
-        }
+        this.noticeService.create()
+                .notice(notice -> notice.player.reset)
+                .placeholder("{PLAYER}", receiver.name())
+                .player(receiver.uuid())
+                .send();
     }
-
 }
