@@ -103,10 +103,9 @@ public class VaultEconomyProvider extends VaultEconomyAdapter {
         return new EconomyResponse(amount, account.balance().doubleValue(), EconomyResponse.ResponseType.SUCCESS, "");
     }
 
-    // TODO: Zwróćcie uwage na te metody w Review, nie wiem czy to ma sens?
     @Override
     public boolean createPlayerAccount(OfflinePlayer offlinePlayer) {
-        Account account = this.accountManager.create(offlinePlayer.getUniqueId(), offlinePlayer.getName());
+        Account account = this.accountManager.getOrCreate(offlinePlayer.getUniqueId(), offlinePlayer.getName());
 
         return account != null;
     }

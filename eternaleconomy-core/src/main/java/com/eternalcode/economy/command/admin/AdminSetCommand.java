@@ -43,22 +43,20 @@ public class AdminSetCommand {
             return;
         }
 
-        boolean successful = this.accountPaymentService.setBalance(receiver, amount);
+        this.accountPaymentService.setBalance(receiver, amount);
 
-        if (successful) {
-            this.noticeService.create()
-                    .notice(notice -> notice.admin.set)
-                    .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-                    .placeholder("{PLAYER}", receiver.name())
-                    .viewer(sender)
-                    .send();
+        this.noticeService.create()
+                .notice(notice -> notice.admin.set)
+                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+                .placeholder("{PLAYER}", receiver.name())
+                .viewer(sender)
+                .send();
 
-            this.noticeService.create()
-                    .notice(notice -> notice.player.set)
-                    .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-                    .placeholder("{PLAYER}", receiver.name())
-                    .player(receiver.uuid())
-                    .send();
-        }
+        this.noticeService.create()
+                .notice(notice -> notice.player.set)
+                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+                .placeholder("{PLAYER}", receiver.name())
+                .player(receiver.uuid())
+                .send();
     }
 }

@@ -1,7 +1,6 @@
 plugins {
     `economy-java`
     `economy-repositories`
-    `economy-unit`
     `economy-checkstyle`
 
     id("net.minecrell.plugin-yml.bukkit")

@@ -55,22 +55,20 @@ public class AdminRemoveCommand {
             return;
         }
 
-        boolean successful = this.accountPaymentService.removeBalance(receiver, amount);
+        this.accountPaymentService.removeBalance(receiver, amount);
 
-        if (successful) {
-            this.noticeService.create()
-                    .notice(notice -> notice.admin.removed)
-                    .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-                    .placeholder("{PLAYER}", receiver.name())
-                    .viewer(sender)
-                    .send();
+        this.noticeService.create()
+                .notice(notice -> notice.admin.removed)
+                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+                .placeholder("{PLAYER}", receiver.name())
+                .viewer(sender)
+                .send();
 
-            this.noticeService.create()
-                    .notice(notice -> notice.player.removed)
-                    .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-                    .placeholder("{PLAYER}", receiver.name())
-                    .player(receiver.uuid())
-                    .send();
-        }
+        this.noticeService.create()
+                .notice(notice -> notice.player.removed)
+                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+                .placeholder("{PLAYER}", receiver.name())
+                .player(receiver.uuid())
+                .send();
     }
 }
