@@ -36,11 +36,16 @@ import com.eternalcode.multification.notice.NoticeBroadcast;
 import com.google.common.base.Stopwatch;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
+import dev.rollczi.litecommands.jakarta.LiteJakartaExtension;
+import jakarta.validation.constraints.Positive;
+import java.math.BigDecimal;
+import java.util.Locale;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -81,16 +86,8 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         this.databaseManager = new DatabaseManager(this.getLogger(), dataFolder, pluginConfig.database);
         this.databaseManager.connect();
 
-        AccountManager accountManager;
-        AccountRepository accountRepository;
-        try {
-            accountRepository = new AccountRepositoryImpl(this.databaseManager, scheduler);
-            accountManager = new AccountManager(accountRepository);
-            accountManager.loadAccounts();
-        }
-        catch (DatabaseException exception) {
-            throw new RuntimeException(exception);
-        }
+        AccountRepository accountRepository = new AccountRepositoryImpl(this.databaseManager, scheduler);
+        AccountManager accountManager = AccountManager.create(accountRepository);
 
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
@@ -98,24 +95,43 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         VaultEconomyProvider vaultEconomyProvider = new VaultEconomyProvider(this, decimalFormatter, accountPaymentService, accountManager);
 
         this.liteCommands = LiteBukkitFactory.builder("eternaleconomy", this, server)
-                .commands(
-                        new AdminAddCommand(accountPaymentService, decimalFormatter, noticeService),
-                        new AdminRemoveCommand(accountPaymentService, decimalFormatter, noticeService),
-                        new AdminSetCommand(accountPaymentService, decimalFormatter, noticeService),
-                        new AdminResetCommand(accountPaymentService, noticeService),
-                        new AdminBalanceCommand(noticeService, decimalFormatter),
-                        new MoneyBalanceCommand(noticeService, decimalFormatter),
-                        new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService),
-                        new EconomyReloadCommand(configService, noticeService)
-                )
+            .extension(new LiteJakartaExtension<>(), settings -> settings
+                .violationMessage(Positive.class, (invocation, positive) -> {
+                    Object invalidValue = positive.getViolation().getInvalidValue();
 
-                .context(Account.class, new AccountContext(accountManager, messageConfig))
-                .argument(Account.class, new AccountArgument(accountManager, noticeService, server))
+                    if (invalidValue instanceof BigDecimal invalidAmount) {
+                        return noticeService.create()
+                            .notice(notice -> notice.invalidAmount)
+                            .placeholder("{AMOUNT}", invalidAmount.toString())
+                            .viewer(invocation.sender());
+                    }
 
-                .result(Notice.class, new NoticeHandler(noticeService))
-                .result(NoticeBroadcast.class, new NoticeBroadcastHandler())
+                    return null;
+                })
+                .constraintViolationsMessage((invocation, violations) -> {
+                    for (String violation : violations.getViolations()) {
 
-                .build();
+                    }
+                })
+            )
+            .commands(
+                    new AdminAddCommand(accountPaymentService, decimalFormatter, noticeService),
+                    new AdminRemoveCommand(accountPaymentService, decimalFormatter, noticeService),
+                    new AdminSetCommand(accountPaymentService, decimalFormatter, noticeService),
+                    new AdminResetCommand(accountPaymentService, noticeService),
+                    new AdminBalanceCommand(noticeService, decimalFormatter),
+                    new MoneyBalanceCommand(noticeService, decimalFormatter),
+                    new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService),
+                    new EconomyReloadCommand(configService, noticeService)
+            )
+
+            .context(Account.class, new AccountContext(accountManager, messageConfig))
+            .argument(Account.class, new AccountArgument(accountManager, noticeService, server))
+
+            .result(Notice.class, new NoticeHandler(noticeService))
+            .result(NoticeBroadcast.class, new NoticeBroadcastHandler())
+
+            .build();
 
         server.getPluginManager().registerEvents(new AccountController(accountManager), this);
 

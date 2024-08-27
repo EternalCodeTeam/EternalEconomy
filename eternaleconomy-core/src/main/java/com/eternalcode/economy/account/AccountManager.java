@@ -3,6 +3,7 @@ package com.eternalcode.economy.account;
 import com.eternalcode.economy.account.database.AccountRepository;
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -14,7 +15,7 @@ public class AccountManager {
 
     private final AccountRepository accountRepository;
 
-    public AccountManager(AccountRepository accountRepository) {
+    private AccountManager(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
 
@@ -24,15 +25,6 @@ public class AccountManager {
 
     public Account getAccount(String name) {
         return this.accountByName.get(name);
-    }
-
-    public void loadAccounts() {
-        this.accountRepository.getAllAccounts().thenAccept(accounts -> {
-            for (Account account : accounts) {
-                this.accountByUniqueId.put(account.uuid(), account);
-                this.accountByName.put(account.name(), account);
-            }
-        });
     }
 
     public Account getOrCreate(UUID uuid, String name) {
@@ -70,6 +62,20 @@ public class AccountManager {
     }
 
     public Collection<Account> getAccounts() {
-        return this.accountByUniqueId.values();
+        return Collections.unmodifiableCollection(this.accountByUniqueId.values());
     }
+
+    public static AccountManager create(AccountRepository accountRepository) {
+        AccountManager accountManager = new AccountManager(accountRepository);
+
+        accountRepository.getAllAccounts().thenAccept(accounts -> {
+            for (Account account : accounts) {
+                accountManager.accountByUniqueId.put(account.uuid(), account);
+                accountManager.accountByName.put(account.name(), account);
+            }
+        });
+
+        return accountManager;
+    }
+
 }

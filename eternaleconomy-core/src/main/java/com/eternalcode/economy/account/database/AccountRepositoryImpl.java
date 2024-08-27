@@ -15,7 +15,7 @@ public class AccountRepositoryImpl extends AbstractRepositoryOrmLite implements 
     public AccountRepositoryImpl(
             DatabaseManager databaseManager,
             Scheduler scheduler
-    ) throws DatabaseException {
+    ) {
         super(databaseManager, scheduler);
 
         try {
