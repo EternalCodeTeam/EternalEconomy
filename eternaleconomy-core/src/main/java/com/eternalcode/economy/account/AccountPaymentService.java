@@ -1,30 +1,19 @@
 package com.eternalcode.economy.account;
 
 import com.eternalcode.economy.config.implementation.PluginConfig;
-import com.eternalcode.economy.format.DecimalFormatter;
-import com.eternalcode.economy.multification.NoticeService;
-
 import java.math.BigDecimal;
-import org.bukkit.command.CommandSender;
-
-import static com.eternalcode.economy.account.AccountUtil.isNegative;
 
 public class AccountPaymentService {
 
-    private final NoticeService noticeService;
     private final AccountManager accountManager;
-    private final DecimalFormatter formatter;
-    private final PluginConfig config;
+    private final PluginConfig pluginConfig;
 
     public AccountPaymentService(
-            NoticeService noticeService,
             AccountManager accountManager,
-            DecimalFormatter formatter, PluginConfig config
+            PluginConfig pluginConfig
     ) {
-        this.noticeService = noticeService;
         this.accountManager = accountManager;
-        this.formatter = formatter;
-        this.config = config;
+        this.pluginConfig = pluginConfig;
     }
 
     public boolean payment(Account payer, Account receiver, BigDecimal amount) {
@@ -38,18 +27,8 @@ public class AccountPaymentService {
     }
 
     public boolean setBalance(Account account, BigDecimal amount) {
-        if (isNegative(this.noticeService, account, amount)) {
-            return false;
-        }
-
         account = new Account(account.uuid(), account.name(), amount);
         this.accountManager.save(account);
-
-        this.noticeService.create()
-                .notice(notice -> notice.admin.set)
-                .placeholder("{AMOUNT}", this.formatter.format(amount))
-                .player(account.uuid())
-                .send();
 
         return true;
     }
@@ -69,7 +48,7 @@ public class AccountPaymentService {
     }
 
     public boolean resetBalance(Account account) {
-        this.setBalance(account, this.config.defaultBalance);
+        this.setBalance(account, this.pluginConfig.defaultBalance);
         return true;
     }
 }
