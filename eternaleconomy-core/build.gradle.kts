@@ -80,5 +80,6 @@ tasks.shadowJar {
         "org.yaml",
         "net.kyori",
         "com.eternalcode.commons",
+        "net.jodah",
     ).forEach { relocate(it, prefix) }
 }
