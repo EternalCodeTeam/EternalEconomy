@@ -1,14 +1,15 @@
 package com.eternalcode.economy.format;
 
+import com.eternalcode.economy.config.implementation.PluginConfig;
+
+import java.math.BigDecimal;
+import java.util.List;
+
 import static com.eternalcode.economy.format.DecimalFormatterUtil.getFractionalPart;
 import static com.eternalcode.economy.format.DecimalFormatterUtil.getIntegralPart;
 import static com.eternalcode.economy.format.DecimalFormatterUtil.getLengthOfIntegralPart;
 import static java.lang.Math.ceil;
 import static java.lang.Math.floor;
-
-import com.eternalcode.economy.config.implementation.PluginConfig;
-import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * @author Rafał "shitzuu" Chomczyk
@@ -45,7 +46,7 @@ public class DecimalFormatterImpl implements DecimalFormatter {
     }
 
     public String getFormattedDecimal(BigDecimal amount) {
-        return getFormattedDecimal(amount.doubleValue());
+        return this.getFormattedDecimal(amount.doubleValue());
     }
 
     public String getFormattedDecimal(double amount) {

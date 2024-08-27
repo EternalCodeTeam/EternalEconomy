@@ -1,28 +1,20 @@
 package com.eternalcode.economy.database;
 
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.H2_DRIVER;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.H2_JDBC_URL;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MARIADB_DRIVER;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MARIADB_JDBC_URL;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MYSQL_DRIVER;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MYSQL_JDBC_URL;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.POSTGRESQL_DRIVER;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.POSTGRESQL_JDBC_URL;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.SQLITE_DRIVER;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.SQLITE_JDBC_URL;
-
 import com.google.common.base.Stopwatch;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.DataSourceConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.zaxxer.hikari.HikariDataSource;
+
 import java.io.File;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.*;
 
 public class DatabaseManager {
 
@@ -67,7 +59,7 @@ public class DatabaseManager {
                     this.dataSource.setDriverClassName(MYSQL_DRIVER);
                     this.dataSource.setJdbcUrl(String.format(
                             MYSQL_JDBC_URL,
-                            settings.getHostname(), settings.getPort(), settings.getDatabase(), useSSL, requireSSL)
+                            settings.getHostname(), settings.getPort(), settings.getDatabase(), this.useSSL, this.requireSSL)
                     );
                 }
 
@@ -75,7 +67,7 @@ public class DatabaseManager {
                     this.dataSource.setDriverClassName(MARIADB_DRIVER);
                     this.dataSource.setJdbcUrl(String.format(
                             MARIADB_JDBC_URL,
-                            settings.getHostname(), settings.getPort(), settings.getDatabase(), useSSL, requireSSL)
+                            settings.getHostname(), settings.getPort(), settings.getDatabase(), this.useSSL, this.requireSSL)
                     );
                 }
 
@@ -99,7 +91,7 @@ public class DatabaseManager {
                     this.dataSource.setDriverClassName(POSTGRESQL_DRIVER);
                     this.dataSource.setJdbcUrl(String.format(
                             POSTGRESQL_JDBC_URL,
-                            settings.getHostname(), settings.getPort(), useSSL)
+                            settings.getHostname(), settings.getPort(), this.useSSL)
                     );
                 }
 
@@ -121,7 +113,7 @@ public class DatabaseManager {
             this.connectionSource.close();
         }
         catch (Exception exception) {
-            logger.severe("Failed to close database connection: " + exception.getMessage());
+            this.logger.severe("Failed to close database connection: " + exception.getMessage());
         }
     }
 

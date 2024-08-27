@@ -1,11 +1,12 @@
 package com.eternalcode.economy.vault;
 
-import java.util.Collections;
-import java.util.List;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Vault has many deprecated and unusable methods in the Economy interface.
@@ -19,25 +20,25 @@ abstract class VaultEconomyAdapter implements Economy {
     @Deprecated
     @Override
     public boolean hasAccount(String playerName) {
-        return hasAccount(Bukkit.getOfflinePlayer(playerName));
+        return this.hasAccount(Bukkit.getOfflinePlayer(playerName));
     }
 
     @Deprecated
     @Override
     public boolean hasAccount(String playerName, String worldName) {
-        return hasAccount(Bukkit.getOfflinePlayer(playerName));
+        return this.hasAccount(Bukkit.getOfflinePlayer(playerName));
     }
 
     @Deprecated
     @Override
     public double getBalance(String playerName) {
-        return getBalance(Bukkit.getOfflinePlayer(playerName));
+        return this.getBalance(Bukkit.getOfflinePlayer(playerName));
     }
 
     @Deprecated
     @Override
     public double getBalance(String playerName, String world) {
-        return getBalance(Bukkit.getOfflinePlayer(playerName));
+        return this.getBalance(Bukkit.getOfflinePlayer(playerName));
     }
 
     @Override
@@ -53,7 +54,7 @@ abstract class VaultEconomyAdapter implements Economy {
     @Deprecated
     @Override
     public boolean has(String playerName, double amount) {
-        return has(Bukkit.getOfflinePlayer(playerName), amount);
+        return this.has(Bukkit.getOfflinePlayer(playerName), amount);
     }
 
     @Override
@@ -69,43 +70,43 @@ abstract class VaultEconomyAdapter implements Economy {
     @Deprecated
     @Override
     public boolean has(String playerName, String worldName, double amount) {
-        return has(Bukkit.getOfflinePlayer(playerName), amount);
+        return this.has(Bukkit.getOfflinePlayer(playerName), amount);
     }
 
     @Deprecated
     @Override
     public EconomyResponse withdrawPlayer(String playerName, double amount) {
-        return withdrawPlayer(Bukkit.getOfflinePlayer(playerName), amount);
+        return this.withdrawPlayer(Bukkit.getOfflinePlayer(playerName), amount);
     }
 
     @Deprecated
     @Override
     public EconomyResponse withdrawPlayer(String playerName, String worldName, double amount) {
-        return withdrawPlayer(Bukkit.getOfflinePlayer(playerName), amount);
+        return this.withdrawPlayer(Bukkit.getOfflinePlayer(playerName), amount);
     }
 
     @Deprecated
     @Override
     public EconomyResponse depositPlayer(String playerName, double amount) {
-        return depositPlayer(Bukkit.getOfflinePlayer(playerName), amount);
+        return this.depositPlayer(Bukkit.getOfflinePlayer(playerName), amount);
     }
 
     @Deprecated
     @Override
     public EconomyResponse depositPlayer(String playerName, String worldName, double amount) {
-        return depositPlayer(Bukkit.getOfflinePlayer(playerName), amount);
+        return this.depositPlayer(Bukkit.getOfflinePlayer(playerName), amount);
     }
 
     @Deprecated
     @Override
     public boolean createPlayerAccount(String playerName) {
-        return createPlayerAccount(Bukkit.getOfflinePlayer(playerName));
+        return this.createPlayerAccount(Bukkit.getOfflinePlayer(playerName));
     }
 
     @Deprecated
     @Override
     public boolean createPlayerAccount(String playerName, String worldName) {
-        return createPlayerAccount(Bukkit.getOfflinePlayer(playerName));
+        return this.createPlayerAccount(Bukkit.getOfflinePlayer(playerName));
     }
 
     @Deprecated

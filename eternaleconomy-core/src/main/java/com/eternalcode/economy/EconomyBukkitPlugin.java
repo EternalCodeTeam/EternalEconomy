@@ -35,14 +35,15 @@ import com.eternalcode.multification.notice.NoticeBroadcast;
 import com.google.common.base.Stopwatch;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
-import java.io.File;
-import java.time.Duration;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.time.Duration;
 
 @SuppressWarnings("unused")
 public class EconomyBukkitPlugin extends JavaPlugin {
@@ -93,7 +94,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         }
 
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
-        AccountPaymentService accountPaymentService = new AccountPaymentService(noticeService, accountManager, decimalFormatter);
+        AccountPaymentService accountPaymentService = new AccountPaymentService(noticeService, accountManager, decimalFormatter, pluginConfig);
 
         VaultEconomyProvider vaultEconomyProvider = new VaultEconomyProvider(this, decimalFormatter, accountPaymentService, accountManager);
 

@@ -1,26 +1,30 @@
 package com.eternalcode.economy.account;
 
-import static com.eternalcode.economy.account.AccountUtil.isNegative;
-
+import com.eternalcode.economy.config.implementation.PluginConfig;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
+
 import java.math.BigDecimal;
 import org.bukkit.command.CommandSender;
+
+import static com.eternalcode.economy.account.AccountUtil.isNegative;
 
 public class AccountPaymentService {
 
     private final NoticeService noticeService;
     private final AccountManager accountManager;
     private final DecimalFormatter formatter;
+    private final PluginConfig config;
 
     public AccountPaymentService(
             NoticeService noticeService,
             AccountManager accountManager,
-            DecimalFormatter formatter
+            DecimalFormatter formatter, PluginConfig config
     ) {
         this.noticeService = noticeService;
         this.accountManager = accountManager;
         this.formatter = formatter;
+        this.config = config;
     }
 
     public boolean payment(Account payer, Account receiver, BigDecimal amount) {
@@ -65,9 +69,7 @@ public class AccountPaymentService {
     }
 
     public boolean resetBalance(Account account) {
-        account = new Account(account.uuid(), account.name(), BigDecimal.ZERO);
-        this.accountManager.save(account);
-
+        this.setBalance(account, this.config.defaultBalance);
         return true;
     }
 }

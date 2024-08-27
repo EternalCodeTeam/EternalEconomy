@@ -14,11 +14,11 @@ public class DecimalUnit implements Serializable {
     }
 
     public long getFactor() {
-        return factor;
+        return this.factor;
     }
 
     public char getSuffix() {
-        return suffix;
+        return this.suffix;
     }
 
 }
