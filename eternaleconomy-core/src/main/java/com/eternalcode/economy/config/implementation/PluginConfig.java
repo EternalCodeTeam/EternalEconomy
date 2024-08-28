@@ -26,7 +26,7 @@ public class PluginConfig extends OkaeriConfig {
         public List<DecimalUnit> format = Arrays.asList(
                 new DecimalUnit(1_000L, 'k'),
                 new DecimalUnit(1_000_000L, 'm'),
-                new DecimalUnit(1_000_000_000L, 'g'),
+                new DecimalUnit(1_000_000_000L, 'b'),
                 new DecimalUnit(1_000_000_000_000L, 't'),
                 new DecimalUnit(1_000_000_000_000_000L, 'p'),
                 new DecimalUnit(1_000_000_000_000_000_000L, 'e')
