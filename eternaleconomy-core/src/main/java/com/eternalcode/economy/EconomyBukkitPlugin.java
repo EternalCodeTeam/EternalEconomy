@@ -21,8 +21,8 @@ import com.eternalcode.economy.command.context.AccountContext;
 import com.eternalcode.economy.command.player.MoneyBalanceCommand;
 import com.eternalcode.economy.command.player.MoneyTransferCommand;
 import com.eternalcode.economy.command.message.InvalidBigDecimalMessage;
-import com.eternalcode.economy.command.validator.notyourself.NotYourself;
-import com.eternalcode.economy.command.validator.notyourself.NotYourselfValidator;
+import com.eternalcode.economy.command.validator.notyourself.NotMe;
+import com.eternalcode.economy.command.validator.notyourself.NotMeValidator;
 import com.eternalcode.economy.config.ConfigService;
 import com.eternalcode.economy.config.implementation.PluginConfig;
 import com.eternalcode.economy.config.implementation.messages.MessageConfig;
@@ -99,7 +99,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 .violationMessage(Positive.class, BigDecimal.class, new InvalidBigDecimalMessage<>(noticeService))
             )
 
-            .annotations(extension -> extension.validator(Account.class, NotYourself.class, new NotYourselfValidator(messageConfig)))
+            .annotations(extension -> extension.validator(Account.class, NotMe.class, new NotMeValidator(messageConfig)))
 
             .commands(
                     new AdminAddCommand(accountPaymentService, decimalFormatter, noticeService),
