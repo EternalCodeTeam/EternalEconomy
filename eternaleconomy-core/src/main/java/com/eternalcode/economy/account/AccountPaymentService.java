@@ -1,15 +1,19 @@
 package com.eternalcode.economy.account;
 
+import com.eternalcode.economy.config.implementation.PluginConfig;
+
 import java.math.BigDecimal;
 
 public class AccountPaymentService {
 
     private final AccountManager accountManager;
+    private final PluginConfig config;
 
     public AccountPaymentService(
-            AccountManager accountManager
+            AccountManager accountManager, PluginConfig config
     ) {
         this.accountManager = accountManager;
+        this.config = config;
     }
 
     public void payment(Account payer, Account receiver, BigDecimal amount) {
@@ -36,6 +40,7 @@ public class AccountPaymentService {
     }
 
     public void resetBalance(Account account) {
-        this.setBalance(account, BigDecimal.ZERO);
+        account = new Account(account.uuid(), account.name(), this.config.defaultBalance);
+        this.accountManager.save(account);
     }
 }

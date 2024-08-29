@@ -18,11 +18,11 @@ import com.eternalcode.economy.command.admin.AdminResetCommand;
 import com.eternalcode.economy.command.admin.AdminSetCommand;
 import com.eternalcode.economy.command.argument.AccountArgument;
 import com.eternalcode.economy.command.context.AccountContext;
+import com.eternalcode.economy.command.message.InvalidBigDecimalMessage;
 import com.eternalcode.economy.command.player.MoneyBalanceCommand;
 import com.eternalcode.economy.command.player.MoneyTransferCommand;
-import com.eternalcode.economy.command.message.InvalidBigDecimalMessage;
-import com.eternalcode.economy.command.validator.notyourself.NotMe;
-import com.eternalcode.economy.command.validator.notyourself.NotMeValidator;
+import com.eternalcode.economy.command.validator.notsender.NotSender;
+import com.eternalcode.economy.command.validator.notsender.NotSenderValidator;
 import com.eternalcode.economy.config.ConfigService;
 import com.eternalcode.economy.config.implementation.PluginConfig;
 import com.eternalcode.economy.config.implementation.messages.MessageConfig;
@@ -40,7 +40,6 @@ import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.jakarta.LiteJakartaExtension;
 import jakarta.validation.constraints.Positive;
-import java.math.BigDecimal;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -49,6 +48,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.time.Duration;
 
 @SuppressWarnings("unused")
@@ -90,7 +90,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         AccountManager accountManager = AccountManager.create(accountRepository);
 
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
-        AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager);
+        AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
 
         VaultEconomyProvider vaultEconomyProvider = new VaultEconomyProvider(this, decimalFormatter, accountPaymentService, accountManager);
 
@@ -99,7 +99,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 .violationMessage(Positive.class, BigDecimal.class, new InvalidBigDecimalMessage<>(noticeService))
             )
 
-            .annotations(extension -> extension.validator(Account.class, NotMe.class, new NotMeValidator(messageConfig)))
+            .annotations(extension -> extension.validator(Account.class, NotSender.class, new NotSenderValidator(messageConfig)))
 
             .commands(
                     new AdminAddCommand(accountPaymentService, decimalFormatter, noticeService),

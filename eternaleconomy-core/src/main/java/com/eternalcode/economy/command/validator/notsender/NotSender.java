@@ -1,4 +1,4 @@
-package com.eternalcode.economy.command.validator.notyourself;
+package com.eternalcode.economy.command.validator.notsender;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,5 +7,5 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
-public @interface NotMe {
+public @interface NotSender {
 }
