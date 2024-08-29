@@ -40,7 +40,6 @@ public class AccountPaymentService {
     }
 
     public void resetBalance(Account account) {
-        account = new Account(account.uuid(), account.name(), this.config.defaultBalance);
-        this.accountManager.save(account);
+        this.setBalance(account, this.config.defaultBalance);
     }
 }
