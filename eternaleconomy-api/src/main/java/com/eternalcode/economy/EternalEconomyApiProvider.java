@@ -6,7 +6,7 @@ public class EternalEconomyApiProvider {
 
     public static EternalEconomyApi provide() {
         if (eternalEconomyApi == null) {
-            throw new IllegalStateException("LobbyHeadsApi has not been initialized yet!");
+            throw new IllegalStateException("EternalEconomyAPI has not been initialized yet!");
         }
 
         return eternalEconomyApi;
