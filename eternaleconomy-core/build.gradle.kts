@@ -30,7 +30,6 @@ dependencies {
     implementation("dev.rollczi:litecommands-bukkit:${Versions.LITE_COMMANDS}")
     implementation("dev.rollczi:litecommands-adventure:${Versions.LITE_COMMANDS}")
     implementation("dev.rollczi:litecommands-jakarta:${Versions.LITE_COMMANDS}")
-    implementation("dev.rollczi:litecommands-enterprise:${Versions.LITE_COMMANDS}")
 
     // multification
     implementation("com.eternalcode:multification-bukkit:${Versions.MULTIFICATION}")
@@ -67,11 +66,9 @@ tasks.shadowJar {
 
     exclude(
         "org/intellij/lang/annotations/**",
-        "org/jetbrains/annotations/**",
-        "META-INF/**",
+        "org/jetbrains/annotations/**"
     )
 
-    mergeServiceFiles()
 
     val prefix = "com.eternalcode.economy.libs"
     listOf(
