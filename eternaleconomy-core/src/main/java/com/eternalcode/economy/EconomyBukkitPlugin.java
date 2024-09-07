@@ -39,6 +39,7 @@ import com.google.common.base.Stopwatch;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.jakarta.LiteJakartaExtension;
+import jakarta.validation.Validation;
 import jakarta.validation.constraints.Positive;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -50,6 +51,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.Duration;
+import org.hibernate.validator.HibernateValidator;
 
 @SuppressWarnings("unused")
 public class EconomyBukkitPlugin extends JavaPlugin {
@@ -97,6 +99,10 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         this.liteCommands = LiteBukkitFactory.builder("eternaleconomy", this, server)
             .extension(new LiteJakartaExtension<>(), settings -> settings
                 .violationMessage(Positive.class, BigDecimal.class, new InvalidBigDecimalMessage<>(noticeService))
+                .validatorFactory(Validation.byProvider(HibernateValidator.class)
+                        .configure()
+                        .buildValidatorFactory()
+                )
             )
 
             .annotations(extension -> extension.validator(Account.class, NotSender.class, new NotSenderValidator(messageConfig)))

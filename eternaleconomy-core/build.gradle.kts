@@ -6,6 +6,7 @@ plugins {
     id("net.minecrell.plugin-yml.bukkit")
     id("com.gradleup.shadow")
     id("xyz.jpenilla.run-paper")
+    id("me.champeau.jmh")
 }
 
 dependencies {
@@ -45,6 +46,16 @@ dependencies {
     // okaeri configs
     implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:${Versions.OKAERI_CONFIGS}")
     implementation("eu.okaeri:okaeri-configs-serdes-commons:${Versions.OKAERI_CONFIGS}")
+
+    testImplementation(platform("org.junit:junit-bom:5.10.2"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    jmh("org.openjdk.jmh:jmh-core:1.37")
+    jmh("org.openjdk.jmh:jmh-generator-annprocess:1.37")
+    jmh("org.openjdk.jmh:jmh-generator-bytecode:1.37")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 bukkit {
@@ -68,7 +79,6 @@ tasks.shadowJar {
         "org/intellij/lang/annotations/**",
         "org/jetbrains/annotations/**"
     )
-
 
     val prefix = "com.eternalcode.economy.libs"
     listOf(

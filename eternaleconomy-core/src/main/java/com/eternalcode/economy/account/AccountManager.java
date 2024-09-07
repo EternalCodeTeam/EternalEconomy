@@ -6,16 +6,20 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NavigableMap;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.UUID;
 
 public class AccountManager {
 
     private final Map<UUID, Account> accountByUniqueId = new HashMap<>();
     private final Map<String, Account> accountByName = new HashMap<>();
+    private final TreeMap<String, Account> accountIndex = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     private final AccountRepository accountRepository;
 
-    private AccountManager(AccountRepository accountRepository) {
+    public AccountManager(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
 
@@ -51,6 +55,7 @@ public class AccountManager {
         Account account = new Account(uuid, name, BigDecimal.ZERO);
         this.accountByUniqueId.put(uuid, account);
         this.accountByName.put(name, account);
+        this.accountIndex.put(name, account);
 
         return account;
     }
@@ -61,9 +66,12 @@ public class AccountManager {
         this.accountRepository.save(account);
     }
 
-    public Collection<Account> getAccounts() {
-        return Collections.unmodifiableCollection(this.accountByUniqueId.values());
+    public Collection<Account> getAccountStartingWith(String prefix) {
+        return Collections.unmodifiableCollection(
+                this.accountIndex.subMap(prefix, true, prefix + Character.MAX_VALUE, true).values()
+        );
     }
+
 
     public static AccountManager create(AccountRepository accountRepository) {
         AccountManager accountManager = new AccountManager(accountRepository);
@@ -76,6 +84,10 @@ public class AccountManager {
         });
 
         return accountManager;
+    }
+
+    public Collection<Account> getAccounts() {
+        return Collections.unmodifiableCollection(this.accountByUniqueId.values());
     }
 
 }

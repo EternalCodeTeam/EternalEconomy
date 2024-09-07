@@ -31,9 +31,9 @@ public class AccountArgument extends ArgumentResolver<CommandSender, Account> {
             Invocation<CommandSender> invocation,
             Argument<Account> argument,
             String string) {
-        Player player = this.server.getPlayer(string);
+        Account account = this.accountManager.getAccount(string);
 
-        if (player == null) {
+        if (account == null) {
             NoticeBroadcast invalidPlayerNotice = this.noticeService.create()
                     .notice(messageConfig -> messageConfig.invalidPlayer)
                     .viewer(invocation.sender());
@@ -41,7 +41,6 @@ public class AccountArgument extends ArgumentResolver<CommandSender, Account> {
             return ParseResult.failure(invalidPlayerNotice);
         }
 
-        Account account = this.accountManager.getAccount(player.getUniqueId());
         return ParseResult.success(account);
     }
 
@@ -51,9 +50,16 @@ public class AccountArgument extends ArgumentResolver<CommandSender, Account> {
             Argument<Account> argument,
             SuggestionContext context
     ) {
+        String input = context.getCurrent().multilevel();
 
-        return this.server.getOnlinePlayers().stream()
+        if (input.length() < 3) {
+            return this.server.getOnlinePlayers().stream()
                 .map(Player::getName)
                 .collect(SuggestionResult.collector());
+        }
+
+        return this.accountManager.getAccountStartingWith(input).stream()
+            .map(Account::name)
+            .collect(SuggestionResult.collector());
     }
 }
