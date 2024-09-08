@@ -7,7 +7,7 @@ import com.eternalcode.economy.database.DatabaseException;
 import com.eternalcode.economy.database.DatabaseManager;
 import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
 public class AccountRepositoryImpl extends AbstractRepositoryOrmLite implements AccountRepository {
@@ -37,11 +37,12 @@ public class AccountRepositoryImpl extends AbstractRepositoryOrmLite implements 
     }
 
     @Override
-    public CompletableFuture<List<Account>> getAllAccounts() {
+    public CompletableFuture<Collection<Account>> getAllAccounts() {
         return this.selectAll(AccountWrapper.class)
                 .thenApply(accountWrappers -> accountWrappers.stream()
-                        .map(AccountWrapper::toAccount)
-                        .toList());
+                        .map(accountWrapper -> accountWrapper.toAccount())
+                        .toList()
+                );
     }
 }
 
