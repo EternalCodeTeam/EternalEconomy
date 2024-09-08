@@ -101,10 +101,6 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         this.liteCommands = LiteBukkitFactory.builder("eternaleconomy", this, server)
             .extension(new LiteJakartaExtension<>(), settings -> settings
                 .violationMessage(Positive.class, BigDecimal.class, new InvalidBigDecimalMessage<>(noticeService))
-                .validatorFactory(Validation.byProvider(HibernateValidator.class)
-                        .configure()
-                        .buildValidatorFactory()
-                )
             )
 
             .annotations(extension -> extension.validator(Account.class, NotSender.class, new NotSenderValidator(messageConfig)))

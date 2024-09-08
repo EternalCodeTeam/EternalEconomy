@@ -22,8 +22,6 @@ public class DatabaseManager {
     private final File dataFolder;
     private final DatabaseSettings databaseSettings;
     private final Map<Class<?>, Dao<?, ?>> cachedDao = new ConcurrentHashMap<>();
-    private final boolean useSSL;
-    private final boolean requireSSL;
     private HikariDataSource dataSource;
     private ConnectionSource connectionSource;
 
@@ -31,8 +29,6 @@ public class DatabaseManager {
         this.logger = logger;
         this.dataFolder = dataFolder;
         this.databaseSettings = databaseSettings;
-        this.useSSL = databaseSettings.isSSL();
-        this.requireSSL = databaseSettings.isSSL();
     }
 
     public void connect() {
@@ -59,7 +55,7 @@ public class DatabaseManager {
                     this.dataSource.setDriverClassName(MYSQL_DRIVER);
                     this.dataSource.setJdbcUrl(String.format(
                             MYSQL_JDBC_URL,
-                            settings.getHostname(), settings.getPort(), settings.getDatabase(), this.useSSL, this.requireSSL)
+                            settings.getHostname(), settings.getPort(), settings.getDatabase(), this.databaseSettings.isSSL(), this.databaseSettings.isSSL())
                     );
                 }
 
@@ -67,7 +63,7 @@ public class DatabaseManager {
                     this.dataSource.setDriverClassName(MARIADB_DRIVER);
                     this.dataSource.setJdbcUrl(String.format(
                             MARIADB_JDBC_URL,
-                            settings.getHostname(), settings.getPort(), settings.getDatabase(), this.useSSL, this.requireSSL)
+                            settings.getHostname(), settings.getPort(), settings.getDatabase(), this.databaseSettings.isSSL(), this.databaseSettings.isSSL())
                     );
                 }
 
@@ -91,7 +87,7 @@ public class DatabaseManager {
                     this.dataSource.setDriverClassName(POSTGRESQL_DRIVER);
                     this.dataSource.setJdbcUrl(String.format(
                             POSTGRESQL_JDBC_URL,
-                            settings.getHostname(), settings.getPort(), this.useSSL)
+                            settings.getHostname(), settings.getPort(), this.databaseSettings.isSSL())
                     );
                 }
 
