@@ -68,6 +68,8 @@ bukkit {
     website = "www.eternalcode.pl"
     version = "${project.version}"
 
+    depend = listOf("Vault")
+
     foliaSupported = true
 }
 
