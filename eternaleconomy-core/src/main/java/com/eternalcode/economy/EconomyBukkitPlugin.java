@@ -3,7 +3,6 @@ package com.eternalcode.economy;
 import com.eternalcode.commons.adventure.AdventureLegacyColorPostProcessor;
 import com.eternalcode.commons.adventure.AdventureLegacyColorPreProcessor;
 import com.eternalcode.commons.adventure.AdventureUrlPostProcessor;
-import com.eternalcode.commons.bukkit.scheduler.BukkitSchedulerImpl;
 import com.eternalcode.commons.scheduler.Scheduler;
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.AccountController;
@@ -44,8 +43,10 @@ import jakarta.validation.constraints.Positive;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -83,7 +84,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
         NoticeService noticeService = new NoticeService(messageConfig, this.audienceProvider, miniMessage);
 
-        Scheduler scheduler = new BukkitSchedulerImpl(this);
+        Scheduler scheduler = EconomySchedulerAdapter.getAdaptiveScheduler(this);
 
         this.databaseManager = new DatabaseManager(this.getLogger(), dataFolder, pluginConfig.database);
         this.databaseManager.connect();
@@ -95,6 +96,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
 
         VaultEconomyProvider vaultEconomyProvider = new VaultEconomyProvider(this, decimalFormatter, accountPaymentService, accountManager);
+        server.getServicesManager().register(Economy.class, vaultEconomyProvider, this, ServicePriority.Highest);
 
         this.liteCommands = LiteBukkitFactory.builder("eternaleconomy", this, server)
             .extension(new LiteJakartaExtension<>(), settings -> settings

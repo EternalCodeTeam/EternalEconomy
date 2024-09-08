@@ -5,7 +5,7 @@ object Versions {
     const val OKAERI_CONFIGS = "5.0.3"
     const val LITE_COMMANDS = "3.5.0-SNAPSHOT"
 
-    const val ETERNALCODE_COMMONS = "1.1.3"
+    const val ETERNALCODE_COMMONS = "1.1.4-SNAPSHOT"
     const val MULTIFICATION = "1.1.3"
 
     const val JETBRAINS_ANNOTATIONS = "24.1.0"

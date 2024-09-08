@@ -20,6 +20,7 @@ dependencies {
     implementation("com.eternalcode:eternalcode-commons-adventure:${Versions.ETERNALCODE_COMMONS}")
     implementation("com.eternalcode:eternalcode-commons-bukkit:${Versions.ETERNALCODE_COMMONS}")
     implementation("com.eternalcode:eternalcode-commons-shared:${Versions.ETERNALCODE_COMMONS}")
+    implementation("com.eternalcode:eternalcode-commons-folia:${Versions.ETERNALCODE_COMMONS}")
 
     bukkitLibrary("org.mariadb.jdbc:mariadb-java-client:${Versions.MARIA_DB}")
     bukkitLibrary("org.postgresql:postgresql:${Versions.POSTGRESQL}")
@@ -66,6 +67,8 @@ bukkit {
     name = "EternalEconomy"
     website = "www.eternalcode.pl"
     version = "${project.version}"
+
+    foliaSupported = true
 }
 
 tasks.runServer {
