@@ -10,6 +10,7 @@ import com.eternalcode.economy.account.AccountManager;
 import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.account.database.AccountRepository;
 import com.eternalcode.economy.account.database.AccountRepositoryImpl;
+import com.eternalcode.economy.bridge.BridgeManager;
 import com.eternalcode.economy.command.admin.AdminAddCommand;
 import com.eternalcode.economy.command.admin.AdminBalanceCommand;
 import com.eternalcode.economy.command.admin.AdminRemoveCommand;
@@ -52,7 +53,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.Duration;
-import org.hibernate.validator.HibernateValidator;
 
 @SuppressWarnings("unused")
 public class EconomyBukkitPlugin extends JavaPlugin {
@@ -125,6 +125,15 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             .build();
 
         server.getPluginManager().registerEvents(new AccountController(accountManager), this);
+
+        BridgeManager bridgeManager = new BridgeManager(
+                this.getDescription(),
+                accountManager,
+                decimalFormatter,
+                server,
+                this.getLogger()
+        );
+        bridgeManager.init();
 
         Duration elapsed = started.elapsed();
         server.getLogger().info(String.format(PLUGIN_STARTED, elapsed.toMillis()));
