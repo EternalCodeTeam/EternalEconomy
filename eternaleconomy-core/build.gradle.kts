@@ -48,6 +48,8 @@ dependencies {
     implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:${Versions.OKAERI_CONFIGS}")
     implementation("eu.okaeri:okaeri-configs-serdes-commons:${Versions.OKAERI_CONFIGS}")
 
+    compileOnly("me.clip:placeholderapi:${Versions.PLACEHOLDER_API}")
+
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     jmh("org.openjdk.jmh:jmh-core:1.37")
@@ -69,6 +71,7 @@ bukkit {
     version = "${project.version}"
 
     depend = listOf("Vault")
+    softDepend = listOf("PlaceholderAPI")
 
     foliaSupported = true
 }
