@@ -18,6 +18,8 @@ import com.eternalcode.economy.command.admin.AdminResetCommand;
 import com.eternalcode.economy.command.admin.AdminSetCommand;
 import com.eternalcode.economy.command.argument.AccountArgument;
 import com.eternalcode.economy.command.context.AccountContext;
+import com.eternalcode.economy.command.handler.InvalidUsageHandlerImpl;
+import com.eternalcode.economy.command.handler.MissingPermissionHandlerImpl;
 import com.eternalcode.economy.command.message.InvalidBigDecimalMessage;
 import com.eternalcode.economy.command.player.MoneyBalanceCommand;
 import com.eternalcode.economy.command.player.MoneyTransferCommand;
@@ -104,6 +106,9 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             )
 
             .annotations(extension -> extension.validator(Account.class, NotSender.class, new NotSenderValidator(messageConfig)))
+
+            .missingPermission(new MissingPermissionHandlerImpl(noticeService))
+            .invalidUsage(new InvalidUsageHandlerImpl(noticeService))
 
             .commands(
                     new AdminAddCommand(accountPaymentService, decimalFormatter, noticeService),
