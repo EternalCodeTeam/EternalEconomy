@@ -4,12 +4,11 @@ import com.eternalcode.economy.config.section.DatabaseSection;
 import com.eternalcode.economy.format.DecimalUnit;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
+@SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
 public class PluginConfig extends OkaeriConfig {
 
     @Comment("Units settings")
@@ -24,12 +23,12 @@ public class PluginConfig extends OkaeriConfig {
     public static class Units extends OkaeriConfig {
 
         public List<DecimalUnit> format = Arrays.asList(
-                new DecimalUnit(1_000L, 'k'),
-                new DecimalUnit(1_000_000L, 'm'),
-                new DecimalUnit(1_000_000_000L, 'b'),
-                new DecimalUnit(1_000_000_000_000L, 't'),
-                new DecimalUnit(1_000_000_000_000_000L, 'p'),
-                new DecimalUnit(1_000_000_000_000_000_000L, 'e')
+            new DecimalUnit(1_000L, 'k'),
+            new DecimalUnit(1_000_000L, 'm'),
+            new DecimalUnit(1_000_000_000L, 'b'),
+            new DecimalUnit(1_000_000_000_000L, 't'),
+            new DecimalUnit(1_000_000_000_000_000L, 'p'),
+            new DecimalUnit(1_000_000_000_000_000_000L, 'e')
         );
     }
 }

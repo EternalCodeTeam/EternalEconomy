@@ -12,7 +12,6 @@ import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import jakarta.validation.constraints.Positive;
-
 import java.math.BigDecimal;
 
 @Command(name = "pay")
@@ -24,9 +23,9 @@ public class MoneyTransferCommand {
     private final NoticeService noticeService;
 
     public MoneyTransferCommand(
-            AccountPaymentService accountPaymentService,
-            DecimalFormatter decimalFormatter,
-            NoticeService noticeService
+        AccountPaymentService accountPaymentService,
+        DecimalFormatter decimalFormatter,
+        NoticeService noticeService
     ) {
         this.accountPaymentService = accountPaymentService;
         this.decimalFormatter = decimalFormatter;
@@ -38,10 +37,10 @@ public class MoneyTransferCommand {
         if (payer.balance().compareTo(amount) < 1) {
             BigDecimal subtract = amount.subtract(payer.balance());
             this.noticeService.create()
-                    .notice(notice -> notice.player.insufficientBalance)
-                    .placeholder("{MISSING_BALANCE}", this.decimalFormatter.format(subtract))
-                    .player(payer.uuid())
-                    .send();
+                .notice(notice -> notice.player.insufficientBalance)
+                .placeholder("{MISSING_BALANCE}", this.decimalFormatter.format(subtract))
+                .player(payer.uuid())
+                .send();
 
             return;
         }
@@ -49,17 +48,17 @@ public class MoneyTransferCommand {
         this.accountPaymentService.payment(payer, receiver, amount);
 
         this.noticeService.create()
-                .notice(notice -> notice.player.transferSuccess)
-                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-                .placeholder("{PLAYER}", receiver.name())
-                .player(payer.uuid())
-                .send();
+            .notice(notice -> notice.player.transferSuccess)
+            .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+            .placeholder("{PLAYER}", receiver.name())
+            .player(payer.uuid())
+            .send();
 
         this.noticeService.create()
-                .notice(notice -> notice.player.transferReceived)
-                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-                .placeholder("{PLAYER}", payer.name())
-                .player(receiver.uuid())
-                .send();
+            .notice(notice -> notice.player.transferReceived)
+            .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+            .placeholder("{PLAYER}", payer.name())
+            .player(receiver.uuid())
+            .send();
     }
 }

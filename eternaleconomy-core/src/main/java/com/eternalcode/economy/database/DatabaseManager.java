@@ -1,20 +1,28 @@
 package com.eternalcode.economy.database;
 
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.H2_DRIVER;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.H2_JDBC_URL;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MARIADB_DRIVER;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MARIADB_JDBC_URL;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MYSQL_DRIVER;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MYSQL_JDBC_URL;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.POSTGRESQL_DRIVER;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.POSTGRESQL_JDBC_URL;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.SQLITE_DRIVER;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.SQLITE_JDBC_URL;
+
 import com.google.common.base.Stopwatch;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.DataSourceConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.zaxxer.hikari.HikariDataSource;
-
 import java.io.File;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.*;
 
 public class DatabaseManager {
 
@@ -54,40 +62,48 @@ public class DatabaseManager {
                 case MY_SQL -> {
                     this.dataSource.setDriverClassName(MYSQL_DRIVER);
                     this.dataSource.setJdbcUrl(String.format(
-                            MYSQL_JDBC_URL,
-                            settings.getHostname(), settings.getPort(), settings.getDatabase(), this.databaseSettings.isSSL(), this.databaseSettings.isSSL())
+                        MYSQL_JDBC_URL,
+                        settings.getHostname(),
+                        settings.getPort(),
+                        settings.getDatabase(),
+                        this.databaseSettings.isSSL(),
+                        this.databaseSettings.isSSL())
                     );
                 }
 
                 case MARIA_DB -> {
                     this.dataSource.setDriverClassName(MARIADB_DRIVER);
                     this.dataSource.setJdbcUrl(String.format(
-                            MARIADB_JDBC_URL,
-                            settings.getHostname(), settings.getPort(), settings.getDatabase(), this.databaseSettings.isSSL(), this.databaseSettings.isSSL())
+                        MARIADB_JDBC_URL,
+                        settings.getHostname(),
+                        settings.getPort(),
+                        settings.getDatabase(),
+                        this.databaseSettings.isSSL(),
+                        this.databaseSettings.isSSL())
                     );
                 }
 
                 case H2 -> {
                     this.dataSource.setDriverClassName(H2_DRIVER);
                     this.dataSource.setJdbcUrl(String.format(
-                            H2_JDBC_URL,
-                            this.dataFolder)
+                        H2_JDBC_URL,
+                        this.dataFolder)
                     );
                 }
 
                 case SQLITE -> {
                     this.dataSource.setDriverClassName(SQLITE_DRIVER);
                     this.dataSource.setJdbcUrl(String.format(
-                            SQLITE_JDBC_URL,
-                            this.dataFolder)
+                        SQLITE_JDBC_URL,
+                        this.dataFolder)
                     );
                 }
 
                 case POSTGRE_SQL -> {
                     this.dataSource.setDriverClassName(POSTGRESQL_DRIVER);
                     this.dataSource.setJdbcUrl(String.format(
-                            POSTGRESQL_JDBC_URL,
-                            settings.getHostname(), settings.getPort(), this.databaseSettings.isSSL())
+                        POSTGRESQL_JDBC_URL,
+                        settings.getHostname(), settings.getPort(), this.databaseSettings.isSSL())
                     );
                 }
 
@@ -96,7 +112,7 @@ public class DatabaseManager {
 
             this.connectionSource = new DataSourceConnectionSource(this.dataSource, this.dataSource.getJdbcUrl());
             this.logger.info("Loaded database " + driverType + " in " +
-                    stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms");
+                stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms");
         }
         catch (DatabaseException | SQLException exception) {
             throw new RuntimeException("Failed to connect to the database", exception);

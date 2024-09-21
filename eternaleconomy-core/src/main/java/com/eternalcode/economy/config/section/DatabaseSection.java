@@ -9,18 +9,18 @@ import eu.okaeri.configs.annotation.Comment;
 public class DatabaseSection extends OkaeriConfig implements DatabaseSettings {
 
     @Comment({"Type of the database driver (e.g., SQLITE, H2, MY_SQL, MARIA_DB, POSTGRE_SQL).", "Determines the "
-            + "database type "
-            + "to be used."})
+        + "database type "
+        + "to be used."})
     public DatabaseDriverType driverType = DatabaseDriverType.SQLITE;
- 
+
     @Comment({"Hostname of the database server.", "For local databases, this is usually 'localhost'."})
     public String hostname = "localhost";
 
     @Comment({"Port number of the database server. Common ports:",
-             " - MySQL: 3306",
-             " - PostgreSQL: 5432",
-             " - H2: Not applicable (file-based)",
-             " - SQLite: Not applicable (file-based)"})
+              " - MySQL: 3306",
+              " - PostgreSQL: 5432",
+              " - H2: Not applicable (file-based)",
+              " - SQLite: Not applicable (file-based)"})
     public int port = 3306;
 
     @Comment("Name of the database to connect to. This is the name of the specific database instance.")

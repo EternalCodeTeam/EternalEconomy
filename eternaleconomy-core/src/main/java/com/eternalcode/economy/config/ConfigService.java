@@ -28,14 +28,14 @@ public class ConfigService {
         YamlSnakeYamlConfigurer yamlConfigurer = new YamlSnakeYamlConfigurer(this.createYaml());
 
         NoticeResolverRegistry noticeRegistry = NoticeResolverDefaults.createRegistry()
-                        .registerResolver(new SoundBukkitResolver());
+            .registerResolver(new SoundBukkitResolver());
         configFile
-                .withConfigurer(yamlConfigurer, new SerdesCommons())
-                .withConfigurer(yamlConfigurer, new MultificationSerdesPack(noticeRegistry))
-                .withBindFile(file)
-                .withRemoveOrphans(true)
-                .saveDefaults()
-                .load(true);
+            .withConfigurer(yamlConfigurer, new SerdesCommons())
+            .withConfigurer(yamlConfigurer, new MultificationSerdesPack(noticeRegistry))
+            .withBindFile(file)
+            .withRemoveOrphans(true)
+            .saveDefaults()
+            .load(true);
 
         this.configs.add(configFile);
 

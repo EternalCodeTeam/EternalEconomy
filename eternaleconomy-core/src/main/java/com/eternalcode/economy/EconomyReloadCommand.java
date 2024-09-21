@@ -17,8 +17,8 @@ import org.bukkit.command.CommandSender;
 public class EconomyReloadCommand {
 
     private static final Notice RELOADED = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> "
-            + "<dark_gray>➤</dark_gray> <white>Reloaded "
-            + "EternalEconomy in <gradient:#00FFA2:#34AE00>{TIME}ms!</gradient></white>");
+        + "<dark_gray>➤</dark_gray> <white>Reloaded "
+        + "EternalEconomy in <gradient:#00FFA2:#34AE00>{TIME}ms!</gradient></white>");
 
     private final ConfigService configService;
     private final NoticeService noticeService;
@@ -36,9 +36,9 @@ public class EconomyReloadCommand {
 
         Duration elapsed = stopwatch.elapsed();
         this.noticeService.create()
-                .notice(RELOADED)
-                .placeholder("{TIME}", String.valueOf(elapsed.toMillis()))
-                .viewer(sender)
-                .send();
+            .notice(RELOADED)
+            .placeholder("{TIME}", String.valueOf(elapsed.toMillis()))
+            .viewer(sender)
+            .send();
     }
 }

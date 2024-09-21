@@ -50,7 +50,9 @@ public abstract class AbstractRepositoryOrmLite {
         return this.action(type, Dao::queryForAll);
     }
 
-    protected <T, ID, R> CompletableFuture<R> action(Class<T> type, ThrowingFunction<Dao<T, ID>, R, SQLException> action) {
+    protected <T, ID, R> CompletableFuture<R> action(
+        Class<T> type,
+        ThrowingFunction<Dao<T, ID>, R, SQLException> action) {
         CompletableFuture<R> completableFuture = new CompletableFuture<>();
 
         this.scheduler.async(() -> {
@@ -66,5 +68,4 @@ public abstract class AbstractRepositoryOrmLite {
 
         return completableFuture;
     }
-
 }

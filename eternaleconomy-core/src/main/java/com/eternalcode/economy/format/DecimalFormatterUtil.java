@@ -43,7 +43,7 @@ final class DecimalFormatterUtil {
         double fractionalPart = getFractionalPart(amount);
         fractionalPart *= 100;
         fractionalPart =
-                (fractionalPart < 99 && fractionalPart % 1 >= 0.5) ? ceil(fractionalPart) : floor(fractionalPart);
+            (fractionalPart < 99 && fractionalPart % 1 >= 0.5) ? ceil(fractionalPart) : floor(fractionalPart);
         return Long.toString((long) fractionalPart).length();
     }
 

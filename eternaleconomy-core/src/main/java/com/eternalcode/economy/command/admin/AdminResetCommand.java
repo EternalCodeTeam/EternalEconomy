@@ -19,8 +19,8 @@ public class AdminResetCommand {
     private final NoticeService noticeService;
 
     public AdminResetCommand(
-            AccountPaymentService accountPaymentService,
-            NoticeService noticeService
+        AccountPaymentService accountPaymentService,
+        NoticeService noticeService
     ) {
         this.accountPaymentService = accountPaymentService;
         this.noticeService = noticeService;
@@ -31,15 +31,15 @@ public class AdminResetCommand {
         this.accountPaymentService.resetBalance(receiver);
 
         this.noticeService.create()
-                .notice(notice -> notice.admin.reset)
-                .placeholder("{PLAYER}", receiver.name())
-                .viewer(sender)
-                .send();
+            .notice(notice -> notice.admin.reset)
+            .placeholder("{PLAYER}", receiver.name())
+            .viewer(sender)
+            .send();
 
         this.noticeService.create()
-                .notice(notice -> notice.player.reset)
-                .placeholder("{PLAYER}", receiver.name())
-                .player(receiver.uuid())
-                .send();
+            .notice(notice -> notice.player.reset)
+            .placeholder("{PLAYER}", receiver.name())
+            .player(receiver.uuid())
+            .send();
     }
 }

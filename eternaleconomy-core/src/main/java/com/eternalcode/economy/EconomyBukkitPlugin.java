@@ -41,8 +41,10 @@ import com.google.common.base.Stopwatch;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.jakarta.LiteJakartaExtension;
-import jakarta.validation.Validation;
 import jakarta.validation.constraints.Positive;
+import java.io.File;
+import java.math.BigDecimal;
+import java.time.Duration;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -51,10 +53,6 @@ import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.time.Duration;
 
 @SuppressWarnings("unused")
 public class EconomyBukkitPlugin extends JavaPlugin {
@@ -73,10 +71,10 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
         this.audienceProvider = BukkitAudiences.create(this);
         MiniMessage miniMessage = MiniMessage.builder()
-                .postProcessor(new AdventureUrlPostProcessor())
-                .postProcessor(new AdventureLegacyColorPostProcessor())
-                .preProcessor(new AdventureLegacyColorPreProcessor())
-                .build();
+            .postProcessor(new AdventureUrlPostProcessor())
+            .postProcessor(new AdventureLegacyColorPostProcessor())
+            .preProcessor(new AdventureLegacyColorPreProcessor())
+            .build();
 
         File dataFolder = this.getDataFolder();
 
@@ -97,7 +95,8 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
 
-        VaultEconomyProvider vaultEconomyProvider = new VaultEconomyProvider(this, decimalFormatter, accountPaymentService, accountManager);
+        VaultEconomyProvider vaultEconomyProvider =
+            new VaultEconomyProvider(this, decimalFormatter, accountPaymentService, accountManager);
         server.getServicesManager().register(Economy.class, vaultEconomyProvider, this, ServicePriority.Highest);
 
         this.liteCommands = LiteBukkitFactory.builder("eternaleconomy", this, server)
@@ -105,20 +104,23 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 .violationMessage(Positive.class, BigDecimal.class, new InvalidBigDecimalMessage<>(noticeService))
             )
 
-            .annotations(extension -> extension.validator(Account.class, NotSender.class, new NotSenderValidator(messageConfig)))
+            .annotations(extension -> extension.validator(
+                Account.class,
+                NotSender.class,
+                new NotSenderValidator(messageConfig)))
 
             .missingPermission(new MissingPermissionHandlerImpl(noticeService))
             .invalidUsage(new InvalidUsageHandlerImpl(noticeService))
 
             .commands(
-                    new AdminAddCommand(accountPaymentService, decimalFormatter, noticeService),
-                    new AdminRemoveCommand(accountPaymentService, decimalFormatter, noticeService),
-                    new AdminSetCommand(accountPaymentService, decimalFormatter, noticeService),
-                    new AdminResetCommand(accountPaymentService, noticeService),
-                    new AdminBalanceCommand(noticeService, decimalFormatter),
-                    new MoneyBalanceCommand(noticeService, decimalFormatter),
-                    new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService),
-                    new EconomyReloadCommand(configService, noticeService)
+                new AdminAddCommand(accountPaymentService, decimalFormatter, noticeService),
+                new AdminRemoveCommand(accountPaymentService, decimalFormatter, noticeService),
+                new AdminSetCommand(accountPaymentService, decimalFormatter, noticeService),
+                new AdminResetCommand(accountPaymentService, noticeService),
+                new AdminBalanceCommand(noticeService, decimalFormatter),
+                new MoneyBalanceCommand(noticeService, decimalFormatter),
+                new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService),
+                new EconomyReloadCommand(configService, noticeService)
             )
 
             .context(Account.class, new AccountContext(accountManager, messageConfig))
@@ -132,11 +134,11 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         server.getPluginManager().registerEvents(new AccountController(accountManager), this);
 
         BridgeManager bridgeManager = new BridgeManager(
-                this.getDescription(),
-                accountManager,
-                decimalFormatter,
-                server,
-                this.getLogger()
+            this.getDescription(),
+            accountManager,
+            decimalFormatter,
+            server,
+            this.getLogger()
         );
         bridgeManager.init();
 
@@ -158,5 +160,4 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             this.databaseManager.close();
         }
     }
-
 }

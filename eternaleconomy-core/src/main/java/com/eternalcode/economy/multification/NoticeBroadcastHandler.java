@@ -9,8 +9,10 @@ import org.bukkit.command.CommandSender;
 public class NoticeBroadcastHandler implements ResultHandler<CommandSender, NoticeBroadcast> {
 
     @Override
-    public void handle(Invocation<CommandSender> invocation, NoticeBroadcast result, ResultHandlerChain<CommandSender> chain) {
+    public void handle(
+        Invocation<CommandSender> invocation,
+        NoticeBroadcast result,
+        ResultHandlerChain<CommandSender> chain) {
         result.send();
     }
-
 }

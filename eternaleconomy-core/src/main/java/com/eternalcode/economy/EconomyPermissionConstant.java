@@ -12,5 +12,4 @@ public class EconomyPermissionConstant {
     public static final String PLAYER_BALANCE_PERMISSION = "eternaleconomy.player.balance";
     public static final String PLAYER_BALANCE_OTHER_PERMISSION = "eternaleconomy.player.balance.other";
     public static final String PLAYER_PAY_PERMISSION = "eternaleconomy.player.pay";
-
 }

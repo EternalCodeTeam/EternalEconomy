@@ -36,8 +36,8 @@ public interface ThrowingFunction<T, R, E extends Throwable> {
      */
     @SuppressWarnings("unchecked")
     static <T, R, E extends Throwable> Function<T, R> asFunction(
-            panda.std.function.ThrowingFunction<T, R, E> function,
-            Function<E, R> exceptionHandler) {
+        panda.std.function.ThrowingFunction<T, R, E> function,
+        Function<E, R> exceptionHandler) {
         return value -> {
             try {
                 return function.apply(value);

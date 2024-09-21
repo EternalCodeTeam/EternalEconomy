@@ -20,5 +20,4 @@ public class DecimalUnit implements Serializable {
     public char getSuffix() {
         return this.suffix;
     }
-
 }

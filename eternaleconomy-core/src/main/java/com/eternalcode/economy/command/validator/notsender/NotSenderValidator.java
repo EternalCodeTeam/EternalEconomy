@@ -19,12 +19,16 @@ public class NotSenderValidator implements AnnotatedValidator<CommandSender, Acc
     }
 
     @Override
-    public ValidatorResult validate(Invocation<CommandSender> invocation, CommandExecutor<CommandSender> commandExecutor, Requirement<Account> requirement, Account account, NotSender notSender) {
+    public ValidatorResult validate(
+        Invocation<CommandSender> invocation,
+        CommandExecutor<CommandSender> commandExecutor,
+        Requirement<Account> requirement,
+        Account account,
+        NotSender notSender) {
         if (invocation.sender() instanceof Player sender && sender.getUniqueId().equals(account.uuid())) {
             return ValidatorResult.invalid(this.config.notSender);
         }
 
         return ValidatorResult.valid();
     }
-
 }

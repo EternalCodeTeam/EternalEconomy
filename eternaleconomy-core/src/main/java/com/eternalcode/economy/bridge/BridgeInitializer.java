@@ -4,5 +4,4 @@ package com.eternalcode.economy.bridge;
 public interface BridgeInitializer {
 
     void initialize();
-
 }

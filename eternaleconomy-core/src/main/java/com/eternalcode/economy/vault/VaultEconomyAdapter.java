@@ -1,12 +1,11 @@
 package com.eternalcode.economy.vault;
 
+import java.util.Collections;
+import java.util.List;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Vault has many deprecated and unusable methods in the Economy interface.

@@ -7,5 +7,4 @@ public interface DecimalFormatter {
     String format(BigDecimal amount);
 
     String format(double amount);
-
 }

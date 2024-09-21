@@ -23,9 +23,9 @@ public class AdminRemoveCommand {
     private final NoticeService noticeService;
 
     public AdminRemoveCommand(
-            AccountPaymentService accountPaymentService,
-            DecimalFormatter decimalFormatter,
-            NoticeService noticeService
+        AccountPaymentService accountPaymentService,
+        DecimalFormatter decimalFormatter,
+        NoticeService noticeService
     ) {
         this.accountPaymentService = accountPaymentService;
         this.decimalFormatter = decimalFormatter;
@@ -37,11 +37,11 @@ public class AdminRemoveCommand {
         if (receiver.balance().compareTo(amount) < 0) {
             BigDecimal subtract = amount.subtract(receiver.balance());
             this.noticeService.create()
-                    .notice(notice -> notice.admin.insufficientFunds)
-                    .placeholder("{PLAYER}", receiver.name())
-                    .placeholder("{MISSING_BALANCE}", this.decimalFormatter.format(subtract))
-                    .viewer(sender)
-                    .send();
+                .notice(notice -> notice.admin.insufficientFunds)
+                .placeholder("{PLAYER}", receiver.name())
+                .placeholder("{MISSING_BALANCE}", this.decimalFormatter.format(subtract))
+                .viewer(sender)
+                .send();
 
             return;
         }
@@ -49,17 +49,17 @@ public class AdminRemoveCommand {
         this.accountPaymentService.removeBalance(receiver, amount);
 
         this.noticeService.create()
-                .notice(notice -> notice.admin.removed)
-                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-                .placeholder("{PLAYER}", receiver.name())
-                .viewer(sender)
-                .send();
+            .notice(notice -> notice.admin.removed)
+            .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+            .placeholder("{PLAYER}", receiver.name())
+            .viewer(sender)
+            .send();
 
         this.noticeService.create()
-                .notice(notice -> notice.player.removed)
-                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-                .placeholder("{PLAYER}", receiver.name())
-                .player(receiver.uuid())
-                .send();
+            .notice(notice -> notice.player.removed)
+            .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+            .placeholder("{PLAYER}", receiver.name())
+            .player(receiver.uuid())
+            .send();
     }
 }

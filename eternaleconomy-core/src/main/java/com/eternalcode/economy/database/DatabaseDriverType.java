@@ -6,5 +6,5 @@ public enum DatabaseDriverType {
     MARIA_DB,
     POSTGRE_SQL,
     H2,
-    SQLITE;
+    SQLITE
 }

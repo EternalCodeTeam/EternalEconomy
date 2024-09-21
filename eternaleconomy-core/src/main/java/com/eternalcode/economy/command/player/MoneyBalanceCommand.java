@@ -42,5 +42,4 @@ public class MoneyBalanceCommand {
             .viewer(sender)
             .send();
     }
-
 }

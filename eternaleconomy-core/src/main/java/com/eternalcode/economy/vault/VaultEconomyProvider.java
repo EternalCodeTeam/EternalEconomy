@@ -18,10 +18,10 @@ public class VaultEconomyProvider extends VaultEconomyAdapter {
     private final AccountManager accountManager;
 
     public VaultEconomyProvider(
-            Plugin plugin,
-            DecimalFormatter formatter,
-            AccountPaymentService accountPaymentService,
-            AccountManager accountManager
+        Plugin plugin,
+        DecimalFormatter formatter,
+        AccountPaymentService accountPaymentService,
+        AccountManager accountManager
     ) {
         this.plugin = plugin;
         this.formatter = formatter;

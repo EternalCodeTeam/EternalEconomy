@@ -58,9 +58,9 @@ class CustomSnakeYamlRepresenter extends Representer {
         @Override
         public Node representData(Object data) {
             return representSequence(
-                    getTag(data.getClass(), Tag.SEQ),
-                    (Iterable<?>) data,
-                    DumperOptions.FlowStyle.BLOCK);
+                getTag(data.getClass(), Tag.SEQ),
+                (Iterable<?>) data,
+                DumperOptions.FlowStyle.BLOCK);
         }
     }
 }

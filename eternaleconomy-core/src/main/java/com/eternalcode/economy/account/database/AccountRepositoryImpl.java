@@ -13,8 +13,8 @@ import java.util.concurrent.CompletableFuture;
 public class AccountRepositoryImpl extends AbstractRepositoryOrmLite implements AccountRepository {
 
     public AccountRepositoryImpl(
-            DatabaseManager databaseManager,
-            Scheduler scheduler
+        DatabaseManager databaseManager,
+        Scheduler scheduler
     ) {
         super(databaseManager, scheduler);
 
@@ -39,10 +39,10 @@ public class AccountRepositoryImpl extends AbstractRepositoryOrmLite implements 
     @Override
     public CompletableFuture<Collection<Account>> getAllAccounts() {
         return this.selectAll(AccountWrapper.class)
-                .thenApply(accountWrappers -> accountWrappers.stream()
-                        .map(accountWrapper -> accountWrapper.toAccount())
-                        .toList()
-                );
+            .thenApply(accountWrappers -> accountWrappers.stream()
+                .map(accountWrapper -> accountWrapper.toAccount())
+                .toList()
+            );
     }
 }
 

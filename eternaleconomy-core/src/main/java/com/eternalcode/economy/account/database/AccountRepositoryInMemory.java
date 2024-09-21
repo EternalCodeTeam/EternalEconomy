@@ -27,5 +27,4 @@ public class AccountRepositoryInMemory implements AccountRepository {
     public CompletableFuture<Collection<Account>> getAllAccounts() {
         return CompletableFuture.completedFuture(Collections.unmodifiableCollection(accounts.values()));
     }
-
 }

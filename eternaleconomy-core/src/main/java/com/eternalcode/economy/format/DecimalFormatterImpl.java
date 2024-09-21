@@ -1,15 +1,14 @@
 package com.eternalcode.economy.format;
 
-import com.eternalcode.economy.config.implementation.PluginConfig;
-
-import java.math.BigDecimal;
-import java.util.List;
-
 import static com.eternalcode.economy.format.DecimalFormatterUtil.getFractionalPart;
 import static com.eternalcode.economy.format.DecimalFormatterUtil.getIntegralPart;
 import static com.eternalcode.economy.format.DecimalFormatterUtil.getLengthOfIntegralPart;
 import static java.lang.Math.ceil;
 import static java.lang.Math.floor;
+
+import com.eternalcode.economy.config.implementation.PluginConfig;
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @author Rafał "shitzuu" Chomczyk
@@ -41,7 +40,7 @@ public class DecimalFormatterImpl implements DecimalFormatter {
 
         fractionalPart *= 100;
         fractionalPart =
-                (fractionalPart < 99 && fractionalPart % 1 >= 0.5) ? ceil(fractionalPart) : floor(fractionalPart);
+            (fractionalPart < 99 && fractionalPart % 1 >= 0.5) ? ceil(fractionalPart) : floor(fractionalPart);
         return (long) amount + TRUNCATED_AMOUNT_DELIMITER + (long) fractionalPart;
     }
 
@@ -62,9 +61,9 @@ public class DecimalFormatterImpl implements DecimalFormatter {
         DecimalUnit decimalUnit = units.get(nearestScaleDivider);
 
         return getFormattedAmountWithSuffix(
-                amount,
-                decimalUnit.getFactor(),
-                decimalUnit.getSuffix());
+            amount,
+            decimalUnit.getFactor(),
+            decimalUnit.getSuffix());
     }
 
     @Override

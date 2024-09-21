@@ -23,9 +23,9 @@ public class AdminAddCommand {
     private final NoticeService noticeService;
 
     public AdminAddCommand(
-            AccountPaymentService accountPaymentService,
-            DecimalFormatter decimalFormatter,
-            NoticeService noticeService
+        AccountPaymentService accountPaymentService,
+        DecimalFormatter decimalFormatter,
+        NoticeService noticeService
     ) {
         this.accountPaymentService = accountPaymentService;
         this.decimalFormatter = decimalFormatter;
@@ -37,17 +37,17 @@ public class AdminAddCommand {
         this.accountPaymentService.addBalance(receiver, amount);
 
         this.noticeService.create()
-                .notice(notice -> notice.admin.added)
-                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-                .placeholder("{PLAYER}", receiver.name())
-                .viewer(sender)
-                .send();
+            .notice(notice -> notice.admin.added)
+            .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+            .placeholder("{PLAYER}", receiver.name())
+            .viewer(sender)
+            .send();
 
         this.noticeService.create()
-                .notice(notice -> notice.player.added)
-                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-                .placeholder("{PLAYER}", receiver.name())
-                .player(receiver.uuid())
-                .send();
+            .notice(notice -> notice.player.added)
+            .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+            .placeholder("{PLAYER}", receiver.name())
+            .player(receiver.uuid())
+            .send();
     }
 }

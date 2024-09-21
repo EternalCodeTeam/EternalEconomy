@@ -28,15 +28,15 @@ public class AccountArgument extends ArgumentResolver<CommandSender, Account> {
 
     @Override
     protected ParseResult<Account> parse(
-            Invocation<CommandSender> invocation,
-            Argument<Account> argument,
-            String string) {
+        Invocation<CommandSender> invocation,
+        Argument<Account> argument,
+        String string) {
         Account account = this.accountManager.getAccount(string);
 
         if (account == null) {
             NoticeBroadcast invalidPlayerNotice = this.noticeService.create()
-                    .notice(messageConfig -> messageConfig.invalidPlayer)
-                    .viewer(invocation.sender());
+                .notice(messageConfig -> messageConfig.invalidPlayer)
+                .viewer(invocation.sender());
 
             return ParseResult.failure(invalidPlayerNotice);
         }
@@ -46,9 +46,9 @@ public class AccountArgument extends ArgumentResolver<CommandSender, Account> {
 
     @Override
     public SuggestionResult suggest(
-            Invocation<CommandSender> invocation,
-            Argument<Account> argument,
-            SuggestionContext context
+        Invocation<CommandSender> invocation,
+        Argument<Account> argument,
+        SuggestionContext context
     ) {
         String input = context.getCurrent().multilevel();
 

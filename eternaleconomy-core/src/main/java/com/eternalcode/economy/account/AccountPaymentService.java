@@ -1,7 +1,6 @@
 package com.eternalcode.economy.account;
 
 import com.eternalcode.economy.config.implementation.PluginConfig;
-
 import java.math.BigDecimal;
 
 public class AccountPaymentService {
@@ -10,7 +9,7 @@ public class AccountPaymentService {
     private final PluginConfig config;
 
     public AccountPaymentService(
-            AccountManager accountManager, PluginConfig config
+        AccountManager accountManager, PluginConfig config
     ) {
         this.accountManager = accountManager;
         this.config = config;
