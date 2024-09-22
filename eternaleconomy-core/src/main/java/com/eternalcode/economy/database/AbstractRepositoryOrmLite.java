@@ -1,7 +1,7 @@
 package com.eternalcode.economy.database;
 
 import com.eternalcode.commons.scheduler.Scheduler;
-import com.eternalcode.economy.database.util.ThrowingFunction;
+import com.eternalcode.economy.shared.ThrowingFunction;
 import com.j256.ormlite.dao.Dao;
 import java.sql.SQLException;
 import java.util.List;
