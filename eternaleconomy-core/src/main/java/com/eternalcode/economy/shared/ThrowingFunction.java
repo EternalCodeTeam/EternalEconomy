@@ -1,4 +1,4 @@
-package com.eternalcode.economy.database.util;
+package com.eternalcode.economy.shared;
 
 /*
  * Copyright (c) 2021 dzikoysk
@@ -21,7 +21,7 @@ import java.util.function.Function;
 @FunctionalInterface
 public interface ThrowingFunction<T, R, E extends Throwable> {
 
-    static <T, S extends Exception> panda.std.function.ThrowingFunction<T, T, S> identity() {
+    static <T, S extends Exception> ThrowingFunction<T, T, S> identity() {
         return t -> t;
     }
     /**
@@ -36,7 +36,7 @@ public interface ThrowingFunction<T, R, E extends Throwable> {
      */
     @SuppressWarnings("unchecked")
     static <T, R, E extends Throwable> Function<T, R> asFunction(
-        panda.std.function.ThrowingFunction<T, R, E> function,
+        ThrowingFunction<T, R, E> function,
         Function<E, R> exceptionHandler) {
         return value -> {
             try {

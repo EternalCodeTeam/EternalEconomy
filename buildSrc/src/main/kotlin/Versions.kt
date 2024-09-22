@@ -3,7 +3,7 @@ object Versions {
     const val SPIGOT_API = "1.19.4-R0.1-SNAPSHOT"
 
     const val OKAERI_CONFIGS = "5.0.3"
-    const val LITE_COMMANDS = "3.5.0-SNAPSHOT"
+    const val LITE_COMMANDS = "3.6.0-SNAPSHOT"
 
     const val ETERNALCODE_COMMONS = "1.1.4-SNAPSHOT"
     const val MULTIFICATION = "1.1.3"

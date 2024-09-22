@@ -1,6 +1,6 @@
 package com.eternalcode.economy.config.implementation;
 
-import com.eternalcode.economy.config.section.DatabaseSection;
+import com.eternalcode.economy.database.DatabaseConfig;
 import com.eternalcode.economy.format.DecimalUnit;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
@@ -15,7 +15,7 @@ public class PluginConfig extends OkaeriConfig {
     public Units units = new Units();
 
     @Comment("Database settings")
-    public DatabaseSection database = new DatabaseSection();
+    public DatabaseConfig database = new DatabaseConfig();
 
     @Comment("Default balance for new accounts")
     public BigDecimal defaultBalance = BigDecimal.valueOf(0.0);

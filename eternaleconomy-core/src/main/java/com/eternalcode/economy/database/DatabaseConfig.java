@@ -1,12 +1,10 @@
-package com.eternalcode.economy.config.section;
+package com.eternalcode.economy.database;
 
-import com.eternalcode.economy.database.DatabaseDriverType;
-import com.eternalcode.economy.database.DatabaseSettings;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 
 @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
-public class DatabaseSection extends OkaeriConfig implements DatabaseSettings {
+public class DatabaseConfig extends OkaeriConfig implements DatabaseSettings {
 
     @Comment({"Type of the database driver (e.g., SQLITE, H2, MY_SQL, MARIA_DB, POSTGRE_SQL).", "Determines the "
         + "database type "
