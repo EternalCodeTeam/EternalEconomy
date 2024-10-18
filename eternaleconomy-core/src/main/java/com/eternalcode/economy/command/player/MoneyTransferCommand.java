@@ -4,6 +4,7 @@ import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.command.validator.notsender.NotSender;
+import com.eternalcode.economy.config.implementation.PluginConfig;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import dev.rollczi.litecommands.annotations.argument.Arg;
@@ -21,15 +22,18 @@ public class MoneyTransferCommand {
     private final AccountPaymentService accountPaymentService;
     private final DecimalFormatter decimalFormatter;
     private final NoticeService noticeService;
+    private PluginConfig pluginConfig;
 
     public MoneyTransferCommand(
         AccountPaymentService accountPaymentService,
         DecimalFormatter decimalFormatter,
-        NoticeService noticeService
+        NoticeService noticeService,
+        PluginConfig pluginConfig
     ) {
         this.accountPaymentService = accountPaymentService;
         this.decimalFormatter = decimalFormatter;
         this.noticeService = noticeService;
+        this.pluginConfig = pluginConfig;
     }
 
     @Execute
@@ -39,6 +43,16 @@ public class MoneyTransferCommand {
             this.noticeService.create()
                 .notice(notice -> notice.player.insufficientBalance)
                 .placeholder("{MISSING_BALANCE}", this.decimalFormatter.format(subtract))
+                .player(payer.uuid())
+                .send();
+
+            return;
+        }
+
+        if (amount.compareTo(this.pluginConfig.transactionLimit) > 0) {
+            this.noticeService.create()
+                .notice(notice -> notice.player.transferLimit)
+                .placeholder("{LIMIT}", this.decimalFormatter.format(this.pluginConfig.transactionLimit))
                 .player(payer.uuid())
                 .send();
 

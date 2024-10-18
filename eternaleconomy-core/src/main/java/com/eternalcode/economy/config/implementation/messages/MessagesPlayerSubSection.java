@@ -27,4 +27,6 @@ public class MessagesPlayerSubSection extends OkaeriConfig {
     public Notice transferReceived = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> "
         + "<dark_gray>➤</dark_gray> <white>Received <gradient:#00FFA2:#34AE00>{AMOUNT}</gradient> from "
         + "<gradient:#00FFA2:#34AE00>{PLAYER}</gradient>.</white>");
+    public Notice transferLimit = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
+        + " <white>Transaction limit is <gradient:#00FFA2:#34AE00>{LIMIT}</gradient>.</white>");
 }
