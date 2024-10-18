@@ -49,7 +49,7 @@ public class MoneyTransferCommand {
             return;
         }
 
-        if(amount.compareTo(this.pluginConfig.transactionLimit) > 0) {
+        if (amount.compareTo(this.pluginConfig.transactionLimit) > 0) {
             this.noticeService.create()
                 .notice(notice -> notice.player.transferLimit)
                 .placeholder("{LIMIT}", this.decimalFormatter.format(this.pluginConfig.transactionLimit))
