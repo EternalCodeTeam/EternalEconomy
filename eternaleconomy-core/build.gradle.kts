@@ -78,6 +78,9 @@ bukkit {
 
 tasks.runServer {
     minecraftVersion("1.21.1")
+    downloadPlugins {
+        github("MilkBowl", "Vault", "1.7.3", "Vault.jar")
+    }
 }
 
 tasks.shadowJar {
