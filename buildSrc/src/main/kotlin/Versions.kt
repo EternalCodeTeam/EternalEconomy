@@ -3,7 +3,7 @@ object Versions {
     const val SPIGOT_API = "1.19.4-R0.1-SNAPSHOT"
 
     const val OKAERI_CONFIGS = "5.0.5"
-    const val LITE_COMMANDS = "3.7.1"
+    const val LITE_COMMANDS = "3.8.0"
 
     const val ETERNALCODE_COMMONS = "1.1.4"
     const val MULTIFICATION = "1.1.4"
@@ -17,7 +17,7 @@ object Versions {
 
     const val PLACEHOLDER_API = "2.11.6"
 
-    const val MARIA_DB = "3.4.1"
+    const val MARIA_DB = "3.5.0"
     const val POSTGRESQL = "42.7.4"
     const val H2 = "2.3.232"
     const val ORMLITE = "6.1"
