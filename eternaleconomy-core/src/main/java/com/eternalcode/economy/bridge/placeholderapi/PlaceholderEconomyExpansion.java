@@ -54,7 +54,7 @@ public class PlaceholderEconomyExpansion extends PlaceholderExpansion implements
 
         switch (params) {
             case "balance" -> {
-                return account.balance().toString();
+                return String.format("%.2f", account.balance());
             }
             case "balance_formatted" -> {
                 return this.decimalFormatter.format(account.balance());
