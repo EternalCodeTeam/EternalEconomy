@@ -18,6 +18,8 @@ import com.eternalcode.economy.command.admin.AdminResetCommand;
 import com.eternalcode.economy.command.admin.AdminSetCommand;
 import com.eternalcode.economy.command.argument.AccountArgument;
 import com.eternalcode.economy.command.context.AccountContext;
+import com.eternalcode.economy.command.cooldown.CommandCooldownEditor;
+import com.eternalcode.economy.command.cooldown.CommandCooldownMessage;
 import com.eternalcode.economy.command.handler.InvalidUsageHandlerImpl;
 import com.eternalcode.economy.command.handler.MissingPermissionHandlerImpl;
 import com.eternalcode.economy.command.message.InvalidBigDecimalMessage;
@@ -26,6 +28,7 @@ import com.eternalcode.economy.command.player.MoneyTransferCommand;
 import com.eternalcode.economy.command.validator.notsender.NotSender;
 import com.eternalcode.economy.command.validator.notsender.NotSenderValidator;
 import com.eternalcode.economy.config.ConfigService;
+import com.eternalcode.economy.config.implementation.CommandsConfig;
 import com.eternalcode.economy.config.implementation.PluginConfig;
 import com.eternalcode.economy.config.implementation.messages.MessageConfig;
 import com.eternalcode.economy.database.DatabaseManager;
@@ -41,6 +44,7 @@ import com.google.common.base.Stopwatch;
 import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.jakarta.LiteJakartaExtension;
+import dev.rollczi.litecommands.message.LiteMessages;
 import jakarta.validation.constraints.Positive;
 import java.io.File;
 import java.math.BigDecimal;
@@ -81,6 +85,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         ConfigService configService = new ConfigService();
         MessageConfig messageConfig = configService.create(MessageConfig.class, new File(dataFolder, "messages.yml"));
         PluginConfig pluginConfig = configService.create(PluginConfig.class, new File(dataFolder, "config.yml"));
+        CommandsConfig commandsConfig = configService.create(CommandsConfig.class, new File(dataFolder, "commands.yml"));
 
         NoticeService noticeService = new NoticeService(messageConfig, this.audienceProvider, miniMessage);
 
@@ -112,6 +117,9 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             .missingPermission(new MissingPermissionHandlerImpl(noticeService))
             .invalidUsage(new InvalidUsageHandlerImpl(noticeService))
 
+            .message(LiteMessages.COMMAND_COOLDOWN, new CommandCooldownMessage(noticeService, commandsConfig))
+            .editorGlobal(new CommandCooldownEditor(commandsConfig))
+
             .commands(
                 new AdminAddCommand(accountPaymentService, decimalFormatter, noticeService),
                 new AdminRemoveCommand(accountPaymentService, decimalFormatter, noticeService),
@@ -119,7 +127,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 new AdminResetCommand(accountPaymentService, noticeService),
                 new AdminBalanceCommand(noticeService, decimalFormatter),
                 new MoneyBalanceCommand(noticeService, decimalFormatter),
-                new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService),
+                new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService, pluginConfig),
                 new EconomyReloadCommand(configService, noticeService)
             )
 
@@ -138,6 +146,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             accountManager,
             decimalFormatter,
             server,
+            this,
             this.getLogger()
         );
         bridgeManager.init();

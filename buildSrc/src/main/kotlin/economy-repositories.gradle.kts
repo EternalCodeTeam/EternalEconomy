@@ -12,4 +12,5 @@ repositories {
     maven("https://storehouse.okaeri.eu/repository/maven-public/")
     maven("https://jitpack.io")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
 }
