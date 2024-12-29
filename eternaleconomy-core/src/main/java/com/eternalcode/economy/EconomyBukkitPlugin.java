@@ -146,6 +146,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             accountManager,
             decimalFormatter,
             server,
+            this,
             this.getLogger()
         );
         bridgeManager.init();

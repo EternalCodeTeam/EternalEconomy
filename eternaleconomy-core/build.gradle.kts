@@ -1,3 +1,5 @@
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+
 plugins {
     `economy-java`
     `economy-repositories`
@@ -68,6 +70,10 @@ bukkit {
     author = "EternalCodeTeam"
     name = "EternalEconomy"
     website = "www.eternalcode.pl"
+    // Enabling this option previously caused issues where the plugin was loaded before Vault,
+    // preventing the Vault Economy Provider from registering and causing dependent plugins to malfunction.
+    // Setting the load order to startup ensures the economy plugin is one of the first to load, avoiding these issues.
+    load = BukkitPluginDescription.PluginLoadOrder.STARTUP
     version = "${project.version}"
 
     depend = listOf("Vault")
