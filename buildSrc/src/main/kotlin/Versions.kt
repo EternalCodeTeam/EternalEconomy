@@ -21,5 +21,5 @@ object Versions {
     const val POSTGRESQL = "42.7.3"
     const val H2 = "2.1.214"
     const val ORMLITE = "6.1"
-    const val HIKARI_CP = "5.1.0"
+    const val HIKARI_CP = "6.2.1"
 }
