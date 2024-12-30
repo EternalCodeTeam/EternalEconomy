@@ -8,7 +8,7 @@ object Versions {
     const val ETERNALCODE_COMMONS = "1.1.5"
     const val MULTIFICATION = "1.1.4"
 
-    const val JETBRAINS_ANNOTATIONS = "24.1.0"
+    const val JETBRAINS_ANNOTATIONS = "26.0.1"
 
     const val ADVENTURE_PLATFORM_BUKKIT = "4.3.4"
     const val ADVENTURE_API = "4.17.0"
@@ -21,5 +21,5 @@ object Versions {
     const val POSTGRESQL = "42.7.4"
     const val H2 = "2.1.214"
     const val ORMLITE = "6.1"
-    const val HIKARI_CP = "5.1.0"
+    const val HIKARI_CP = "6.2.1"
 }
