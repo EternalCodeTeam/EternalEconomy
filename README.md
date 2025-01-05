@@ -1,1 +1,4 @@
-[WIP] Comprehensive economy system with balance tracking, payment limits, and server-wide sync.
+<div align="center">
+
+![readme-banner.png](https://github.com/EternalCodeTeam/EternalEconomy/blob/master/assets/readme-banner.png?raw=true)
+</div>
