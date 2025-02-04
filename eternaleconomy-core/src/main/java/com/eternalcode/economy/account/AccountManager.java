@@ -30,14 +30,6 @@ public class AccountManager {
         return accountManager;
     }
 
-    public void test() {
-        Random random = new Random();
-        for (int i = 0; i < 20; i++) {
-            Account account = new Account(UUID.randomUUID(), "Account" + i, BigDecimal.valueOf(random.nextInt(100)));
-            save(account);
-        }
-    }
-
     public Account getAccount(UUID uuid) {
         return this.accountByUniqueId.get(uuid);
     }
