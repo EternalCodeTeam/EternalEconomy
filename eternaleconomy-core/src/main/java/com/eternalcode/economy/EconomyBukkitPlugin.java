@@ -25,6 +25,7 @@ import com.eternalcode.economy.command.handler.MissingPermissionHandlerImpl;
 import com.eternalcode.economy.command.message.InvalidBigDecimalMessage;
 import com.eternalcode.economy.command.player.MoneyBalanceCommand;
 import com.eternalcode.economy.command.player.MoneyTransferCommand;
+import com.eternalcode.economy.command.player.TopBalanceCommand;
 import com.eternalcode.economy.command.validator.notsender.NotSender;
 import com.eternalcode.economy.command.validator.notsender.NotSenderValidator;
 import com.eternalcode.economy.config.ConfigService;
@@ -128,7 +129,8 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 new AdminBalanceCommand(noticeService, decimalFormatter),
                 new MoneyBalanceCommand(noticeService, decimalFormatter),
                 new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService, pluginConfig),
-                new EconomyReloadCommand(configService, noticeService)
+                new EconomyReloadCommand(configService, noticeService),
+                new TopBalanceCommand(noticeService, decimalFormatter, accountManager, pluginConfig)
             )
 
             .context(Account.class, new AccountContext(accountManager, messageConfig))

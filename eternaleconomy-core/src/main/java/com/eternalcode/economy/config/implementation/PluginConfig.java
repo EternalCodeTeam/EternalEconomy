@@ -23,6 +23,9 @@ public class PluginConfig extends OkaeriConfig {
     @Comment("Limit on the amount of money sent in one transaction")
     public BigDecimal transactionLimit = BigDecimal.valueOf(1_000_000_000.0);
 
+    @Comment("Top balance size")
+    public int topBalanceSize = 10;
+
     public static class Units extends OkaeriConfig {
 
         public List<DecimalUnit> format = Arrays.asList(

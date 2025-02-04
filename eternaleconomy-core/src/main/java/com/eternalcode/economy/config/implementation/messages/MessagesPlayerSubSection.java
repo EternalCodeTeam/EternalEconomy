@@ -1,6 +1,7 @@
 package com.eternalcode.economy.config.implementation.messages;
 
 import com.eternalcode.multification.notice.Notice;
+import com.j256.ormlite.stmt.query.Not;
 import eu.okaeri.configs.OkaeriConfig;
 
 public class MessagesPlayerSubSection extends OkaeriConfig {
@@ -29,4 +30,10 @@ public class MessagesPlayerSubSection extends OkaeriConfig {
         + "<gradient:#00FFA2:#34AE00>{PLAYER}</gradient>.</white>");
     public Notice transferLimit = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
         + " <white>Transaction limit is <gradient:#00FFA2:#34AE00>{LIMIT}</gradient>.</white>");
+    public Notice topBalanceHeader = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
+        + " <white>Top balances:</white>");
+    public Notice topBalanceEntry = Notice.chat("<dark_gray>➤</dark_gray> <white>{POSITION}." +
+        " <gradient:#00FFA2:#34AE00>{PLAYER}</gradient> - <gradient:#00FFA2:#34AE00>{BALANCE}</gradient></white>");
+    public Notice balancePosition = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
+        + " <white>Your balance position is <gradient:#00FFA2:#34AE00>{POSITION}</gradient> with <gradient:#00FFA2:#34AE00>{BALANCE}</gradient>.</white>");
 }
