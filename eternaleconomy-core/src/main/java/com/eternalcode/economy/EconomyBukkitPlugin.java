@@ -99,7 +99,6 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
         AccountRepository accountRepository = new AccountRepositoryImpl(this.databaseManager, scheduler);
         AccountManager accountManager = AccountManager.create(accountRepository);
-        accountManager.test();
 
         LeaderboardService leaderboardService = new LeaderboardService(accountRepository, pluginConfig);
         server.getScheduler().runTaskTimerAsynchronously(
