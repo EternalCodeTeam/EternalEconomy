@@ -2,12 +2,12 @@ package com.eternalcode.economy.account;
 
 import com.eternalcode.economy.account.database.AccountRepository;
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.Collection;
+import java.util.Collections;
 
 public class AccountManager {
 
@@ -81,9 +81,5 @@ public class AccountManager {
         return Collections.unmodifiableCollection(
             this.accountIndex.subMap(prefix, true, prefix + Character.MAX_VALUE, true).values()
         );
-    }
-
-    public Collection<Account> getAccounts() {
-        return Collections.unmodifiableCollection(this.accountByUniqueId.values());
     }
 }
