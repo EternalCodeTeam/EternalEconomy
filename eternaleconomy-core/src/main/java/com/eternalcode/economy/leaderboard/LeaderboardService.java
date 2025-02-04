@@ -1,13 +1,16 @@
 package com.eternalcode.economy.leaderboard;
 
 import com.eternalcode.economy.account.Account;
-import com.eternalcode.economy.account.AccountPosition;
 import com.eternalcode.economy.account.database.AccountRepository;
 import com.eternalcode.economy.config.implementation.PluginConfig;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -21,34 +24,32 @@ public class LeaderboardService {
     public LeaderboardService(AccountRepository accountRepository, PluginConfig pluginConfig) {
         this.accountRepository = accountRepository;
         this.pluginConfig = pluginConfig;
-        this.loadTopAccounts();
+        this.loadLeaderboard();
         this.lastUpdated = Instant.now();
     }
 
-    private void loadTopAccounts() {
+    private void loadLeaderboard() {
         this.accountRepository.getAllAccounts().thenAccept(accounts -> {
             this.topAccounts.clear();
-            accounts.stream()
-                .collect(Collectors.toCollection(() ->
-                    new PriorityQueue<>((a1, a2) -> a2.balance().compareTo(a1.balance()))
-                ))
-                .stream()
-                .limit(this.pluginConfig.leaderboardSize)
-                .forEach(account -> {
-                    this.topAccounts.computeIfAbsent(account.balance(), (k) -> new ArrayList<>()).add(account);
-                });
+            this.topAccounts.putAll(accounts.stream()
+                .sorted((a1, a2) -> a2.balance().compareTo(a1.balance()))
+                .collect(Collectors.groupingBy(
+                    Account::balance,
+                    () -> new TreeMap<>(Comparator.reverseOrder()),
+                    Collectors.toList()
+                )));
         });
     }
 
-    public Collection<Account> getTopAccounts() {
+    public Collection<Account> getLeaderboard() {
         return this.topAccounts.values().stream()
             .flatMap(List::stream)
             .limit(this.pluginConfig.leaderboardSize)
             .toList();
     }
 
-    public void updateTopAccounts() {
-        loadTopAccounts();
+    public void updateLeaderboard() {
+        loadLeaderboard();
         this.lastUpdated = Instant.now();
     }
 
@@ -56,13 +57,14 @@ public class LeaderboardService {
         return this.lastUpdated;
     }
 
-    public CompletableFuture<AccountPosition> getAccountPosition(Account targetAccount) {
+    public CompletableFuture<LeaderboardPosition> getLeaderboardPosition(Account targetAccount) {
         return this.accountRepository.getAllAccounts().thenApply(accounts -> {
-            int position = (int) accounts.stream()
-                .filter(account -> account.balance().compareTo(targetAccount.balance()) > 0)
-                .count() + 1;
+            List<Account> sorted = accounts.stream()
+                .sorted(Comparator.comparing(Account::balance).reversed())
+                .toList();
+            int position = sorted.indexOf(targetAccount) + 1;
 
-            return new AccountPosition(targetAccount, position);
+            return new LeaderboardPosition(targetAccount, position);
         });
     }
 }

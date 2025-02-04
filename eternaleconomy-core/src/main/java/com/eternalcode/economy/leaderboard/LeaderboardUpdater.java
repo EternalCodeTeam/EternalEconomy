@@ -10,7 +10,7 @@ public class LeaderboardUpdater implements Runnable {
 
     @Override
     public void run() {
-        this.leaderboardService.updateTopAccounts();
+        this.leaderboardService.updateLeaderboard();
     }
 
 }

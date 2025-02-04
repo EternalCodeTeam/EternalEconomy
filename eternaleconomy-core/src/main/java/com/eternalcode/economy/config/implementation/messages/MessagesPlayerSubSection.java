@@ -29,10 +29,12 @@ public class MessagesPlayerSubSection extends OkaeriConfig {
         + "<gradient:#00FFA2:#34AE00>{PLAYER}</gradient>.</white>");
     public Notice transferLimit = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
         + " <white>Transaction limit is <gradient:#00FFA2:#34AE00>{LIMIT}</gradient>.</white>");
-    public Notice topBalanceHeader = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
+    public Notice leaderboardHeader = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
         + " <white>Top balances:</white>");
-    public Notice topBalanceEntry = Notice.chat("<dark_gray>➤</dark_gray> <white>{POSITION}." +
+    public Notice leaderboardEntry = Notice.chat("<dark_gray>➤</dark_gray> <white>{POSITION}." +
         " <gradient:#00FFA2:#34AE00>{PLAYER}</gradient> - <gradient:#00FFA2:#34AE00>{BALANCE}</gradient></white>");
+    public Notice leaderboardPosition = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
+        + " <white>Your position: <gradient:#00FFA2:#34AE00>{POSITION}</gradient>.</white>");
     public Notice lastLeaderboardUpdate = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
         + " <white>Last leaderboard update: <gradient:#00FFA2:#34AE00>{TIME}</gradient>.</white>");
 }
