@@ -35,6 +35,8 @@ import com.eternalcode.economy.config.implementation.messages.MessageConfig;
 import com.eternalcode.economy.database.DatabaseManager;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.format.DecimalFormatterImpl;
+import com.eternalcode.economy.leaderboard.LeaderboardService;
+import com.eternalcode.economy.leaderboard.LeaderboardUpdater;
 import com.eternalcode.economy.multification.NoticeBroadcastHandler;
 import com.eternalcode.economy.multification.NoticeHandler;
 import com.eternalcode.economy.multification.NoticeService;
@@ -97,6 +99,15 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
         AccountRepository accountRepository = new AccountRepositoryImpl(this.databaseManager, scheduler);
         AccountManager accountManager = AccountManager.create(accountRepository);
+        accountManager.test();
+
+        LeaderboardService leaderboardService = new LeaderboardService(accountRepository, pluginConfig);
+        server.getScheduler().runTaskTimerAsynchronously(
+            this,
+            new LeaderboardUpdater(leaderboardService),
+            0L,
+            pluginConfig.leaderboardUpdateInterval.toSeconds() * 20L
+        );
 
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
@@ -130,7 +141,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 new MoneyBalanceCommand(noticeService, decimalFormatter),
                 new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService, pluginConfig),
                 new EconomyReloadCommand(configService, noticeService),
-                new TopBalanceCommand(noticeService, decimalFormatter, accountManager, pluginConfig)
+                new TopBalanceCommand(noticeService, decimalFormatter, leaderboardService, pluginConfig)
             )
 
             .context(Account.class, new AccountContext(accountManager, messageConfig))

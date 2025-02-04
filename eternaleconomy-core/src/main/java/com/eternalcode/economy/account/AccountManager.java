@@ -30,6 +30,14 @@ public class AccountManager {
         return accountManager;
     }
 
+    public void test() {
+        Random random = new Random();
+        for (int i = 0; i < 20; i++) {
+            Account account = new Account(UUID.randomUUID(), "Account" + i, BigDecimal.valueOf(random.nextInt(100)));
+            save(account);
+        }
+    }
+
     public Account getAccount(UUID uuid) {
         return this.accountByUniqueId.get(uuid);
     }
@@ -67,7 +75,7 @@ public class AccountManager {
         return account;
     }
 
-    public void save(Account account) {
+    void save(Account account) {
         this.accountByUniqueId.put(account.uuid(), account);
         this.accountByName.put(account.name(), account);
         this.accountRepository.save(account);
@@ -81,30 +89,6 @@ public class AccountManager {
 
     public Collection<Account> getAccounts() {
         return Collections.unmodifiableCollection(this.accountByUniqueId.values());
-    }
-
-    /**
-     * Gets top accounts sorted by balance.
-     * Using PriorityQueue instead of standard sorting because:
-     * 1. PriorityQueue maintains only 'limit' elements in memory, reducing memory usage
-     * 2. More efficient when we need only top X elements from large dataset
-     */
-    public Collection<Account> getSortedTopAccounts(int limit) {
-        return this.accountByUniqueId.values().stream()
-            .collect(Collectors.toCollection(() ->
-                new PriorityQueue<>((a1, a2) -> a2.balance().compareTo(a1.balance()))
-            ))
-            .stream()
-            .limit(limit)
-            .collect(Collectors.toList());
-    }
-
-    public AccountPosition getAccountPosition(Account targetAccount) {
-        int position = (int) this.accountByUniqueId.values().stream()
-            .filter(account -> account.balance().compareTo(targetAccount.balance()) > 0)
-            .count() + 1;
-
-        return new AccountPosition(targetAccount, position);
     }
 
 }
