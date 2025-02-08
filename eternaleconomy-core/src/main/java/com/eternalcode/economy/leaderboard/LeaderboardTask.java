@@ -1,10 +1,10 @@
 package com.eternalcode.economy.leaderboard;
 
-public class LeaderboardUpdater implements Runnable {
+public class LeaderboardTask implements Runnable {
 
     private final LeaderboardService leaderboardService;
 
-    public LeaderboardUpdater(LeaderboardService leaderboardService) {
+    public LeaderboardTask(LeaderboardService leaderboardService) {
         this.leaderboardService = leaderboardService;
     }
 

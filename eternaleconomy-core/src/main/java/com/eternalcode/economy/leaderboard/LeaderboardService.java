@@ -24,18 +24,17 @@ public class LeaderboardService {
     public LeaderboardService(AccountRepository accountRepository, PluginConfig pluginConfig) {
         this.accountRepository = accountRepository;
         this.pluginConfig = pluginConfig;
-        this.loadLeaderboard();
         this.lastUpdated = Instant.now();
+        this.loadLeaderboard();
     }
 
     private void loadLeaderboard() {
         this.accountRepository.getAllAccounts().thenAccept(accounts -> {
             this.topAccounts.clear();
             this.topAccounts.putAll(accounts.stream()
-                .sorted((a1, a2) -> a2.balance().compareTo(a1.balance()))
+                .sorted(Comparator.comparing(Account::balance).reversed())
                 .collect(Collectors.groupingBy(
                     Account::balance,
-                    () -> new TreeMap<>(Comparator.reverseOrder()),
                     Collectors.toList()
                 )));
         });
@@ -49,7 +48,7 @@ public class LeaderboardService {
     }
 
     public void updateLeaderboard() {
-        loadLeaderboard();
+        this.loadLeaderboard();
         this.lastUpdated = Instant.now();
     }
 

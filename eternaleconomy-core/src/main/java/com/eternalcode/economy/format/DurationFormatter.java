@@ -16,8 +16,9 @@ public class DurationFormatter {
     }
 
     public String format(Instant instant) {
-        ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of(this.pluginConfig.timeZone));
+        ZonedDateTime zonedDateTime = instant.atZone(ZoneId.systemDefault());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(this.pluginConfig.timePatternFormat);
+
         return formatter.format(zonedDateTime);
     }
 

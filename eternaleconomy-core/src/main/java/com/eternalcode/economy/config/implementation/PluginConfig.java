@@ -36,9 +36,6 @@ public class PluginConfig extends OkaeriConfig {
     @Comment("# How often should leaderboard be updated")
     public Duration leaderboardUpdateInterval = Duration.ofMinutes(5);
 
-    @Comment("# Time zone. See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones")
-    public String timeZone = "Europe/Warsaw";
-
     @Comment({
         "# Pattern format for time",
         "# Where 'dd' is day, 'MM' is month, 'yyyy' is year, 'HH' is hour, 'mm' is minute, 'ss' is second"

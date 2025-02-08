@@ -37,7 +37,7 @@ import com.eternalcode.economy.database.DatabaseManager;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.format.DecimalFormatterImpl;
 import com.eternalcode.economy.leaderboard.LeaderboardService;
-import com.eternalcode.economy.leaderboard.LeaderboardUpdater;
+import com.eternalcode.economy.leaderboard.LeaderboardTask;
 import com.eternalcode.economy.multification.NoticeBroadcastHandler;
 import com.eternalcode.economy.multification.NoticeHandler;
 import com.eternalcode.economy.multification.NoticeService;
@@ -103,7 +103,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
         LeaderboardService leaderboardService = new LeaderboardService(accountRepository, pluginConfig);
         scheduler.timerAsync(
-            new LeaderboardUpdater(leaderboardService),
+            new LeaderboardTask(leaderboardService),
             Duration.ZERO,
             pluginConfig.leaderboardUpdateInterval
         );

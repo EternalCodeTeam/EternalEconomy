@@ -2,7 +2,6 @@ package com.eternalcode.economy.leaderboard;
 
 import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
-import com.eternalcode.economy.account.AccountManager;
 import com.eternalcode.economy.config.implementation.PluginConfig;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.format.DurationFormatter;
@@ -15,8 +14,8 @@ import dev.rollczi.litecommands.annotations.permission.Permission;
 import java.time.Instant;
 import java.util.UUID;
 
-@Command(name = "leaderboard")
-@Permission(EconomyPermissionConstant.PLAYER_TOP_BALANCE_PERMISSION)
+@Command(name = "balancetop", aliases = {"baltop"})
+@Permission(EconomyPermissionConstant.PLAYER_BALANCE_TOP_PERMISSION)
 public class LeaderboardCommand {
 
     private final NoticeService noticeService;

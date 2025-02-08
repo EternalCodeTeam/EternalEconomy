@@ -82,4 +82,8 @@ public class AccountManager {
             this.accountIndex.subMap(prefix, true, prefix + Character.MAX_VALUE, true).values()
         );
     }
+
+    public Collection<Account> getAllAccounts() {
+        return Collections.unmodifiableCollection(this.accountByUniqueId.values());
+    }
 }
