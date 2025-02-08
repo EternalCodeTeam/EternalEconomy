@@ -22,10 +22,16 @@ public class EconomyReloadCommand {
 
     private final ConfigService configService;
     private final NoticeService noticeService;
+    private final MessageConfig messageConfig;
 
-    public EconomyReloadCommand(ConfigService configService, NoticeService noticeService) {
+    public EconomyReloadCommand(
+        ConfigService configService,
+        NoticeService noticeService,
+        MessageConfig messageConfig
+    ) {
         this.configService = configService;
         this.noticeService = noticeService;
+        this.messageConfig = messageConfig;
     }
 
     @Execute
@@ -38,7 +44,7 @@ public class EconomyReloadCommand {
         this.noticeService.create()
             .notice(RELOADED)
             .placeholder("{TIME}", String.valueOf(elapsed.toMillis()))
-            .placeholder("{PREFIX}", MessageConfig.messagesPrefix)
+            .placeholder("{PREFIX}", messageConfig.messagesPrefix)
             .viewer(sender)
             .send();
     }

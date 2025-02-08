@@ -128,7 +128,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 new AdminBalanceCommand(noticeService, decimalFormatter, messageConfig),
                 new MoneyBalanceCommand(noticeService, decimalFormatter, messageConfig),
                 new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService, pluginConfig, messageConfig),
-                new EconomyReloadCommand(configService, noticeService)
+                new EconomyReloadCommand(configService, noticeService, messageConfig)
             )
 
             .context(Account.class, new AccountContext(accountManager, messageConfig))
