@@ -1,5 +1,6 @@
 package com.eternalcode.economy.command.message;
 
+import com.eternalcode.economy.config.implementation.messages.MessageConfig;
 import com.eternalcode.economy.multification.NoticeService;
 import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.jakarta.JakartaViolation;
@@ -11,9 +12,11 @@ import org.bukkit.command.CommandSender;
 public class InvalidBigDecimalMessage<A extends Annotation>
     implements InvokedMessage<CommandSender, Object, JakartaViolation<A, BigDecimal>> {
     private final NoticeService noticeService;
+    private final MessageConfig messageConfig;
 
-    public InvalidBigDecimalMessage(NoticeService noticeService) {
+    public InvalidBigDecimalMessage(NoticeService noticeService, MessageConfig messageConfig) {
         this.noticeService = noticeService;
+        this.messageConfig = messageConfig;
     }
 
     @Override
@@ -23,6 +26,7 @@ public class InvalidBigDecimalMessage<A extends Annotation>
         return noticeService.create()
             .notice(notice -> notice.invalidAmount)
             .placeholder("{AMOUNT}", invalidValue.toString())
+            .placeholder("{PREFIX}", messageConfig.messagesPrefix)
             .viewer(invocation.sender());
     }
 }

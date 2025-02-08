@@ -5,6 +5,7 @@ import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.command.validator.notsender.NotSender;
 import com.eternalcode.economy.config.implementation.PluginConfig;
+import com.eternalcode.economy.config.implementation.messages.MessageConfig;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import dev.rollczi.litecommands.annotations.argument.Arg;
@@ -23,17 +24,20 @@ public class MoneyTransferCommand {
     private final DecimalFormatter decimalFormatter;
     private final NoticeService noticeService;
     private PluginConfig pluginConfig;
+    private final MessageConfig messageConfig;
 
     public MoneyTransferCommand(
         AccountPaymentService accountPaymentService,
         DecimalFormatter decimalFormatter,
         NoticeService noticeService,
-        PluginConfig pluginConfig
+        PluginConfig pluginConfig,
+        MessageConfig messageConfig
     ) {
         this.accountPaymentService = accountPaymentService;
         this.decimalFormatter = decimalFormatter;
         this.noticeService = noticeService;
         this.pluginConfig = pluginConfig;
+        this.messageConfig = messageConfig;
     }
 
     @Execute
@@ -43,6 +47,7 @@ public class MoneyTransferCommand {
             this.noticeService.create()
                 .notice(notice -> notice.player.insufficientBalance)
                 .placeholder("{MISSING_BALANCE}", this.decimalFormatter.format(subtract))
+                .placeholder("{PREFIX}", messageConfig.messagesPrefix)
                 .player(payer.uuid())
                 .send();
 
@@ -53,6 +58,7 @@ public class MoneyTransferCommand {
             this.noticeService.create()
                 .notice(notice -> notice.player.transferLimit)
                 .placeholder("{LIMIT}", this.decimalFormatter.format(this.pluginConfig.transactionLimit))
+                .placeholder("{PREFIX}", messageConfig.messagesPrefix)
                 .player(payer.uuid())
                 .send();
 
@@ -65,6 +71,7 @@ public class MoneyTransferCommand {
             .notice(notice -> notice.player.transferSuccess)
             .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
             .placeholder("{PLAYER}", receiver.name())
+            .placeholder("{PREFIX}", messageConfig.messagesPrefix)
             .player(payer.uuid())
             .send();
 
@@ -72,6 +79,7 @@ public class MoneyTransferCommand {
             .notice(notice -> notice.player.transferReceived)
             .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
             .placeholder("{PLAYER}", payer.name())
+            .placeholder("{PREFIX}", messageConfig.messagesPrefix)
             .player(receiver.uuid())
             .send();
     }

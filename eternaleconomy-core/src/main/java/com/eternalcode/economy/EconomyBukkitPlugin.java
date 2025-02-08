@@ -106,7 +106,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
         this.liteCommands = LiteBukkitFactory.builder("eternaleconomy", this, server)
             .extension(new LiteJakartaExtension<>(), settings -> settings
-                .violationMessage(Positive.class, BigDecimal.class, new InvalidBigDecimalMessage<>(noticeService))
+                .violationMessage(Positive.class, BigDecimal.class, new InvalidBigDecimalMessage<>(noticeService, messageConfig))
             )
 
             .annotations(extension -> extension.validator(
@@ -114,21 +114,21 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 NotSender.class,
                 new NotSenderValidator(messageConfig)))
 
-            .missingPermission(new MissingPermissionHandlerImpl(noticeService))
-            .invalidUsage(new InvalidUsageHandlerImpl(noticeService))
+            .missingPermission(new MissingPermissionHandlerImpl(noticeService, messageConfig))
+            .invalidUsage(new InvalidUsageHandlerImpl(noticeService, messageConfig))
 
-            .message(LiteMessages.COMMAND_COOLDOWN, new CommandCooldownMessage(noticeService, commandsConfig))
+            .message(LiteMessages.COMMAND_COOLDOWN, new CommandCooldownMessage(noticeService, commandsConfig, messageConfig))
             .editorGlobal(new CommandCooldownEditor(commandsConfig))
 
             .commands(
-                new AdminAddCommand(accountPaymentService, decimalFormatter, noticeService),
-                new AdminRemoveCommand(accountPaymentService, decimalFormatter, noticeService),
-                new AdminSetCommand(accountPaymentService, decimalFormatter, noticeService),
-                new AdminResetCommand(accountPaymentService, noticeService),
-                new AdminBalanceCommand(noticeService, decimalFormatter),
-                new MoneyBalanceCommand(noticeService, decimalFormatter),
-                new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService, pluginConfig),
-                new EconomyReloadCommand(configService, noticeService)
+                new AdminAddCommand(accountPaymentService, decimalFormatter, noticeService, messageConfig),
+                new AdminRemoveCommand(accountPaymentService, decimalFormatter, noticeService, messageConfig),
+                new AdminSetCommand(accountPaymentService, decimalFormatter, noticeService, messageConfig),
+                new AdminResetCommand(accountPaymentService, noticeService, messageConfig),
+                new AdminBalanceCommand(noticeService, decimalFormatter, messageConfig),
+                new MoneyBalanceCommand(noticeService, decimalFormatter, messageConfig),
+                new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService, pluginConfig, messageConfig),
+                new EconomyReloadCommand(configService, noticeService, messageConfig)
             )
 
             .context(Account.class, new AccountContext(accountManager, messageConfig))

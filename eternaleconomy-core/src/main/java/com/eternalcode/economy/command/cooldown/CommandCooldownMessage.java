@@ -1,6 +1,7 @@
 package com.eternalcode.economy.command.cooldown;
 
 import com.eternalcode.economy.config.implementation.CommandsConfig;
+import com.eternalcode.economy.config.implementation.messages.MessageConfig;
 import com.eternalcode.economy.multification.NoticeService;
 import dev.rollczi.litecommands.cooldown.CooldownState;
 import dev.rollczi.litecommands.invocation.Invocation;
@@ -15,10 +16,16 @@ public class CommandCooldownMessage implements InvokedMessage<CommandSender, Obj
 
     private final NoticeService noticeService;
     private final CommandsConfig commandsConfig;
+    private final MessageConfig messageConfig;
 
-    public CommandCooldownMessage(NoticeService noticeService, CommandsConfig commandsConfig) {
+    public CommandCooldownMessage(
+        NoticeService noticeService,
+        CommandsConfig commandsConfig,
+        MessageConfig messageConfig
+    ) {
         this.noticeService = noticeService;
         this.commandsConfig = commandsConfig;
+        this.messageConfig = messageConfig;
     }
 
     @Override
@@ -34,6 +41,7 @@ public class CommandCooldownMessage implements InvokedMessage<CommandSender, Obj
         return noticeService.create()
             .notice(notice -> cooldown.message)
             .placeholder("{TIME}", formatted)
+            .placeholder("{PREFIX}", messageConfig.messagesPrefix)
             .viewer(invocation.sender());
     }
 

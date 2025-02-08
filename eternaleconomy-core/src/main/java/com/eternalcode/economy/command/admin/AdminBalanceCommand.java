@@ -2,6 +2,7 @@ package com.eternalcode.economy.command.admin;
 
 import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
+import com.eternalcode.economy.config.implementation.messages.MessageConfig;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import dev.rollczi.litecommands.annotations.argument.Arg;
@@ -17,10 +18,16 @@ public class AdminBalanceCommand {
 
     private final NoticeService noticeService;
     private final DecimalFormatter decimalFormatter;
+    private final MessageConfig messageConfig;
 
-    public AdminBalanceCommand(NoticeService noticeService, DecimalFormatter decimalFormatter) {
+    public AdminBalanceCommand(
+        NoticeService noticeService,
+        DecimalFormatter decimalFormatter,
+        MessageConfig messageConfig
+    ) {
         this.noticeService = noticeService;
         this.decimalFormatter = decimalFormatter;
+        this.messageConfig = messageConfig;
     }
 
     @Execute
@@ -29,6 +36,7 @@ public class AdminBalanceCommand {
             .notice(notice -> notice.admin.balance)
             .placeholder("{BALANCE}", this.decimalFormatter.format(account.balance()))
             .placeholder("{PLAYER}", account.name())
+            .placeholder("{PREFIX}", messageConfig.messagesPrefix)
             .viewer(sender)
             .send();
     }

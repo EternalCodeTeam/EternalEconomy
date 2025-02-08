@@ -3,6 +3,7 @@ package com.eternalcode.economy.command.admin;
 import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.AccountPaymentService;
+import com.eternalcode.economy.config.implementation.messages.MessageConfig;
 import com.eternalcode.economy.multification.NoticeService;
 import dev.rollczi.litecommands.annotations.argument.Arg;
 import dev.rollczi.litecommands.annotations.command.Command;
@@ -17,13 +18,16 @@ public class AdminResetCommand {
 
     private final AccountPaymentService accountPaymentService;
     private final NoticeService noticeService;
+    private final MessageConfig messageConfig;
 
     public AdminResetCommand(
         AccountPaymentService accountPaymentService,
-        NoticeService noticeService
+        NoticeService noticeService,
+        MessageConfig messageConfig
     ) {
         this.accountPaymentService = accountPaymentService;
         this.noticeService = noticeService;
+        this.messageConfig = messageConfig;
     }
 
     @Execute
@@ -33,12 +37,14 @@ public class AdminResetCommand {
         this.noticeService.create()
             .notice(notice -> notice.admin.reset)
             .placeholder("{PLAYER}", receiver.name())
+            .placeholder("{PREFIX}", messageConfig.messagesPrefix)
             .viewer(sender)
             .send();
 
         this.noticeService.create()
             .notice(notice -> notice.player.reset)
             .placeholder("{PLAYER}", receiver.name())
+            .placeholder("{PREFIX}", messageConfig.messagesPrefix)
             .player(receiver.uuid())
             .send();
     }
