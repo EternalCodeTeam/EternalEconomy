@@ -1,5 +1,6 @@
 package com.eternalcode.economy.command.handler;
 
+import com.eternalcode.economy.config.implementation.messages.MessageConfig;
 import com.eternalcode.economy.multification.NoticeService;
 import dev.rollczi.litecommands.handler.result.ResultHandlerChain;
 import dev.rollczi.litecommands.invalidusage.InvalidUsage;
@@ -11,9 +12,14 @@ import org.bukkit.command.CommandSender;
 public class InvalidUsageHandlerImpl implements InvalidUsageHandler<CommandSender> {
 
     private final NoticeService noticeService;
+    private final MessageConfig messageConfig;
 
-    public InvalidUsageHandlerImpl(NoticeService noticeService) {
+    public InvalidUsageHandlerImpl(
+        NoticeService noticeService,
+        MessageConfig messageConfig
+    ) {
         this.noticeService = noticeService;
+        this.messageConfig = messageConfig;
     }
 
     @Override
@@ -28,6 +34,7 @@ public class InvalidUsageHandlerImpl implements InvalidUsageHandler<CommandSende
                 .viewer(invocation.sender())
                 .notice(notice -> notice.correctUsage)
                 .placeholder("{USAGE}", schematic.first())
+                .placeholder("{PREFIX}", messageConfig.messagesPrefix)
                 .send();
         }
 
@@ -41,6 +48,7 @@ public class InvalidUsageHandlerImpl implements InvalidUsageHandler<CommandSende
                 .viewer(invocation.sender())
                 .notice(notice -> notice.correctUsageEntry)
                 .placeholder("{USAGE}", usage)
+                .placeholder("{PREFIX}", messageConfig.messagesPrefix)
                 .send();
         }
     }

@@ -3,6 +3,7 @@ package com.eternalcode.economy.command.admin;
 import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.AccountPaymentService;
+import com.eternalcode.economy.config.implementation.messages.MessageConfig;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import dev.rollczi.litecommands.annotations.argument.Arg;
@@ -11,8 +12,9 @@ import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import jakarta.validation.constraints.Positive;
-import java.math.BigDecimal;
 import org.bukkit.command.CommandSender;
+
+import java.math.BigDecimal;
 
 @Command(name = "economy admin set")
 @Permission(EconomyPermissionConstant.ADMIN_SET_PERMISSION)
@@ -21,15 +23,18 @@ public class AdminSetCommand {
     private final AccountPaymentService accountPaymentService;
     private final DecimalFormatter decimalFormatter;
     private final NoticeService noticeService;
+    private final MessageConfig messageConfig;
 
     public AdminSetCommand(
         AccountPaymentService accountPaymentService,
         DecimalFormatter decimalFormatter,
-        NoticeService noticeService
+        NoticeService noticeService,
+        MessageConfig messageConfig
     ) {
         this.accountPaymentService = accountPaymentService;
         this.decimalFormatter = decimalFormatter;
         this.noticeService = noticeService;
+        this.messageConfig = messageConfig;
     }
 
     @Execute
@@ -40,6 +45,7 @@ public class AdminSetCommand {
             .notice(notice -> notice.admin.set)
             .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
             .placeholder("{PLAYER}", receiver.name())
+            .placeholder("{PREFIX}", messageConfig.messagesPrefix)
             .viewer(sender)
             .send();
 
@@ -47,6 +53,7 @@ public class AdminSetCommand {
             .notice(notice -> notice.player.set)
             .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
             .placeholder("{PLAYER}", receiver.name())
+            .placeholder("{PREFIX}", messageConfig.messagesPrefix)
             .player(receiver.uuid())
             .send();
     }

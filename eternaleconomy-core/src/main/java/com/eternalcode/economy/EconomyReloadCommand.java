@@ -1,6 +1,7 @@
 package com.eternalcode.economy;
 
 import com.eternalcode.economy.config.ConfigService;
+import com.eternalcode.economy.config.implementation.messages.MessageConfig;
 import com.eternalcode.economy.multification.NoticeService;
 import com.eternalcode.multification.notice.Notice;
 import com.google.common.base.Stopwatch;
@@ -16,8 +17,7 @@ import org.bukkit.command.CommandSender;
 @Permission(EconomyPermissionConstant.ADMIN_RELOAD_PERMISSION)
 public class EconomyReloadCommand {
 
-    private static final Notice RELOADED = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> "
-        + "<dark_gray>➤</dark_gray> <white>Reloaded "
+    private static final Notice RELOADED = Notice.chat("{PREFIX}<white>Reloaded "
         + "EternalEconomy in <gradient:#00FFA2:#34AE00>{TIME}ms!</gradient></white>");
 
     private final ConfigService configService;
@@ -38,6 +38,7 @@ public class EconomyReloadCommand {
         this.noticeService.create()
             .notice(RELOADED)
             .placeholder("{TIME}", String.valueOf(elapsed.toMillis()))
+            .placeholder("{PREFIX}", MessageConfig.messagesPrefix)
             .viewer(sender)
             .send();
     }
