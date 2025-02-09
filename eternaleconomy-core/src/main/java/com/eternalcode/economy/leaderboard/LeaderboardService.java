@@ -23,18 +23,20 @@ public class LeaderboardService {
 
     public CompletableFuture<Collection<Account>> getLeaderboard() {
         return this.accountRepository.getAllAccounts().thenApply(accounts -> {
-            leaderboard.clear();
-            leaderboard.putAll(accounts.stream()
-                .sorted(Comparator.comparing(Account::balance).reversed())
-                .collect(Collectors.groupingBy(
-                    Account::balance,
-                    () -> new TreeMap<>(Comparator.reverseOrder()),
-                    Collectors.toList()
-                )));
-
-            return leaderboard.values().stream()
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
+            synchronized (lock) {
+                leaderboard.clear();
+                leaderboard.putAll(accounts.stream()
+                    .collect(Collectors.groupingBy(
+                        Account::balance,
+                        () -> new TreeMap<>(Comparator.reverseOrder()),
+                        Collectors.toList()
+                    )));
+    
+                return leaderboard.values().stream()
+                    .limit(pluginConfig.leaderboardSize)
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
+            }
         });
     }
 
