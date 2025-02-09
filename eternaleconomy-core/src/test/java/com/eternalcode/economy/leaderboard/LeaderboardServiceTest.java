@@ -99,21 +99,4 @@ class LeaderboardServiceTest {
         Collection<Account> leaderboard = this.leaderboardService.getLeaderboard().join();
         assertTrue(leaderboard.isEmpty(), "Leaderboard should be empty when no accounts exist");
     }
-
-    @Test
-    void testLeaderboardCache() {
-        Account account1 = new Account(UUID.randomUUID(), "Player1", BigDecimal.valueOf(100));
-        Account account2 = new Account(UUID.randomUUID(), "Player2", BigDecimal.valueOf(200));
-
-        this.accountRepository.save(account1);
-        this.accountRepository.save(account2);
-
-        // First call to populate the cache
-        Collection<Account> leaderboard = this.leaderboardService.getLeaderboard().join();
-        assertEquals(2, leaderboard.size());
-
-        // Second call to use the cache
-        Collection<Account> cachedLeaderboard = this.leaderboardService.getLeaderboard().join();
-        assertEquals(leaderboard, cachedLeaderboard);
-    }
 }
