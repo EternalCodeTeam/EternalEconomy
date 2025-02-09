@@ -2,6 +2,7 @@ package com.eternalcode.economy.config.implementation.messages;
 
 import com.eternalcode.multification.notice.Notice;
 import eu.okaeri.configs.OkaeriConfig;
+import eu.okaeri.configs.annotation.Comment;
 
 public class MessagesPlayerSubSection extends OkaeriConfig {
 
@@ -29,12 +30,38 @@ public class MessagesPlayerSubSection extends OkaeriConfig {
         + "<gradient:#00FFA2:#34AE00>{PLAYER}</gradient>.</white>");
     public Notice transferLimit = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
         + " <white>Transaction limit is <gradient:#00FFA2:#34AE00>{LIMIT}</gradient>.</white>");
-    public Notice leaderboardHeader = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
-        + " <white>Top balances:</white>");
-    public Notice leaderboardEntry = Notice.chat("<dark_gray>➤</dark_gray> <white>{POSITION}." +
-        " <gradient:#00FFA2:#34AE00>{PLAYER}</gradient> - <gradient:#00FFA2:#34AE00>{BALANCE}</gradient></white>");
-    public Notice leaderboardPosition = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
-        + " <white>Your position: <gradient:#00FFA2:#34AE00>{POSITION}</gradient>.</white>");
-    public Notice lastLeaderboardUpdate = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
-        + " <white>Last leaderboard update: <gradient:#00FFA2:#34AE00>{TIME}</gradient>.</white>");
+
+    @Comment({
+        "Use {PAGE} placeholder to show the current page number",
+        "Use {TOTAL_PAGES} placeholder to show the total number of pages"
+    })
+    public Notice leaderboardHeader = Notice.chat("<newline> <white><b>Balance leaderboard</b> <gray>(Page "
+        + "{PAGE}/{TOTAL_PAGES}):</gray> <newline>");
+
+    @Comment({
+        "Leaderboard entry notice, only displayed if showLeaderboardPosition is set to true in the config.yml",
+        "Use {POSITION} placeholder to show the player's position in the leaderboard",
+        "Use {PLAYER} placeholder to show the player's name",
+        "Use {BALANCE} placeholder to show the player's formatted balance",
+        "Use {BALANCE_RAW} placeholder to show the player's raw balance"
+    })
+    public Notice leaderboardEntry = Notice.chat("<white>#{POSITION} <gradient:#00FFA2:#34AE00>{PLAYER}</gradient> - <gradient:#00FFA2:#34AE00>{BALANCE}</gradient></white>");
+
+    @Comment({
+        "Leaderboard position notice, only displayed if showLeaderboardPosition is set to true in the config.yml",
+        "Use {POSITION} placeholder to show the player's position in the leaderboard"
+    })
+    public Notice leaderboardPosition = Notice.chat("<newline>  <gray><u>Your position: #{POSITION} <newline>");
+
+    @Comment({
+        "Leaderboard footer notice, only displayed if there are more pages to show",
+        "Use {NEXT_PAGE} placeholder to show the next page number",
+        "Use {TOTAL_PAGES} placeholder to show the total number of pages",
+        "Use {PAGE} placeholder to show the current page number"
+    })
+    public Notice leaderboardFooter = Notice.chat("<newline>  <white>Click <gradient:#00FFA2:#34AE00><hover:show_text:'<white>Go to page {PAGE}</white>'>/baltop {PAGE}</hover></gradient> to go to the next page.</white>");
+
+    @Comment("Leaderboard is empty notice")
+    public Notice leaderboardEmpty = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> "
+        + "<dark_gray>➤</dark_gray> <white>Leaderboard is empty :(</white>");
 }

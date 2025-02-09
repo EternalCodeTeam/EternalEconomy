@@ -91,7 +91,6 @@ class LeaderboardServiceTest {
 
     @Test
     void testLeaderboardWithSameBalances() {
-        // Add test accounts with the same balance
         Account account1 = new Account(UUID.randomUUID(), "Player1", BigDecimal.valueOf(100));
         Account account2 = new Account(UUID.randomUUID(), "Player2", BigDecimal.valueOf(100));
         Account account3 = new Account(UUID.randomUUID(), "Player3", BigDecimal.valueOf(100));
@@ -100,10 +99,8 @@ class LeaderboardServiceTest {
         this.accountRepository.save(account2);
         this.accountRepository.save(account3);
 
-        // Update leaderboard
         this.leaderboardService.updateLeaderboard();
 
-        // Test positions
         CompletableFuture<LeaderboardPosition> position1Future = this.leaderboardService.getLeaderboardPosition(account1);
         CompletableFuture<LeaderboardPosition> position2Future = this.leaderboardService.getLeaderboardPosition(account2);
         CompletableFuture<LeaderboardPosition> position3Future = this.leaderboardService.getLeaderboardPosition(account3);
@@ -112,7 +109,6 @@ class LeaderboardServiceTest {
         LeaderboardPosition position2 = position2Future.join();
         LeaderboardPosition position3 = position3Future.join();
 
-        // All accounts have the same balance, so their positions should be 1
         assertEquals(1, position1.position(), "Player1 should be in position 1");
         assertEquals(1, position2.position(), "Player2 should be in position 1");
         assertEquals(1, position3.position(), "Player3 should be in position 1");
@@ -120,13 +116,9 @@ class LeaderboardServiceTest {
 
     @Test
     void testLeaderboardWithNoAccounts() {
-        // Update leaderboard with no accounts
         this.leaderboardService.updateLeaderboard();
 
-        // Get leaderboard
         Collection<Account> leaderboard = this.leaderboardService.getLeaderboard();
-
-        // Assert leaderboard is empty
         assertTrue(leaderboard.isEmpty(), "Leaderboard should be empty when no accounts exist");
     }
 }

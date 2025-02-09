@@ -30,18 +30,6 @@ public class PluginConfig extends OkaeriConfig {
     @Comment("Should leaderboard command show player's position in the leaderboard")
     public boolean showLeaderboardPosition = true;
 
-    @Comment("# Should leaderboard command show when leaderboard was last updated")
-    public boolean showLastLeaderboardUpdate = true;
-
-    @Comment("# How often should leaderboard be updated")
-    public Duration leaderboardUpdateInterval = Duration.ofMinutes(5);
-
-    @Comment({
-        "# Pattern format for time",
-        "# Where 'dd' is day, 'MM' is month, 'yyyy' is year, 'HH' is hour, 'mm' is minute, 'ss' is second"
-    })
-    public String timePatternFormat = "dd.MM.yyyy HH:mm:ss";
-
     public static class Units extends OkaeriConfig {
 
         public List<DecimalUnit> format = Arrays.asList(

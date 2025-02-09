@@ -25,7 +25,6 @@ import com.eternalcode.economy.command.handler.MissingPermissionHandlerImpl;
 import com.eternalcode.economy.command.message.InvalidBigDecimalMessage;
 import com.eternalcode.economy.command.player.MoneyBalanceCommand;
 import com.eternalcode.economy.command.player.MoneyTransferCommand;
-import com.eternalcode.economy.format.DurationFormatter;
 import com.eternalcode.economy.leaderboard.LeaderboardCommand;
 import com.eternalcode.economy.command.validator.notsender.NotSender;
 import com.eternalcode.economy.command.validator.notsender.NotSenderValidator;
@@ -37,7 +36,6 @@ import com.eternalcode.economy.database.DatabaseManager;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.format.DecimalFormatterImpl;
 import com.eternalcode.economy.leaderboard.LeaderboardService;
-import com.eternalcode.economy.leaderboard.LeaderboardTask;
 import com.eternalcode.economy.multification.NoticeBroadcastHandler;
 import com.eternalcode.economy.multification.NoticeHandler;
 import com.eternalcode.economy.multification.NoticeService;
@@ -102,14 +100,8 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         AccountManager accountManager = AccountManager.create(accountRepository);
 
         LeaderboardService leaderboardService = new LeaderboardService(accountRepository, pluginConfig);
-        scheduler.timerAsync(
-            new LeaderboardTask(leaderboardService),
-            Duration.ZERO,
-            pluginConfig.leaderboardUpdateInterval
-        );
 
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
-        DurationFormatter durationFormatter = new DurationFormatter(pluginConfig);
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
 
         VaultEconomyProvider vaultEconomyProvider =
@@ -141,7 +133,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 new MoneyBalanceCommand(noticeService, decimalFormatter),
                 new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService, pluginConfig),
                 new EconomyReloadCommand(configService, noticeService),
-                new LeaderboardCommand(noticeService, decimalFormatter, durationFormatter, leaderboardService, pluginConfig)
+                new LeaderboardCommand(noticeService, decimalFormatter, leaderboardService, pluginConfig)
             )
 
             .context(Account.class, new AccountContext(accountManager, messageConfig))
