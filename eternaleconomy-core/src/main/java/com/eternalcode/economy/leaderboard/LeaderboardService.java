@@ -15,7 +15,7 @@ public class LeaderboardService {
 
     private final AccountRepository accountRepository;
     private final Object lock = new Object();
-    private final TreeMap<BigDecimal, List<Account>> leaderboard = new TreeMap<>(Comparator.reverseOrder());
+    private final TreeMap<BigDecimal, List<Account>> leaderboardIndex = new TreeMap<>(Comparator.reverseOrder());
 
     public LeaderboardService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
@@ -24,15 +24,15 @@ public class LeaderboardService {
     public CompletableFuture<Collection<Account>> getLeaderboard() {
         return this.accountRepository.getAllAccounts().thenApply(accounts -> {
             synchronized (lock) {
-                leaderboard.clear();
-                leaderboard.putAll(accounts.stream()
+                leaderboardIndex.clear();
+                leaderboardIndex.putAll(accounts.stream()
                     .collect(Collectors.groupingBy(
                         Account::balance,
                         () -> new TreeMap<>(Comparator.reverseOrder()),
                         Collectors.toList()
                     )));
     
-                return leaderboard.values().stream()
+                return leaderboardIndex.values().stream()
                     .flatMap(List::stream)
                     .collect(Collectors.toList());
             }
