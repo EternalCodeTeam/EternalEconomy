@@ -20,8 +20,6 @@ import java.util.UUID;
 @Permission(EconomyPermissionConstant.PLAYER_BALANCE_TOP_PERMISSION)
 public class LeaderboardCommand {
 
-    private static final int ENTRIES_PER_PAGE = 10;
-
     private final NoticeService noticeService;
     private final DecimalFormatter decimalFormatter;
     private final LeaderboardService leaderboardService;
@@ -48,6 +46,8 @@ public class LeaderboardCommand {
     void execute(@Context Account account, @Arg("page") int page) {
         UUID uuid = account.uuid();
 
+        int entriesPerPage = this.pluginConfig.leaderboardEntriesPerPage;
+
         this.leaderboardService.getLeaderboard().thenAccept(leaderboard -> {
             List<Account> leaderboardList = new ArrayList<>(leaderboard);
 
@@ -59,7 +59,7 @@ public class LeaderboardCommand {
                 return;
             }
 
-            int totalPages = (int) Math.ceil((double) leaderboardList.size() / ENTRIES_PER_PAGE);
+            int totalPages = (int) Math.ceil((double) leaderboardList.size() / entriesPerPage);
             int finalPage = Math.max(1, Math.min(page, totalPages));
 
             this.noticeService.create()
@@ -69,8 +69,8 @@ public class LeaderboardCommand {
                 .player(uuid)
                 .send();
 
-            int startIndex = (finalPage - 1) * ENTRIES_PER_PAGE;
-            int endIndex = Math.min(startIndex + ENTRIES_PER_PAGE, leaderboardList.size());
+            int startIndex = (finalPage - 1) * entriesPerPage;
+            int endIndex = Math.min(startIndex + entriesPerPage, leaderboardList.size());
             List<Account> pageEntries = leaderboardList.subList(startIndex, endIndex);
 
             for (int i = 0; i < pageEntries.size(); i++) {

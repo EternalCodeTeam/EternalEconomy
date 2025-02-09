@@ -5,7 +5,6 @@ import com.eternalcode.economy.format.DecimalUnit;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,8 +23,8 @@ public class PluginConfig extends OkaeriConfig {
     @Comment("Limit on the amount of money sent in one transaction")
     public BigDecimal transactionLimit = BigDecimal.valueOf(1_000_000_000.0);
 
-    @Comment("Leaderboard size")
-    public int leaderboardSize = 10;
+    @Comment("Limit of the entries per leaderboard page")
+    public int leaderboardEntriesPerPage = 10;
 
     @Comment("Should leaderboard command show player's position in the leaderboard")
     public boolean showLeaderboardPosition = true;

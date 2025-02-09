@@ -54,6 +54,8 @@ dependencies {
 
     testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
+
     jmh("org.openjdk.jmh:jmh-core:1.37")
     jmh("org.openjdk.jmh:jmh-generator-annprocess:1.37")
     jmh("org.openjdk.jmh:jmh-generator-bytecode:1.37")

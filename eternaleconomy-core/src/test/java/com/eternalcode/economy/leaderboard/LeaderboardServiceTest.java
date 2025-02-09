@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -24,8 +23,8 @@ class LeaderboardServiceTest {
     void setUp() {
         this.accountRepository = new AccountRepositoryInMemory();
         PluginConfig pluginConfig = new PluginConfig();
-        pluginConfig.leaderboardSize = 3;
-        this.leaderboardService = new LeaderboardService(this.accountRepository, pluginConfig);
+        pluginConfig.leaderboardEntriesPerPage = 3;
+        this.leaderboardService = new LeaderboardService(this.accountRepository);
     }
 
     @Test
@@ -40,8 +39,7 @@ class LeaderboardServiceTest {
         this.accountRepository.save(account3);
         this.accountRepository.save(account4);
 
-        this.leaderboardService.updateLeaderboard();
-        Collection<Account> leaderboard = this.leaderboardService.getLeaderboard();
+        Collection<Account> leaderboard = this.leaderboardService.getLeaderboard().join();
 
         assertEquals(3, leaderboard.size(), "Leaderboard should contain top 3 accounts");
         List<Account> leaderboardList = List.copyOf(leaderboard);
@@ -60,8 +58,6 @@ class LeaderboardServiceTest {
         this.accountRepository.save(account2);
         this.accountRepository.save(account3);
 
-        this.leaderboardService.updateLeaderboard();
-
         CompletableFuture<LeaderboardPosition> position1Future = this.leaderboardService.getLeaderboardPosition(account1);
         CompletableFuture<LeaderboardPosition> position2Future = this.leaderboardService.getLeaderboardPosition(account2);
         CompletableFuture<LeaderboardPosition> position3Future = this.leaderboardService.getLeaderboardPosition(account3);
@@ -76,20 +72,6 @@ class LeaderboardServiceTest {
     }
 
     @Test
-    void testLastUpdated() {
-        Instant beforeUpdate = Instant.now();
-        this.leaderboardService.updateLeaderboard();
-        Instant afterUpdate = Instant.now();
-
-        Instant lastUpdated = this.leaderboardService.getLastUpdated();
-
-        assertTrue(lastUpdated.isAfter(beforeUpdate) || lastUpdated.equals(beforeUpdate),
-            "Last updated time should be after or equal to the time before update");
-        assertTrue(lastUpdated.isBefore(afterUpdate) || lastUpdated.equals(afterUpdate),
-            "Last updated time should be before or equal to the time after update");
-    }
-
-    @Test
     void testLeaderboardWithSameBalances() {
         Account account1 = new Account(UUID.randomUUID(), "Player1", BigDecimal.valueOf(100));
         Account account2 = new Account(UUID.randomUUID(), "Player2", BigDecimal.valueOf(100));
@@ -98,8 +80,6 @@ class LeaderboardServiceTest {
         this.accountRepository.save(account1);
         this.accountRepository.save(account2);
         this.accountRepository.save(account3);
-
-        this.leaderboardService.updateLeaderboard();
 
         CompletableFuture<LeaderboardPosition> position1Future = this.leaderboardService.getLeaderboardPosition(account1);
         CompletableFuture<LeaderboardPosition> position2Future = this.leaderboardService.getLeaderboardPosition(account2);
@@ -116,9 +96,24 @@ class LeaderboardServiceTest {
 
     @Test
     void testLeaderboardWithNoAccounts() {
-        this.leaderboardService.updateLeaderboard();
-
-        Collection<Account> leaderboard = this.leaderboardService.getLeaderboard();
+        Collection<Account> leaderboard = this.leaderboardService.getLeaderboard().join();
         assertTrue(leaderboard.isEmpty(), "Leaderboard should be empty when no accounts exist");
+    }
+
+    @Test
+    void testLeaderboardCache() {
+        Account account1 = new Account(UUID.randomUUID(), "Player1", BigDecimal.valueOf(100));
+        Account account2 = new Account(UUID.randomUUID(), "Player2", BigDecimal.valueOf(200));
+
+        this.accountRepository.save(account1);
+        this.accountRepository.save(account2);
+
+        // First call to populate the cache
+        Collection<Account> leaderboard = this.leaderboardService.getLeaderboard().join();
+        assertEquals(2, leaderboard.size());
+
+        // Second call to use the cache
+        Collection<Account> cachedLeaderboard = this.leaderboardService.getLeaderboard().join();
+        assertEquals(leaderboard, cachedLeaderboard);
     }
 }

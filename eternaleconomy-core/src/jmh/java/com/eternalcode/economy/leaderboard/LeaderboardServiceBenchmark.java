@@ -6,6 +6,7 @@ import com.eternalcode.economy.config.implementation.PluginConfig;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -28,9 +29,9 @@ public class LeaderboardServiceBenchmark {
         AccountRepositoryInMemory accountRepository = new AccountRepositoryInMemory();
 
         PluginConfig pluginConfig = new PluginConfig();
-        pluginConfig.leaderboardSize = 100;
+        pluginConfig.leaderboardEntriesPerPage = 100;
 
-        this.leaderboardService = new LeaderboardService(accountRepository, pluginConfig);
+        this.leaderboardService = new LeaderboardService(accountRepository);
 
         for (int i = 0; i < 10_000; i++) {
             UUID uuid = UUID.randomUUID();
@@ -39,18 +40,6 @@ public class LeaderboardServiceBenchmark {
             Account account = new Account(uuid, name, balance);
             accountRepository.save(account);
         }
-
-        this.leaderboardService.updateLeaderboard();
-    }
-
-    @Benchmark
-    @BenchmarkMode(Mode.AverageTime)
-    @OutputTimeUnit(TimeUnit.MILLISECONDS)
-    @Warmup(iterations = 5, time = 1)
-    @Measurement(iterations = 10, time = 1)
-    public void benchmarkUpdateLeaderboard(Blackhole blackhole) {
-        this.leaderboardService.updateLeaderboard();
-        blackhole.consume(this.leaderboardService.getLastUpdated());
     }
 
     @Benchmark
@@ -59,7 +48,8 @@ public class LeaderboardServiceBenchmark {
     @Warmup(iterations = 5, time = 1)
     @Measurement(iterations = 10, time = 1)
     public void benchmarkGetLeaderboard(Blackhole blackhole) {
-        Collection<Account> leaderboard = this.leaderboardService.getLeaderboard();
+        CompletableFuture<Collection<Account>> future = this.leaderboardService.getLeaderboard();
+        Collection<Account> leaderboard = future.join();
         blackhole.consume(leaderboard);
     }
 }
