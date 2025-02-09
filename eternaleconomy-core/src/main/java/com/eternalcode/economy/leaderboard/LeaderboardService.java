@@ -33,7 +33,6 @@ public class LeaderboardService {
                     )));
     
                 return leaderboard.values().stream()
-                    .limit(pluginConfig.leaderboardSize)
                     .flatMap(List::stream)
                     .collect(Collectors.toList());
             }
