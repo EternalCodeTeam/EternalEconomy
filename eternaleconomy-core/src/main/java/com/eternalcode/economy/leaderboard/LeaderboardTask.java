@@ -12,5 +12,4 @@ public class LeaderboardTask implements Runnable {
     public void run() {
         this.leaderboardService.updateLeaderboard();
     }
-
 }

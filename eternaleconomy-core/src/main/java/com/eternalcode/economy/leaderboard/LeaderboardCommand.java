@@ -71,7 +71,7 @@ public class LeaderboardCommand {
         }
 
         if (this.pluginConfig.showLastLeaderboardUpdate) {
-            Instant lastUpdated = this.leaderboardService.lastUpdated();
+            Instant lastUpdated = this.leaderboardService.getLastUpdated();
             this.noticeService.create()
                 .notice(messageConfig -> messageConfig.player.lastLeaderboardUpdate)
                 .placeholder("{TIME}", this.durationFormatter.format(lastUpdated))

@@ -83,7 +83,7 @@ public class AccountManager {
         );
     }
 
-    public Collection<Account> getAllAccounts() {
+    public Collection<Account> getAccounts() {
         return Collections.unmodifiableCollection(this.accountByUniqueId.values());
     }
 }
