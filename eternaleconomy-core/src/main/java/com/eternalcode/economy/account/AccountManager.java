@@ -93,17 +93,6 @@ public class AccountManager {
     }
 
     public void save(Account account) {
-        Account previous = this.accountByUniqueId.put(account.uuid(), account);
-        if (previous != null) {
-            Set<Account> accountsWithPreviousBalance = this.accountsByBalance.get(previous.balance());
-            if (accountsWithPreviousBalance != null) {
-                accountsWithPreviousBalance.remove(previous);
-                if (accountsWithPreviousBalance.isEmpty()) {
-                    this.accountsByBalance.remove(previous.balance());
-                }
-            }
-        }
-
         this.accountByName.put(account.name(), account);
         this.accountIndex.put(account.name(), account);
         this.accountsByBalance.computeIfAbsent(account.balance(), k -> new HashSet<>()).add(account);
