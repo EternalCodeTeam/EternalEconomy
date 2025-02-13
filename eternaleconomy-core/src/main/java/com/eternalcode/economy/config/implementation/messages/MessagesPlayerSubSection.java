@@ -45,7 +45,8 @@ public class MessagesPlayerSubSection extends OkaeriConfig {
         "Use {BALANCE} placeholder to show the player's formatted balance",
         "Use {BALANCE_RAW} placeholder to show the player's raw balance"
     })
-    public Notice leaderboardEntry = Notice.chat("<white>#{POSITION} <gradient:#00FFA2:#34AE00>{PLAYER}</gradient> - <gradient:#00FFA2:#34AE00>{BALANCE}</gradient></white>");
+    public Notice leaderboardEntry = Notice.chat("  <white>#{POSITION} <gradient:#00FFA2:#34AE00>{PLAYER}</gradient> -"
+        + " <gradient:#00FFA2:#34AE00>{BALANCE}</gradient></white>");
 
     @Comment({
         "Leaderboard position notice, only displayed if showLeaderboardPosition is set to true in the config.yml",
@@ -59,7 +60,7 @@ public class MessagesPlayerSubSection extends OkaeriConfig {
         "Use {TOTAL_PAGES} placeholder to show the total number of pages",
         "Use {PAGE} placeholder to show the current page number"
     })
-    public Notice leaderboardFooter = Notice.chat("<newline>  <white>Click <gradient:#00FFA2:#34AE00><hover:show_text:'<white>Go to page {PAGE}</white>'>/baltop {PAGE}</hover></gradient> to go to the next page.</white>");
+    public Notice leaderboardFooter = Notice.chat("<newline>  <white>Click <gradient:#00FFA2:#34AE00><hover:show_text:'<white>Go to page {NEXT_PAGE}</white>'><click:run_command:'/baltop {NEXT_PAGE}'>/baltop {NEXT_PAGE}</click></hover></gradient> to go to the next page.</white>");
 
     @Comment("Leaderboard is empty notice")
     public Notice leaderboardEmpty = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> "

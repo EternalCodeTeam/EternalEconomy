@@ -11,9 +11,7 @@ import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.execute.ExecuteDefault;
 import dev.rollczi.litecommands.annotations.permission.Permission;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @SuppressWarnings("unused")
 @Command(name = "balancetop", aliases = {"baltop"})
@@ -44,46 +42,34 @@ public class LeaderboardCommand {
 
     @Execute
     void execute(@Context Account account, @Arg("page") int page) {
-        UUID uuid = account.uuid();
-
         int entriesPerPage = this.pluginConfig.leaderboardEntriesPerPage;
 
-        this.leaderboardService.getLeaderboard().thenAccept(leaderboard -> {
-            List<Account> leaderboardList = new ArrayList<>(leaderboard);
+        this.leaderboardService.getLeaderboardPage(page, entriesPerPage).thenAccept(leadboardPage -> {
+            List<LeaderboardEntry> entries = leadboardPage.entries();
 
-            if (leaderboardList.isEmpty()) {
+            if (entries.isEmpty()) {
                 this.noticeService.create()
                     .notice(messageConfig -> messageConfig.player.leaderboardEmpty)
-                    .player(uuid)
+                    .player(account.uuid())
                     .send();
                 return;
             }
 
-            int totalPages = (int) Math.ceil((double) leaderboardList.size() / entriesPerPage);
-            int finalPage = Math.max(1, Math.min(page, totalPages));
-
             this.noticeService.create()
                 .notice(messageConfig -> messageConfig.player.leaderboardHeader)
-                .placeholder("{PAGE}", String.valueOf(finalPage))
-                .placeholder("{TOTAL_PAGES}", String.valueOf(totalPages))
-                .player(uuid)
+                .placeholder("{PAGE}", String.valueOf(leadboardPage.currentPage()))
+                .placeholder("{TOTAL_PAGES}", String.valueOf(leadboardPage.maxPages()))
+                .player(account.uuid())
                 .send();
 
-            int startIndex = (finalPage - 1) * entriesPerPage;
-            int endIndex = Math.min(startIndex + entriesPerPage, leaderboardList.size());
-            List<Account> pageEntries = leaderboardList.subList(startIndex, endIndex);
-
-            for (int i = 0; i < pageEntries.size(); i++) {
-                Account topAccount = pageEntries.get(i);
-                int position = startIndex + i + 1;
-
+            for (LeaderboardEntry entry : entries) {
                 this.noticeService.create()
                     .notice(messageConfig -> messageConfig.player.leaderboardEntry)
-                    .placeholder("{POSITION}", String.valueOf(position))
-                    .placeholder("{PLAYER}", topAccount.name())
-                    .placeholder("{BALANCE}", this.decimalFormatter.format(topAccount.balance()))
-                    .placeholder("{BALANCE_RAW}", String.valueOf(topAccount.balance()))
-                    .player(uuid)
+                    .placeholder("{POSITION}", String.valueOf(entry.position()))
+                    .placeholder("{PLAYER}", entry.account().name())
+                    .placeholder("{BALANCE}", this.decimalFormatter.format(entry.account().balance()))
+                    .placeholder("{BALANCE_RAW}", String.valueOf(entry.account().balance()))
+                    .player(account.uuid())
                     .send();
             }
 
@@ -92,19 +78,18 @@ public class LeaderboardCommand {
                     this.noticeService.create()
                         .notice(messageConfig -> messageConfig.player.leaderboardPosition)
                         .placeholder("{POSITION}", String.valueOf(leaderboardPosition.position()))
-                        .player(uuid)
+                        .player(account.uuid())
                         .send()
                 );
             }
 
-            if (finalPage < totalPages) {
-                int nextPage = finalPage + 1;
+            if (leadboardPage.nextPage() != -1) {
                 this.noticeService.create()
                     .notice(messageConfig -> messageConfig.player.leaderboardFooter)
-                    .placeholder("{NEXT_PAGE}", String.valueOf(nextPage))
-                    .placeholder("{TOTAL_PAGES}", String.valueOf(totalPages))
-                    .placeholder("{PAGE}", String.valueOf(finalPage))
-                    .player(uuid)
+                    .placeholder("{NEXT_PAGE}", String.valueOf(leadboardPage.nextPage()))
+                    .placeholder("{TOTAL_PAGES}", String.valueOf(leadboardPage.maxPages()))
+                    .placeholder("{PAGE}", String.valueOf(leadboardPage.currentPage()))
+                    .player(account.uuid())
                     .send();
             }
         });

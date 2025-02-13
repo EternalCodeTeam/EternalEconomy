@@ -1,81 +1,57 @@
 package com.eternalcode.economy.leaderboard;
 
 import com.eternalcode.economy.account.Account;
-import com.eternalcode.economy.account.database.AccountRepository;
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Comparator;
+import com.eternalcode.economy.account.AccountManager;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
+import java.util.NavigableMap;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 public class LeaderboardService {
 
-    private final AccountRepository accountRepository;
-    private final Object lock = new Object();
-    private final TreeMap<BigDecimal, List<Account>> leaderboardIndex = new TreeMap<>(Comparator.reverseOrder());
+    private final AccountManager accountManager;
 
-    public LeaderboardService(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
+    public LeaderboardService(AccountManager accountManager) {
+        this.accountManager = accountManager;
     }
 
-    public CompletableFuture<Collection<Account>> getLeaderboard() {
-        return this.accountRepository.getAllAccounts().thenApply(accounts -> {
-            synchronized (lock) {
-                leaderboardIndex.clear();
-                leaderboardIndex.putAll(accounts.stream()
-                    .collect(Collectors.groupingBy(
-                        Account::balance,
-                        () -> new TreeMap<>(Comparator.reverseOrder()),
-                        Collectors.toList()
-                    )));
-    
-                return leaderboardIndex.values().stream()
-                    .flatMap(List::stream)
-                    .collect(Collectors.toList());
+    public CompletableFuture<List<LeaderboardEntry>> getLeaderboard() {
+        List<LeaderboardEntry> entries = new ArrayList<>();
+        int position = 1;
+
+        NavigableMap<?, Set<Account>> balanceTiers = accountManager.getAccountsByBalance();
+        for (Set<Account> accounts : balanceTiers.values()) {
+            for (Account account : accounts) {
+                entries.add(new LeaderboardEntry(account, position));
             }
+            position += accounts.size();
+        }
+        return CompletableFuture.completedFuture(entries);
+    }
+
+    public CompletableFuture<LeaderboardPage> getLeaderboardPage(int page, int entriesPerPage) {
+        return getLeaderboard().thenApply(entries -> {
+            int totalEntries = entries.size();
+            int maxPages = (int) Math.ceil((double) totalEntries / entriesPerPage);
+            int currentPage = Math.max(1, Math.min(page, maxPages));
+            int startIndex = (currentPage - 1) * entriesPerPage;
+            int endIndex = Math.min(startIndex + entriesPerPage, totalEntries);
+            List<LeaderboardEntry> pageEntries = entries.subList(startIndex, endIndex);
+            int nextPage = currentPage < maxPages ? currentPage + 1 : -1;
+            return new LeaderboardPage(pageEntries, currentPage, maxPages, nextPage);
         });
     }
 
-    public CompletableFuture<LeaderboardPosition> getLeaderboardPosition(Account targetAccount) {
-        return this.accountRepository.getAllAccounts().thenApply(accounts -> {
-            Map<BigDecimal, List<Account>> grouped = accounts.stream()
-                .sorted(Comparator.comparing(Account::balance).reversed())
-                .collect(Collectors.groupingBy(
-                    Account::balance,
-                    () -> new TreeMap<>(Comparator.reverseOrder()),
-                    Collectors.toList()
-                ));
-
-            BigDecimal targetBalance = targetAccount.balance();
-            int cumulative = 0;
-
-            for (Map.Entry<BigDecimal, List<Account>> entry : grouped.entrySet()) {
-                BigDecimal currentBalance = entry.getKey();
-                List<Account> group = entry.getValue();
-
-                int comparison = currentBalance.compareTo(targetBalance);
-
-                if (comparison > 0) {
-                    cumulative += group.size();
-                    continue;
-                }
-
-                if (comparison == 0) {
-                    for (Account account : group) {
-                        if (account.equals(targetAccount)) {
-                            return new LeaderboardPosition(targetAccount, cumulative + 1);
-                        }
-                    }
-                    return new LeaderboardPosition(targetAccount, -1);
-                }
-
-                break;
+    public CompletableFuture<LeaderboardEntry> getLeaderboardPosition(Account target) {
+        int position = 1;
+        NavigableMap<?, Set<Account>> balanceTiers = accountManager.getAccountsByBalance();
+        for (Set<Account> accounts : balanceTiers.values()) {
+            if (accounts.contains(target)) {
+                return CompletableFuture.completedFuture(new LeaderboardEntry(target, position));
             }
-
-            return new LeaderboardPosition(targetAccount, -1);
-        });
+            position += accounts.size();
+        }
+        return CompletableFuture.completedFuture(new LeaderboardEntry(target, -1));
     }
 }

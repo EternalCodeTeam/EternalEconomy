@@ -99,7 +99,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         AccountRepository accountRepository = new AccountRepositoryImpl(this.databaseManager, scheduler);
         AccountManager accountManager = AccountManager.create(accountRepository);
 
-        LeaderboardService leaderboardService = new LeaderboardService(accountRepository);
+        LeaderboardService leaderboardService = new LeaderboardService(accountManager);
 
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
