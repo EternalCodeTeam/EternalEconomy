@@ -14,17 +14,21 @@ import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
+import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.infra.Blackhole;
 
 @State(Scope.Benchmark)
-@Measurement(iterations = 10, time = 1)
+@Warmup(iterations = 3, time = 1)
+@Measurement(iterations = 5, time = 1)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @BenchmarkMode(Mode.AverageTime)
+@Fork(value = 1, jvmArgs = {"-Xms2G", "-Xmx4G"})
 public class LeaderboardServiceBenchmark {
 
     private static final int ACCOUNTS_COUNT = 2_000_000;
@@ -41,21 +45,17 @@ public class LeaderboardServiceBenchmark {
         this.leaderboardService = new LeaderboardService(accountManager);
         this.targetAccounts = new ArrayList<>();
 
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
-
         for (int i = 0; i < ACCOUNTS_COUNT; i++) {
-            String name = "user_" + UUID.randomUUID().toString().substring(0, 8);
+            String name = "user_" + i;
             BigDecimal balance = BigDecimal.valueOf(ThreadLocalRandom.current().nextDouble(0, 100_000));
             Account account = new Account(UUID.randomUUID(), name, balance);
 
-            futures.add(CompletableFuture.runAsync(() -> accountManager.create(account)));
+            accountManager.create(account);
 
-            if (i % 100_000 == 0) {
+            if (i % 1_000 == 0) {
                 targetAccounts.add(account);
             }
         }
-
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
     }
 
     @Benchmark
@@ -70,13 +70,5 @@ public class LeaderboardServiceBenchmark {
         Account target = targetAccounts.get(ThreadLocalRandom.current().nextInt(targetAccounts.size()));
         CompletableFuture<LeaderboardEntry> future = leaderboardService.getLeaderboardPosition(target);
         blackhole.consume(future.join());
-    }
-
-    @Benchmark
-    public void benchmarkPageIteration(Blackhole blackhole) {
-        for (int page = 1; page <= MAX_PAGES; page++) {
-            CompletableFuture<LeaderboardPage> future = leaderboardService.getLeaderboardPage(page, PAGE_SIZE);
-            blackhole.consume(future.join());
-        }
     }
 }
