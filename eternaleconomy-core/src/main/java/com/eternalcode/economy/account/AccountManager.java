@@ -1,15 +1,13 @@
 package com.eternalcode.economy.account;
 
 import com.eternalcode.economy.account.database.AccountRepository;
+import com.google.common.collect.TreeMultimap;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.NavigableMap;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -18,7 +16,10 @@ public class AccountManager {
     private final Map<UUID, Account> accountByUniqueId = new HashMap<>();
     private final Map<String, Account> accountByName = new HashMap<>();
     private final TreeMap<String, Account> accountIndex = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    private final NavigableMap<BigDecimal, Set<Account>> accountsByBalance = new TreeMap<>(Comparator.reverseOrder());
+    private final TreeMultimap<BigDecimal, Account> accountsByBalance = TreeMultimap.create(
+        Comparator.reverseOrder(),
+        Comparator.comparing(Account::uuid)
+    );
 
     private final AccountRepository accountRepository;
 
@@ -34,7 +35,7 @@ public class AccountManager {
                 accountManager.accountByUniqueId.put(account.uuid(), account);
                 accountManager.accountByName.put(account.name(), account);
                 accountManager.accountIndex.put(account.name(), account);
-                accountManager.accountsByBalance.computeIfAbsent(account.balance(), k -> new HashSet<>()).add(account);
+                accountManager.accountsByBalance.put(account.balance(), account);
             }
         });
 
@@ -74,7 +75,7 @@ public class AccountManager {
         this.accountByUniqueId.put(uuid, account);
         this.accountByName.put(name, account);
         this.accountIndex.put(name, account);
-        this.accountsByBalance.computeIfAbsent(account.balance(), k -> new HashSet<>()).add(account);
+        this.accountsByBalance.put(account.balance(), account);
 
         return account;
     }
@@ -87,16 +88,31 @@ public class AccountManager {
         this.accountByUniqueId.put(account.uuid(), account);
         this.accountByName.put(account.name(), account);
         this.accountIndex.put(account.name(), account);
-        this.accountsByBalance.computeIfAbsent(account.balance(), k -> new HashSet<>()).add(account);
+        this.accountsByBalance.put(account.balance(), account);
 
         return account;
     }
 
-    public void save(Account account) {
-        this.accountByName.put(account.name(), account);
-        this.accountIndex.put(account.name(), account);
-        this.accountsByBalance.computeIfAbsent(account.balance(), k -> new HashSet<>()).add(account);
-        this.accountRepository.save(account);
+    public void save(Account newAccount) {
+        Account oldAccount = this.accountByUniqueId.get(newAccount.uuid());
+
+        if (oldAccount != null) {
+            this.removeAccount(oldAccount);
+        }
+
+        this.accountByUniqueId.put(newAccount.uuid(), newAccount);
+        this.accountByName.put(newAccount.name(), newAccount);
+        this.accountIndex.put(newAccount.name(), newAccount);
+        this.accountsByBalance.put(newAccount.balance(), newAccount);
+
+        this.accountRepository.save(newAccount);
+    }
+
+    private void removeAccount(Account account) {
+        this.accountByUniqueId.remove(account.uuid());
+        this.accountByName.remove(account.name());
+        this.accountIndex.remove(account.name());
+        this.accountsByBalance.remove(account.balance(), account);
     }
 
     public Collection<Account> getAccountStartingWith(String prefix) {
@@ -109,7 +125,11 @@ public class AccountManager {
         return Collections.unmodifiableCollection(this.accountByUniqueId.values());
     }
 
-    public NavigableMap<BigDecimal, Set<Account>> getAccountsByBalance() {
-        return Collections.unmodifiableNavigableMap(this.accountsByBalance);
+    public TreeMultimap<BigDecimal, Account> getAccountsByBalance() {
+        return this.accountsByBalance;
+    }
+
+    public int getAccountsCount() {
+        return this.accountByUniqueId.size();
     }
 }
