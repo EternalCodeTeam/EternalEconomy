@@ -43,7 +43,6 @@ public class LeaderboardServiceBenchmark {
 
         List<CompletableFuture<Void>> futures = new ArrayList<>();
 
-        // Generowanie kont w batchach
         for (int i = 0; i < ACCOUNTS_COUNT; i++) {
             String name = "user_" + UUID.randomUUID().toString().substring(0, 8);
             BigDecimal balance = BigDecimal.valueOf(ThreadLocalRandom.current().nextDouble(0, 100_000));
@@ -56,7 +55,6 @@ public class LeaderboardServiceBenchmark {
             }
         }
 
-        // Czekaj na zakończenie wszystkich operacji
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
     }
 
