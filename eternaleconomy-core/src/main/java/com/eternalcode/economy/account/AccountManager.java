@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.UUID;
 
 public class AccountManager {
@@ -19,6 +20,10 @@ public class AccountManager {
     private final TreeMultimap<BigDecimal, Account> accountsByBalance = TreeMultimap.create(
         Comparator.reverseOrder(),
         Comparator.comparing(Account::uuid)
+    );
+    private final TreeSet<Account> accountsByBalanceSet = new TreeSet<>(
+        Comparator.comparing(Account::balance, Comparator.reverseOrder())
+            .thenComparing(Account::uuid)
     );
 
     private final AccountRepository accountRepository;
@@ -36,6 +41,7 @@ public class AccountManager {
                 accountManager.accountByName.put(account.name(), account);
                 accountManager.accountIndex.put(account.name(), account);
                 accountManager.accountsByBalance.put(account.balance(), account);
+                accountManager.accountsByBalanceSet.add(account);
             }
         });
 
@@ -73,9 +79,10 @@ public class AccountManager {
 
         Account account = new Account(uuid, name, BigDecimal.ZERO);
         this.accountByUniqueId.put(uuid, account);
-        this.accountByName.put(name, account);
-        this.accountIndex.put(name, account);
+        this.accountByName.put(account.name(), account);
+        this.accountIndex.put(account.name(), account);
         this.accountsByBalance.put(account.balance(), account);
+        this.accountsByBalanceSet.add(account);
 
         return account;
     }
@@ -89,6 +96,7 @@ public class AccountManager {
         this.accountByName.put(account.name(), account);
         this.accountIndex.put(account.name(), account);
         this.accountsByBalance.put(account.balance(), account);
+        this.accountsByBalanceSet.add(account);
 
         return account;
     }
@@ -104,6 +112,7 @@ public class AccountManager {
         this.accountByName.put(newAccount.name(), newAccount);
         this.accountIndex.put(newAccount.name(), newAccount);
         this.accountsByBalance.put(newAccount.balance(), newAccount);
+        this.accountsByBalanceSet.add(newAccount);
 
         this.accountRepository.save(newAccount);
     }
@@ -113,6 +122,7 @@ public class AccountManager {
         this.accountByName.remove(account.name());
         this.accountIndex.remove(account.name());
         this.accountsByBalance.remove(account.balance(), account);
+        this.accountsByBalanceSet.remove(account);
     }
 
     public Collection<Account> getAccountStartingWith(String prefix) {
@@ -127,6 +137,10 @@ public class AccountManager {
 
     public TreeMultimap<BigDecimal, Account> getAccountsByBalance() {
         return this.accountsByBalance;
+    }
+
+    public TreeSet<Account> getAccountsByBalanceSet() {
+        return this.accountsByBalanceSet;
     }
 
     public int getAccountsCount() {

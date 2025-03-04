@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 
 public class LeaderboardService {
@@ -53,19 +54,14 @@ public class LeaderboardService {
 
     public CompletableFuture<LeaderboardEntry> getLeaderboardPosition(Account target) {
         return CompletableFuture.supplyAsync(() -> {
-            TreeMultimap<BigDecimal, Account> balanceTiers = accountManager.getAccountsByBalance();
-            int position = 1;
+            TreeSet<Account> accounts = accountManager.getAccountsByBalanceSet();
 
-            for (Collection<Account> accounts : balanceTiers.asMap().values()) {
-                for (Account account : accounts) {
-                    if (account.uuid().equals(target.uuid())) {
-                        return new LeaderboardEntry(account, position);
-                    }
-                    position++;
-                }
+            if (!accounts.contains(target)) {
+                return new LeaderboardEntry(target, -1);
             }
 
-            return new LeaderboardEntry(target, -1);
+            int position = accounts.headSet(target, false).size() + 1;
+            return new LeaderboardEntry(target, position);
         });
     }
 }
