@@ -43,6 +43,15 @@ public class LeaderboardServiceBenchmark {
     private LeaderboardService leaderboardService;
     private List<Account> targetAccounts;
 
+    private static final String[] FIRST_NAMES = {
+        "Alex", "Ben", "Chris", "Dana", "Emma", "Finn", "Grace", "Hannah", "Ian", "Jake",
+        "Kara", "Liam", "Mia", "Noah", "Olivia", "Paul", "Quinn", "Rose", "Sam", "Tina"
+    };
+    private static final String[] SUFFIXES = {
+        "Gamer", "Pro", "X", "123", "Master", "Ninja", "Legend", "King", "Queen", "Star",
+        "Wolf", "Dragon", "Shadow", "Rider", "Blaze"
+    };
+
     @Setup(Level.Trial)
     public void setUp() {
         AccountRepositoryInMemory repository = new AccountRepositoryInMemory();
@@ -51,8 +60,13 @@ public class LeaderboardServiceBenchmark {
         this.targetAccounts = new ArrayList<>();
 
         ParetoDistribution pareto = new ParetoDistribution(1.0, 2.0);
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+
         for (int i = 0; i < accountsCount; i++) {
-            String name = "user_" + i;
+            String firstName = FIRST_NAMES[random.nextInt(FIRST_NAMES.length)];
+            String suffix = SUFFIXES[random.nextInt(SUFFIXES.length)];
+            String name = firstName + suffix + (random.nextInt(100) < 10 ? random.nextInt(100) : "");
+
             BigDecimal balance = BigDecimal.valueOf(pareto.sample()).min(BigDecimal.valueOf(100_000));
             Account account = new Account(UUID.randomUUID(), name, balance);
             accountManager.create(account);
@@ -66,10 +80,9 @@ public class LeaderboardServiceBenchmark {
         targetAccounts.add(allAccounts.get(size - size / 10));
     }
 
-
     @Benchmark
     public void benchmarkGetLeaderboardPage(Blackhole blackhole) {
-        int randomPage = ThreadLocalRandom.current().nextInt(1, MAX_PAGES + 1);
+        int randomPage = ThreadLocalRandom.current().nextInt(1, Math.min(MAX_PAGES, accountsCount / PAGE_SIZE) + 1);
         CompletableFuture<LeaderboardPage> future = leaderboardService.getLeaderboardPage(randomPage, PAGE_SIZE);
         blackhole.consume(future.join());
     }
