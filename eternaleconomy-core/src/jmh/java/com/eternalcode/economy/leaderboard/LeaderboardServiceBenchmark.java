@@ -1,12 +1,14 @@
 package com.eternalcode.economy.leaderboard;
 
+import com.eternalcode.economy.SchedulerImpl;
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.AccountManager;
+import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.account.database.AccountRepositoryInMemory;
+import com.eternalcode.economy.config.implementation.PluginConfig;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
@@ -41,7 +43,7 @@ public class LeaderboardServiceBenchmark {
     private int accountsCount;
 
     private LeaderboardService leaderboardService;
-    private List<Account> targetAccounts;
+    private List<Account> targetAccounts = new ArrayList<>();
 
     private static final String[] FIRST_NAMES = {
         "Alex", "Ben", "Chris", "Dana", "Emma", "Finn", "Grace", "Hannah", "Ian", "Jake",
@@ -55,9 +57,9 @@ public class LeaderboardServiceBenchmark {
     @Setup(Level.Trial)
     public void setUp() {
         AccountRepositoryInMemory repository = new AccountRepositoryInMemory();
-        AccountManager accountManager = new AccountManager(repository);
-        this.leaderboardService = new LeaderboardService(accountManager);
-        this.targetAccounts = new ArrayList<>();
+        AccountManager accountManager = new AccountManager(repository, new SchedulerImpl());
+        AccountPaymentService paymentService = new AccountPaymentService(accountManager, new PluginConfig());
+        this.leaderboardService = accountManager;
 
         ParetoDistribution pareto = new ParetoDistribution(1.0, 2.0);
         ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -68,16 +70,10 @@ public class LeaderboardServiceBenchmark {
             String name = firstName + suffix + (random.nextInt(100) < 10 ? random.nextInt(100) : "");
 
             BigDecimal balance = BigDecimal.valueOf(pareto.sample()).min(BigDecimal.valueOf(100_000));
-            Account account = new Account(UUID.randomUUID(), name, balance);
-            accountManager.create(account);
+            Account create = accountManager.getOrCreate(UUID.randomUUID(), name);
+            paymentService.addBalance(create, balance);
+            targetAccounts.add(create);
         }
-
-        TreeSet<Account> accounts = accountManager.getAccountsByBalanceSet();
-        List<Account> allAccounts = new ArrayList<>(accounts);
-        int size = allAccounts.size();
-        targetAccounts.add(allAccounts.get(size / 10));
-        targetAccounts.add(allAccounts.get(size / 2));
-        targetAccounts.add(allAccounts.get(size - size / 10));
     }
 
     @Benchmark

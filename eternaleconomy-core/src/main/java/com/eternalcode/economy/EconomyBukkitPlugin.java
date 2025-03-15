@@ -97,9 +97,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         this.databaseManager.connect();
 
         AccountRepository accountRepository = new AccountRepositoryImpl(this.databaseManager, scheduler);
-        AccountManager accountManager = AccountManager.create(accountRepository);
-
-        LeaderboardService leaderboardService = new LeaderboardService(accountManager);
+        AccountManager accountManager = AccountManager.create(accountRepository, scheduler);
 
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
@@ -133,7 +131,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 new MoneyBalanceCommand(noticeService, decimalFormatter),
                 new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService, pluginConfig),
                 new EconomyReloadCommand(configService, noticeService),
-                new LeaderboardCommand(noticeService, decimalFormatter, leaderboardService, pluginConfig)
+                new LeaderboardCommand(noticeService, decimalFormatter, accountManager, pluginConfig)
             )
 
             .context(Account.class, new AccountContext(accountManager, messageConfig))

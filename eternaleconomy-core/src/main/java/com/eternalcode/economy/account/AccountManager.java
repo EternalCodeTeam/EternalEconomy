@@ -1,18 +1,26 @@
 package com.eternalcode.economy.account;
 
+import com.eternalcode.commons.scheduler.Scheduler;
 import com.eternalcode.economy.account.database.AccountRepository;
+import com.eternalcode.economy.leaderboard.LeaderboardEntry;
+import com.eternalcode.economy.leaderboard.LeaderboardPage;
+import com.eternalcode.economy.leaderboard.LeaderboardService;
 import com.google.common.collect.TreeMultimap;
+import com.google.common.collect.TreeMultiset;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.NavigableSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
-public class AccountManager {
+public class AccountManager implements LeaderboardService {
 
     private final Map<UUID, Account> accountByUniqueId = new HashMap<>();
     private final Map<String, Account> accountByName = new HashMap<>();
@@ -21,27 +29,25 @@ public class AccountManager {
         Comparator.reverseOrder(),
         Comparator.comparing(Account::uuid)
     );
-    private final TreeSet<Account> accountsByBalanceSet = new TreeSet<>(
+    private final TreeMultiset<Account> accountsByBalanceSet = TreeMultiset.create(
         Comparator.comparing(Account::balance, Comparator.reverseOrder())
             .thenComparing(Account::uuid)
     );
 
     private final AccountRepository accountRepository;
+    private final Scheduler scheduler;
 
-    public AccountManager(AccountRepository accountRepository) {
+    public AccountManager(AccountRepository accountRepository, Scheduler scheduler) {
         this.accountRepository = accountRepository;
+        this.scheduler = scheduler;
     }
 
-    public static AccountManager create(AccountRepository accountRepository) {
-        AccountManager accountManager = new AccountManager(accountRepository);
+    public static AccountManager create(AccountRepository accountRepository, Scheduler scheduler) {
+        AccountManager accountManager = new AccountManager(accountRepository, scheduler);
 
         accountRepository.getAllAccounts().thenAccept(accounts -> {
             for (Account account : accounts) {
-                accountManager.accountByUniqueId.put(account.uuid(), account);
-                accountManager.accountByName.put(account.name(), account);
-                accountManager.accountIndex.put(account.name(), account);
-                accountManager.accountsByBalance.put(account.balance(), account);
-                accountManager.accountsByBalanceSet.add(account);
+                accountManager.save(account);
             }
         });
 
@@ -69,43 +75,16 @@ public class AccountManager {
             return byName;
         }
 
-        return this.create(uuid, name);
-    }
-
-    public Account create(UUID uuid, String name) {
-        if (this.accountByUniqueId.containsKey(uuid) || this.accountByName.containsKey(name)) {
-            throw new IllegalArgumentException("Account with UUID " + uuid + " already exists");
-        }
-
         Account account = new Account(uuid, name, BigDecimal.ZERO);
-        this.accountByUniqueId.put(uuid, account);
-        this.accountByName.put(account.name(), account);
-        this.accountIndex.put(account.name(), account);
-        this.accountsByBalance.put(account.balance(), account);
-        this.accountsByBalanceSet.add(account);
-
+        this.save(account);
         return account;
     }
 
-    public Account create(Account account) {
-        if (this.accountByUniqueId.containsKey(account.uuid())) {
-            throw new IllegalArgumentException("Account already exists: " + account.uuid());
-        }
-
-        this.accountByUniqueId.put(account.uuid(), account);
-        this.accountByName.put(account.name(), account);
-        this.accountIndex.put(account.name(), account);
-        this.accountsByBalance.put(account.balance(), account);
-        this.accountsByBalanceSet.add(account);
-
-        return account;
-    }
-
-    public void save(Account newAccount) {
+    void save(Account newAccount) {
         Account oldAccount = this.accountByUniqueId.get(newAccount.uuid());
 
         if (oldAccount != null) {
-            this.removeAccount(oldAccount);
+            this.accountsByBalance.remove(oldAccount.balance(), oldAccount);
         }
 
         this.accountByUniqueId.put(newAccount.uuid(), newAccount);
@@ -115,14 +94,6 @@ public class AccountManager {
         this.accountsByBalanceSet.add(newAccount);
 
         this.accountRepository.save(newAccount);
-    }
-
-    private void removeAccount(Account account) {
-        this.accountByUniqueId.remove(account.uuid());
-        this.accountByName.remove(account.name());
-        this.accountIndex.remove(account.name());
-        this.accountsByBalance.remove(account.balance(), account);
-        this.accountsByBalanceSet.remove(account);
     }
 
     public Collection<Account> getAccountStartingWith(String prefix) {
@@ -135,15 +106,52 @@ public class AccountManager {
         return Collections.unmodifiableCollection(this.accountByUniqueId.values());
     }
 
-    public TreeMultimap<BigDecimal, Account> getAccountsByBalance() {
-        return this.accountsByBalance;
+    @Override
+    public CompletableFuture<LeaderboardEntry> getLeaderboardPosition(Account target) {
+        return scheduler.completeAsync(() -> {
+            NavigableSet<Account> accounts = accountsByBalance.get(target.balance());
+            if (!accounts.contains(target)) {
+                return new LeaderboardEntry(target, -1);
+            }
+
+            int position = accounts.headSet(target, false).size() + 1;
+
+            return new LeaderboardEntry(target, position);
+        });
     }
 
-    public TreeSet<Account> getAccountsByBalanceSet() {
-        return this.accountsByBalanceSet;
+    @Override
+    public CompletableFuture<LeaderboardPage> getLeaderboardPage(int page, int pageSize) {
+        return scheduler.completeAsync(() -> {
+            List<LeaderboardEntry> list = new ArrayList<>();
+
+            int totalEntries = accountsByBalance.size();
+            int maxPages = (int) Math.ceil((double) totalEntries / pageSize);
+            int nextPage = page < maxPages ? page + 1 : -1;
+
+            int count = 0;
+            int toSkip = page * pageSize;
+            for (Collection<Account> accounts : accountsByBalance.asMap().values()) {
+                if (count + accounts.size() < toSkip) {
+                    count += accounts.size();
+                    continue;
+                }
+
+                for (Account account : accounts) {
+                    if (list.size() >= pageSize) {
+                        return new LeaderboardPage(list, page, maxPages, nextPage);
+                    }
+
+                    if (count++ < toSkip) {
+                        continue;
+                    }
+
+                    list.add(new LeaderboardEntry(account, count));
+                }
+            }
+
+            return new LeaderboardPage(list, page, maxPages, nextPage);
+        });
     }
 
-    public int getAccountsCount() {
-        return this.accountByUniqueId.size();
-    }
 }
