@@ -68,7 +68,7 @@ public class SchedulerImpl implements Scheduler {
 
         @Override
         public boolean isCanceled() {
-            return false;
+            return future.isCancelled();
         }
 
         @Override
@@ -78,7 +78,7 @@ public class SchedulerImpl implements Scheduler {
 
         @Override
         public boolean isRunning() {
-            return false;
+            return !future.isDone() && !future.isCancelled();
         }
 
         @Override
