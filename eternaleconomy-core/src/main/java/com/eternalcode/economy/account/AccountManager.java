@@ -5,6 +5,7 @@ import com.eternalcode.economy.account.database.AccountRepository;
 import com.eternalcode.economy.leaderboard.LeaderboardEntry;
 import com.eternalcode.economy.leaderboard.LeaderboardPage;
 import com.eternalcode.economy.leaderboard.LeaderboardService;
+import com.google.common.collect.BoundType;
 import com.google.common.collect.TreeMultimap;
 import com.google.common.collect.TreeMultiset;
 import java.math.BigDecimal;
@@ -15,7 +16,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NavigableSet;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -85,6 +85,7 @@ public class AccountManager implements LeaderboardService {
 
         if (oldAccount != null) {
             this.accountsByBalance.remove(oldAccount.balance(), oldAccount);
+            this.accountsByBalanceSet.remove(oldAccount);
         }
 
         this.accountByUniqueId.put(newAccount.uuid(), newAccount);
@@ -109,13 +110,7 @@ public class AccountManager implements LeaderboardService {
     @Override
     public CompletableFuture<LeaderboardEntry> getLeaderboardPosition(Account target) {
         return scheduler.completeAsync(() -> {
-            NavigableSet<Account> accounts = accountsByBalance.get(target.balance());
-            if (!accounts.contains(target)) {
-                return new LeaderboardEntry(target, -1);
-            }
-
-            int position = accounts.headSet(target, false).size() + 1;
-
+            int position = accountsByBalanceSet.headMultiset(target, BoundType.CLOSED).size();
             return new LeaderboardEntry(target, position);
         });
     }
@@ -127,7 +122,7 @@ public class AccountManager implements LeaderboardService {
 
             int totalEntries = accountsByBalance.size();
             int maxPages = (int) Math.ceil((double) totalEntries / pageSize);
-            int nextPage = page < maxPages ? page + 1 : -1;
+            int nextPage = page + 1 < maxPages ? page + 1 : -1;
 
             int count = 0;
             int toSkip = page * pageSize;

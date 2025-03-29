@@ -24,7 +24,7 @@ public class PluginConfig extends OkaeriConfig {
     public BigDecimal transactionLimit = BigDecimal.valueOf(1_000_000_000.0);
 
     @Comment("Limit of the entries per leaderboard page")
-    public int leaderboardEntriesPerPage = 10;
+    public int leaderboardPageSize = 10;
 
     @Comment("Should leaderboard command show player's position in the leaderboard")
     public boolean showLeaderboardPosition = true;

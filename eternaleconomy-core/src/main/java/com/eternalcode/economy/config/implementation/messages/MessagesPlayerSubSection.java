@@ -60,7 +60,9 @@ public class MessagesPlayerSubSection extends OkaeriConfig {
         "Use {TOTAL_PAGES} placeholder to show the total number of pages",
         "Use {PAGE} placeholder to show the current page number"
     })
-    public Notice leaderboardFooter = Notice.chat("<newline>  <white>Click <gradient:#00FFA2:#34AE00><hover:show_text:'<white>Go to page {NEXT_PAGE}</white>'><click:run_command:'/baltop {NEXT_PAGE}'>/baltop {NEXT_PAGE}</click></hover></gradient> to go to the next page.</white>");
+    public Notice leaderboardFooter = Notice.builder()
+        .chat("<newline>  <white>Click <gradient:#00FFA2:#34AE00><hover:show_text:'<white>Go to page {NEXT_PAGE}</white>'><click:run_command:'/baltop {NEXT_PAGE}'>/baltop {NEXT_PAGE}</click></hover></gradient> to go to the next page.</white>")
+        .build();
 
     @Comment("Leaderboard is empty notice")
     public Notice leaderboardEmpty = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> "

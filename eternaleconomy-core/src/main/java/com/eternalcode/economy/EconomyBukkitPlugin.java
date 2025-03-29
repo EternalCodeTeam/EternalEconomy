@@ -9,7 +9,7 @@ import com.eternalcode.economy.account.AccountController;
 import com.eternalcode.economy.account.AccountManager;
 import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.account.database.AccountRepository;
-import com.eternalcode.economy.account.database.AccountRepositoryImpl;
+import com.eternalcode.economy.account.database.AccountRepositoryInMemory;
 import com.eternalcode.economy.bridge.BridgeManager;
 import com.eternalcode.economy.command.admin.AdminAddCommand;
 import com.eternalcode.economy.command.admin.AdminBalanceCommand;
@@ -35,7 +35,6 @@ import com.eternalcode.economy.config.implementation.messages.MessageConfig;
 import com.eternalcode.economy.database.DatabaseManager;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.format.DecimalFormatterImpl;
-import com.eternalcode.economy.leaderboard.LeaderboardService;
 import com.eternalcode.economy.multification.NoticeBroadcastHandler;
 import com.eternalcode.economy.multification.NoticeHandler;
 import com.eternalcode.economy.multification.NoticeService;
@@ -51,6 +50,7 @@ import jakarta.validation.constraints.Positive;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.UUID;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -96,7 +96,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         this.databaseManager = new DatabaseManager(this.getLogger(), dataFolder, pluginConfig.database);
         this.databaseManager.connect();
 
-        AccountRepository accountRepository = new AccountRepositoryImpl(this.databaseManager, scheduler);
+        AccountRepository accountRepository = new AccountRepositoryInMemory();
         AccountManager accountManager = AccountManager.create(accountRepository, scheduler);
 
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);

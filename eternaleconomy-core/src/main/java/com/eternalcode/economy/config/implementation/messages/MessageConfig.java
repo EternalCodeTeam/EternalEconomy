@@ -6,8 +6,8 @@ import eu.okaeri.configs.OkaeriConfig;
 @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
 public class MessageConfig extends OkaeriConfig {
 
-    public Notice invalidAmount = Notice.chat(
-        "<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> <white>Invalid amount, please provide a valid number.</white>");
+    public Notice positiveNumberRequired = Notice.chat(
+        "<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> <white>Invalid '{AMOUNT}' value, positive number required!</white>");
     public Notice invalidPlayer = Notice.chat(
         "<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> <white>Invalid player, please provide a valid player.</white>");
     public Notice notSender = Notice.chat(

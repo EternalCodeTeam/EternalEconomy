@@ -11,6 +11,7 @@ import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.execute.ExecuteDefault;
 import dev.rollczi.litecommands.annotations.permission.Permission;
+import jakarta.validation.constraints.Positive;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -41,57 +42,59 @@ public class LeaderboardCommand {
     }
 
     @Execute
-    void execute(@Context Account account, @Arg("page") int page) {
-        int entriesPerPage = this.pluginConfig.leaderboardEntriesPerPage;
+    void execute(@Context Account account, @Positive @Arg("page") int page) {
+        this.leaderboardService.getLeaderboardPage(page - 1, this.pluginConfig.leaderboardPageSize)
+            .thenAcceptAsync(leadboardPage -> showPage(account, leadboardPage));
+    }
 
-        this.leaderboardService.getLeaderboardPage(page, entriesPerPage).thenAccept(leadboardPage -> {
-            List<LeaderboardEntry> entries = leadboardPage.entries();
+    private void showPage(Account account, LeaderboardPage page) {
+        int currentPage = page.currentPage() + 1;
+        List<LeaderboardEntry> entries = page.entries();
 
-            if (entries.isEmpty()) {
-                this.noticeService.create()
-                    .notice(messageConfig -> messageConfig.player.leaderboardEmpty)
-                    .player(account.uuid())
-                    .send();
-                return;
-            }
-
+        if (entries.isEmpty()) {
             this.noticeService.create()
-                .notice(messageConfig -> messageConfig.player.leaderboardHeader)
-                .placeholder("{PAGE}", String.valueOf(leadboardPage.currentPage()))
-                .placeholder("{TOTAL_PAGES}", String.valueOf(leadboardPage.maxPages()))
+                .notice(messageConfig -> messageConfig.player.leaderboardEmpty)
                 .player(account.uuid())
                 .send();
+            return;
+        }
 
-            for (LeaderboardEntry entry : entries) {
-                this.noticeService.create()
-                    .notice(messageConfig -> messageConfig.player.leaderboardEntry)
-                    .placeholder("{POSITION}", String.valueOf(entry.position()))
-                    .placeholder("{PLAYER}", entry.account().name())
-                    .placeholder("{BALANCE}", this.decimalFormatter.format(entry.account().balance()))
-                    .placeholder("{BALANCE_RAW}", String.valueOf(entry.account().balance()))
-                    .player(account.uuid())
-                    .send();
-            }
+        this.noticeService.create()
+            .notice(messages -> messages.player.leaderboardHeader)
+            .placeholder("{PAGE}", String.valueOf(currentPage))
+            .placeholder("{TOTAL_PAGES}", String.valueOf(page.maxPages()))
+            .player(account.uuid())
+            .send();
 
-            if (this.pluginConfig.showLeaderboardPosition) {
-                this.leaderboardService.getLeaderboardPosition(account).thenAccept(leaderboardPosition ->
-                    this.noticeService.create()
-                        .notice(messageConfig -> messageConfig.player.leaderboardPosition)
-                        .placeholder("{POSITION}", String.valueOf(leaderboardPosition.position()))
-                        .player(account.uuid())
-                        .send()
-                );
-            }
+        for (LeaderboardEntry entry : entries) {
+            this.noticeService.create()
+                .notice(messages -> messages.player.leaderboardEntry)
+                .placeholder("{POSITION}", String.valueOf(entry.position()))
+                .placeholder("{PLAYER}", entry.account().name())
+                .placeholder("{BALANCE}", this.decimalFormatter.format(entry.account().balance()))
+                .placeholder("{BALANCE_RAW}", String.valueOf(entry.account().balance()))
+                .player(account.uuid())
+                .send();
+        }
 
-            if (leadboardPage.nextPage() != -1) {
-                this.noticeService.create()
-                    .notice(messageConfig -> messageConfig.player.leaderboardFooter)
-                    .placeholder("{NEXT_PAGE}", String.valueOf(leadboardPage.nextPage()))
-                    .placeholder("{TOTAL_PAGES}", String.valueOf(leadboardPage.maxPages()))
-                    .placeholder("{PAGE}", String.valueOf(leadboardPage.currentPage()))
-                    .player(account.uuid())
-                    .send();
-            }
-        });
+        if (this.pluginConfig.showLeaderboardPosition) {
+            LeaderboardEntry entry = this.leaderboardService.getLeaderboardPosition(account).join();
+            this.noticeService.create()
+                .notice(messageConfig -> messageConfig.player.leaderboardPosition)
+                .placeholder("{POSITION}", String.valueOf(entry.position()))
+                .player(account.uuid())
+                .send();
+        }
+
+        if (page.nextPage() != -1) {
+            this.noticeService.create()
+                .notice(messages -> messages.player.leaderboardFooter)
+                .placeholder("{NEXT_PAGE}", String.valueOf(page.nextPage() + 1))
+                .placeholder("{TOTAL_PAGES}", String.valueOf(page.maxPages()))
+                .placeholder("{PAGE}", String.valueOf(currentPage))
+                .player(account.uuid())
+                .send();
+        }
     }
+
 }
