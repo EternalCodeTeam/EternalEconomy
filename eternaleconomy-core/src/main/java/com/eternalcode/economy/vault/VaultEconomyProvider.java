@@ -13,7 +13,6 @@ public class VaultEconomyProvider extends VaultEconomyAdapter {
 
     private final Plugin plugin;
     private final DecimalFormatter formatter;
-
     private final AccountPaymentService accountPaymentService;
     private final AccountManager accountManager;
 
@@ -45,73 +44,94 @@ public class VaultEconomyProvider extends VaultEconomyAdapter {
     }
 
     @Override
-    public boolean hasAccount(OfflinePlayer offlinePlayer) {
-        Account account = this.accountManager.getAccount(offlinePlayer.getUniqueId());
-
-        return account != null;
+    public boolean hasAccount(OfflinePlayer player) {
+        return getPlayerAccount(player) != null;
     }
 
     @Override
-    public boolean hasAccount(OfflinePlayer offlinePlayer, String s) {
-        return this.hasAccount(offlinePlayer);
+    public boolean hasAccount(OfflinePlayer player, String world) {
+        return hasAccount(player);
     }
 
     @Override
-    public double getBalance(OfflinePlayer offlinePlayer) {
-        Account account = this.accountManager.getAccount(offlinePlayer.getUniqueId());
-
-        return account.balance().doubleValue();
+    public double getBalance(OfflinePlayer player) {
+        Account account = getPlayerAccount(player);
+        return account != null ? account.balance().doubleValue() : 0.0;
     }
 
     @Override
-    public double getBalance(OfflinePlayer offlinePlayer, String world) {
-        return this.getBalance(offlinePlayer);
+    public double getBalance(OfflinePlayer player, String world) {
+        return getBalance(player);
     }
 
     @Override
-    public boolean has(OfflinePlayer offlinePlayer, double amount) {
-        Account account = this.accountManager.getAccount(offlinePlayer.getUniqueId());
-
-        return account.balance().doubleValue() >= amount;
+    public boolean has(OfflinePlayer player, double amount) {
+        Account account = getPlayerAccount(player);
+        return account != null && account.balance().doubleValue() >= amount;
     }
 
     @Override
-    public boolean has(OfflinePlayer offlinePlayer, String world, double amount) {
-        Account account = this.accountManager.getAccount(offlinePlayer.getUniqueId());
-
-        return account.balance().doubleValue() >= amount;
+    public boolean has(OfflinePlayer player, String world, double amount) {
+        return has(player, amount);
     }
 
     @Override
-    public EconomyResponse withdrawPlayer(OfflinePlayer offlinePlayer, double amount) {
-        Account account = this.accountManager.getAccount(offlinePlayer.getUniqueId());
+    public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
+        Account account = getOrCreatePlayerAccount(player);
+
+        if (account == null) {
+            return createFailureResponse();
+        }
 
         this.accountPaymentService.removeBalance(account, BigDecimal.valueOf(amount));
-        return new EconomyResponse(amount, account.balance().doubleValue(), EconomyResponse.ResponseType.SUCCESS, "");
+        return createSuccessResponse(amount, account.balance().doubleValue());
     }
 
     @Override
-    public EconomyResponse withdrawPlayer(OfflinePlayer offlinePlayer, String world, double amount) {
-        return this.withdrawPlayer(offlinePlayer, amount);
+    public EconomyResponse withdrawPlayer(OfflinePlayer player, String world, double amount) {
+        return withdrawPlayer(player, amount);
     }
 
     @Override
-    public EconomyResponse depositPlayer(OfflinePlayer offlinePlayer, double amount) {
-        Account account = this.accountManager.getAccount(offlinePlayer.getUniqueId());
+    public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
+        Account account = getOrCreatePlayerAccount(player);
+
+        if (account == null) {
+            return createFailureResponse();
+        }
 
         this.accountPaymentService.addBalance(account, BigDecimal.valueOf(amount));
-        return new EconomyResponse(amount, account.balance().doubleValue(), EconomyResponse.ResponseType.SUCCESS, "");
+        return createSuccessResponse(amount, account.balance().doubleValue());
     }
 
     @Override
-    public boolean createPlayerAccount(OfflinePlayer offlinePlayer) {
-        Account account = this.accountManager.getOrCreate(offlinePlayer.getUniqueId(), offlinePlayer.getName());
-
-        return account != null;
+    public EconomyResponse depositPlayer(OfflinePlayer player, String world, double amount) {
+        return depositPlayer(player, amount);
     }
 
     @Override
-    public boolean createPlayerAccount(OfflinePlayer offlinePlayer, String world) {
-        return this.createPlayerAccount(offlinePlayer);
+    public boolean createPlayerAccount(OfflinePlayer player) {
+        return getOrCreatePlayerAccount(player) != null;
+    }
+
+    @Override
+    public boolean createPlayerAccount(OfflinePlayer player, String world) {
+        return createPlayerAccount(player);
+    }
+
+    private Account getPlayerAccount(OfflinePlayer player) {
+        return this.accountManager.getAccount(player.getUniqueId());
+    }
+
+    private Account getOrCreatePlayerAccount(OfflinePlayer player) {
+        return this.accountManager.getOrCreate(player.getUniqueId(), player.getName());
+    }
+
+    private EconomyResponse createSuccessResponse(double amount, double balance) {
+        return new EconomyResponse(amount, balance, EconomyResponse.ResponseType.SUCCESS, "");
+    }
+
+    private EconomyResponse createFailureResponse() {
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Could not access player account");
     }
 }

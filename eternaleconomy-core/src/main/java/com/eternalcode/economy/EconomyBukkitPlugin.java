@@ -9,6 +9,7 @@ import com.eternalcode.economy.account.AccountController;
 import com.eternalcode.economy.account.AccountManager;
 import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.account.database.AccountRepository;
+import com.eternalcode.economy.account.database.AccountRepositoryImpl;
 import com.eternalcode.economy.account.database.AccountRepositoryInMemory;
 import com.eternalcode.economy.bridge.BridgeManager;
 import com.eternalcode.economy.command.admin.AdminAddCommand;
@@ -96,7 +97,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         this.databaseManager = new DatabaseManager(this.getLogger(), dataFolder, pluginConfig.database);
         this.databaseManager.connect();
 
-        AccountRepository accountRepository = new AccountRepositoryInMemory();
+        AccountRepository accountRepository = new AccountRepositoryImpl(this.databaseManager, scheduler);
         AccountManager accountManager = AccountManager.create(accountRepository, scheduler);
 
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
