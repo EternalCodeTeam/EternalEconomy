@@ -108,45 +108,41 @@ public class AccountManager implements LeaderboardService {
     }
 
     @Override
-    public CompletableFuture<LeaderboardEntry> getLeaderboardPosition(Account target) {
-        return scheduler.completeAsync(() -> {
-            int position = accountsByBalanceSet.headMultiset(target, BoundType.CLOSED).size();
-            return new LeaderboardEntry(target, position);
-        });
+    public LeaderboardEntry getLeaderboardPosition(Account target) {
+        int position = accountsByBalanceSet.headMultiset(target, BoundType.CLOSED).size();
+        return new LeaderboardEntry(target, position);
     }
 
     @Override
-    public CompletableFuture<LeaderboardPage> getLeaderboardPage(int page, int pageSize) {
-        return scheduler.completeAsync(() -> {
-            List<LeaderboardEntry> list = new ArrayList<>();
+    public LeaderboardPage getLeaderboardPage(int page, int pageSize) {
+        List<LeaderboardEntry> list = new ArrayList<>();
 
-            int totalEntries = accountsByBalance.size();
-            int maxPages = (int) Math.ceil((double) totalEntries / pageSize);
-            int nextPage = page + 1 < maxPages ? page + 1 : -1;
+        int totalEntries = accountsByBalance.size();
+        int maxPages = (int) Math.ceil((double) totalEntries / pageSize);
+        int nextPage = page + 1 < maxPages ? page + 1 : -1;
 
-            int count = 0;
-            int toSkip = page * pageSize;
-            for (Collection<Account> accounts : accountsByBalance.asMap().values()) {
-                if (count + accounts.size() < toSkip) {
-                    count += accounts.size();
+        int count = 0;
+        int toSkip = page * pageSize;
+        for (Collection<Account> accounts : accountsByBalance.asMap().values()) {
+            if (count + accounts.size() < toSkip) {
+                count += accounts.size();
+                continue;
+            }
+
+            for (Account account : accounts) {
+                if (list.size() >= pageSize) {
+                    return new LeaderboardPage(list, page, maxPages, nextPage);
+                }
+
+                if (count++ < toSkip) {
                     continue;
                 }
 
-                for (Account account : accounts) {
-                    if (list.size() >= pageSize) {
-                        return new LeaderboardPage(list, page, maxPages, nextPage);
-                    }
-
-                    if (count++ < toSkip) {
-                        continue;
-                    }
-
-                    list.add(new LeaderboardEntry(account, count));
-                }
+                list.add(new LeaderboardEntry(account, count));
             }
+        }
 
-            return new LeaderboardPage(list, page, maxPages, nextPage);
-        });
+        return new LeaderboardPage(list, page, maxPages, nextPage);
     }
 
 }
