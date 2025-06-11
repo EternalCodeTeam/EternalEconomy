@@ -10,6 +10,7 @@ import com.eternalcode.economy.account.AccountManager;
 import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.account.database.AccountRepository;
 import com.eternalcode.economy.account.database.AccountRepositoryImpl;
+import com.eternalcode.economy.account.database.AccountRepositoryInMemory;
 import com.eternalcode.economy.bridge.BridgeManager;
 import com.eternalcode.economy.command.admin.AdminAddCommand;
 import com.eternalcode.economy.command.admin.AdminBalanceCommand;
@@ -25,6 +26,7 @@ import com.eternalcode.economy.command.handler.MissingPermissionHandlerImpl;
 import com.eternalcode.economy.command.message.InvalidBigDecimalMessage;
 import com.eternalcode.economy.command.player.MoneyBalanceCommand;
 import com.eternalcode.economy.command.player.MoneyTransferCommand;
+import com.eternalcode.economy.leaderboard.LeaderboardCommand;
 import com.eternalcode.economy.command.validator.notsender.NotSender;
 import com.eternalcode.economy.command.validator.notsender.NotSenderValidator;
 import com.eternalcode.economy.config.ConfigService;
@@ -49,6 +51,7 @@ import jakarta.validation.constraints.Positive;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.UUID;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -95,7 +98,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         this.databaseManager.connect();
 
         AccountRepository accountRepository = new AccountRepositoryImpl(this.databaseManager, scheduler);
-        AccountManager accountManager = AccountManager.create(accountRepository);
+        AccountManager accountManager = AccountManager.create(accountRepository, scheduler);
 
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
@@ -128,7 +131,8 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 new AdminBalanceCommand(noticeService, decimalFormatter),
                 new MoneyBalanceCommand(noticeService, decimalFormatter),
                 new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService, pluginConfig),
-                new EconomyReloadCommand(configService, noticeService)
+                new EconomyReloadCommand(configService, noticeService),
+                new LeaderboardCommand(noticeService, decimalFormatter, accountManager, pluginConfig)
             )
 
             .context(Account.class, new AccountContext(accountManager, messageConfig))

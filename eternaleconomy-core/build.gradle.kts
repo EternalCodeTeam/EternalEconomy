@@ -54,6 +54,9 @@ dependencies {
 
     testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
+    testImplementation("com.google.guava:guava:33.0.0-jre")
+
     jmh("org.openjdk.jmh:jmh-core:1.37")
     jmh("org.openjdk.jmh:jmh-generator-annprocess:1.37")
     jmh("org.openjdk.jmh:jmh-generator-bytecode:1.37")
@@ -83,7 +86,7 @@ bukkit {
 }
 
 tasks.runServer {
-    minecraftVersion("1.21.1")
+    minecraftVersion("1.21.4")
 }
 
 tasks.shadowJar {

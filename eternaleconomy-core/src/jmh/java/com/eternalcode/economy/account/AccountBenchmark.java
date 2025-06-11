@@ -1,18 +1,18 @@
 package com.eternalcode.economy.account;
 
+import com.eternalcode.economy.SchedulerImpl;
 import com.eternalcode.economy.account.database.AccountRepositoryInMemory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.Measurement;
+import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Warmup;
-
-import java.util.UUID;
 
 @State(Scope.Thread)
 public class AccountBenchmark {
@@ -22,10 +22,12 @@ public class AccountBenchmark {
 
     private final List<String> searches = new ArrayList<>();
     private AccountManager accountManager;
+    // mimo że nie jest to bezpieczne dla wielu wątków, to w przypadku JMH można to zignorować i tak potrzebujemy losowości
+    private int index = 0;
 
     @Setup
     public void setUp() {
-        accountManager = new AccountManager(new AccountRepositoryInMemory());
+        accountManager = new AccountManager(new AccountRepositoryInMemory(), new SchedulerImpl());
 
         // zapełnienie TreeMapy różnymi nazwami zapewnia, że będzie ona miała optymalne wyniki
         // tree mapa rozdziela elementy na podstawie ich klucza, więc im bardziej zróżnicowane klucze, tym "lepsze' wyniki
@@ -34,7 +36,7 @@ public class AccountBenchmark {
                 for (char third : ALPHABET) {
                     String name = String.valueOf(first) + second + third;
 
-                    accountManager.create(UUID.randomUUID(), name);
+                    accountManager.getOrCreate(UUID.randomUUID(), name);
                 }
             }
         }
@@ -55,14 +57,10 @@ public class AccountBenchmark {
         LOGGER.info("Acounts size: " + accountManager.getAccounts().size() + ", Searches size: " + searches.size());
     }
 
-    // mimo że nie jest to bezpieczne dla wielu wątków, to w przypadku JMH można to zignorować i tak potrzebujemy losowości
-    private int index = 0;
-
     @Benchmark
     @Warmup(iterations = 5, time = 1)
     @Measurement(iterations = 10, time = 1)
     public void benchmarkGetAccountStartingWith() {
         accountManager.getAccountStartingWith(searches.get(index++ % searches.size()));
     }
-
 }

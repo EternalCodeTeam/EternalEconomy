@@ -23,6 +23,12 @@ public class PluginConfig extends OkaeriConfig {
     @Comment("Limit on the amount of money sent in one transaction")
     public BigDecimal transactionLimit = BigDecimal.valueOf(1_000_000_000.0);
 
+    @Comment("Limit of the entries per leaderboard page")
+    public int leaderboardPageSize = 10;
+
+    @Comment("Should leaderboard command show player's position in the leaderboard")
+    public boolean showLeaderboardPosition = true;
+
     public static class Units extends OkaeriConfig {
 
         public List<DecimalUnit> format = Arrays.asList(

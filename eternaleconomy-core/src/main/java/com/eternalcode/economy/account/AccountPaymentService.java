@@ -16,26 +16,20 @@ public class AccountPaymentService {
     }
 
     public void payment(Account payer, Account receiver, BigDecimal amount) {
-        payer = new Account(payer.uuid(), payer.name(), payer.balance().subtract(amount));
-        receiver = new Account(receiver.uuid(), receiver.name(), receiver.balance().add(amount));
-
-        this.accountManager.save(payer);
-        this.accountManager.save(receiver);
+        this.accountManager.save(payer.withBalance(balance -> balance.subtract(amount)));
+        this.accountManager.save(receiver.withBalance(balance -> balance.add(amount)));
     }
 
     public void setBalance(Account account, BigDecimal amount) {
-        account = new Account(account.uuid(), account.name(), amount);
-        this.accountManager.save(account);
+        this.accountManager.save(account.withBalance(amount));
     }
 
     public void addBalance(Account account, BigDecimal amount) {
-        account = new Account(account.uuid(), account.name(), account.balance().add(amount));
-        this.accountManager.save(account);
+        this.accountManager.save(account.withBalance(balance -> balance.add(amount)));
     }
 
     public void removeBalance(Account account, BigDecimal amount) {
-        account = new Account(account.uuid(), account.name(), account.balance().subtract(amount));
-        this.accountManager.save(account);
+        this.accountManager.save(account.withBalance(balance -> balance.subtract(amount)));
     }
 
     public void resetBalance(Account account) {

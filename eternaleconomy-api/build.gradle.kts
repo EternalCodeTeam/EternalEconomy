@@ -1,7 +1,7 @@
 plugins {
     `economy-java`
     `economy-repositories`
-//    `economy-checkstyle`
+    //    `economy-checkstyle`
     `economy-publish`
 }
 
