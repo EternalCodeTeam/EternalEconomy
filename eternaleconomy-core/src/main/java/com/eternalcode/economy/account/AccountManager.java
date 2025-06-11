@@ -86,6 +86,10 @@ public class AccountManager implements LeaderboardService {
         if (oldAccount != null) {
             this.accountsByBalance.remove(oldAccount.balance(), oldAccount);
             this.accountsByBalanceSet.remove(oldAccount);
+            if (!oldAccount.name().equals(newAccount.name())) {
+                this.accountByName.remove(oldAccount.name());
+                this.accountIndex.remove(oldAccount.name());
+            }
         }
 
         this.accountByUniqueId.put(newAccount.uuid(), newAccount);
