@@ -43,8 +43,8 @@ public class LeaderboardCommand {
 
     @Execute
     void execute(@Context Account account, @Positive @Arg("page") int page) {
-        this.leaderboardService.getLeaderboardPage(page - 1, this.pluginConfig.leaderboardPageSize)
-            .thenAcceptAsync(leadboardPage -> showPage(account, leadboardPage));
+        LeaderboardPage leaderboardPage = this.leaderboardService.getLeaderboardPage(page - 1, this.pluginConfig.leaderboardPageSize);
+        showPage(account, leaderboardPage);
     }
 
     private void showPage(Account account, LeaderboardPage page) {
@@ -78,7 +78,7 @@ public class LeaderboardCommand {
         }
 
         if (this.pluginConfig.showLeaderboardPosition) {
-            LeaderboardEntry entry = this.leaderboardService.getLeaderboardPosition(account).join();
+            LeaderboardEntry entry = this.leaderboardService.getLeaderboardPosition(account);
             this.noticeService.create()
                 .notice(messageConfig -> messageConfig.player.leaderboardPosition)
                 .placeholder("{POSITION}", String.valueOf(entry.position()))
