@@ -3,15 +3,15 @@ object Versions {
     const val SPIGOT_API = "1.19.4-R0.1-SNAPSHOT"
 
     const val OKAERI_CONFIGS = "5.0.5"
-    const val LITE_COMMANDS = "3.9.7"
+    const val LITE_COMMANDS = "3.10.5"
 
-    const val ETERNALCODE_COMMONS = "1.1.5"
+    const val ETERNALCODE_COMMONS = "1.3.1"
     const val MULTIFICATION = "1.2.1"
 
     const val JETBRAINS_ANNOTATIONS = "24.1.0"
 
-    const val ADVENTURE_PLATFORM_BUKKIT = "4.3.4"
-    const val ADVENTURE_API = "4.18.0"
+    const val ADVENTURE_PLATFORM_BUKKIT = "4.4.1"
+    const val ADVENTURE_API = "4.24.0"
 
     const val VAULT_API = "1.7.1"
 
