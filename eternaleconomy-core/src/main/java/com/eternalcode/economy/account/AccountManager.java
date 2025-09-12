@@ -66,6 +66,11 @@ public class AccountManager implements LeaderboardService {
         Account byUniqueId = this.accountByUniqueId.get(uuid);
 
         if (byUniqueId != null) {
+            if (!byUniqueId.name().equals(name)) {
+                Account updated = new Account(uuid, name, byUniqueId.balance());
+                this.save(updated);
+                return updated;
+            }
             return byUniqueId;
         }
 

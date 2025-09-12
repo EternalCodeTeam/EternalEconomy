@@ -52,10 +52,10 @@ dependencies {
 
     compileOnly("me.clip:placeholderapi:${Versions.PLACEHOLDER_API}")
 
-    testImplementation(platform("org.junit:junit-bom:5.11.4"))
+    testImplementation(platform("org.junit:junit-bom:5.13.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
-    testImplementation("com.google.guava:guava:33.0.0-jre")
+    testImplementation("com.google.guava:guava:33.4.8-jre")
 
     jmh("org.openjdk.jmh:jmh-core:1.37")
     jmh("org.openjdk.jmh:jmh-generator-annprocess:1.37")
