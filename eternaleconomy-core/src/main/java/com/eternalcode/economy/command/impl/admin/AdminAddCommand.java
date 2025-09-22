@@ -1,4 +1,4 @@
-package com.eternalcode.economy.command.admin;
+package com.eternalcode.economy.command.impl.admin;
 
 import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
@@ -14,15 +14,15 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import org.bukkit.command.CommandSender;
 
-@Command(name = "economy admin remove")
-@Permission(EconomyPermissionConstant.ADMIN_REMOVE_PERMISSION)
-public class AdminRemoveCommand {
+@Command(name = "economy add", aliases = "eco add")
+@Permission(EconomyPermissionConstant.ADMIN_ADD_PERMISSION)
+public class AdminAddCommand {
 
     private final AccountPaymentService accountPaymentService;
     private final DecimalFormatter decimalFormatter;
     private final NoticeService noticeService;
 
-    public AdminRemoveCommand(
+    public AdminAddCommand(
         AccountPaymentService accountPaymentService,
         DecimalFormatter decimalFormatter,
         NoticeService noticeService
@@ -34,29 +34,17 @@ public class AdminRemoveCommand {
 
     @Execute
     void execute(@Context CommandSender sender, @Arg Account receiver, @Arg @Positive BigDecimal amount) {
-        if (receiver.balance().compareTo(amount) < 0) {
-            BigDecimal subtract = amount.subtract(receiver.balance());
-            this.noticeService.create()
-                .notice(notice -> notice.admin.insufficientFunds)
-                .placeholder("{PLAYER}", receiver.name())
-                .placeholder("{MISSING_BALANCE}", this.decimalFormatter.format(subtract))
-                .viewer(sender)
-                .send();
-
-            return;
-        }
-
-        this.accountPaymentService.removeBalance(receiver, amount);
+        this.accountPaymentService.addBalance(receiver, amount);
 
         this.noticeService.create()
-            .notice(notice -> notice.admin.removed)
+            .notice(notice -> notice.admin.added)
             .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
             .placeholder("{PLAYER}", receiver.name())
             .viewer(sender)
             .send();
 
         this.noticeService.create()
-            .notice(notice -> notice.player.removed)
+            .notice(notice -> notice.player.added)
             .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
             .placeholder("{PLAYER}", receiver.name())
             .player(receiver.uuid())

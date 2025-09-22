@@ -1,4 +1,4 @@
-package com.eternalcode.economy.command.player;
+package com.eternalcode.economy.command.impl;
 
 import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
@@ -15,7 +15,7 @@ import dev.rollczi.litecommands.annotations.permission.Permission;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
-@Command(name = "pay")
+@Command(name = "pay", aliases = "transfer")
 @Permission(EconomyPermissionConstant.PLAYER_PAY_PERMISSION)
 public class MoneyTransferCommand {
 

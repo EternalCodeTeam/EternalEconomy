@@ -12,7 +12,7 @@ import dev.rollczi.litecommands.annotations.permission.Permission;
 import java.time.Duration;
 import org.bukkit.command.CommandSender;
 
-@Command(name = "economy admin reload")
+@Command(name = "economy reload")
 @Permission(EconomyPermissionConstant.ADMIN_RELOAD_PERMISSION)
 public class EconomyReloadCommand {
 

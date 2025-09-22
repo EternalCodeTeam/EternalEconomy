@@ -1,4 +1,4 @@
-package com.eternalcode.economy.command.admin;
+package com.eternalcode.economy.command.impl.admin;
 
 import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
@@ -14,7 +14,7 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import org.bukkit.command.CommandSender;
 
-@Command(name = "economy admin set")
+@Command(name = "economy set", aliases = "eco set")
 @Permission(EconomyPermissionConstant.ADMIN_SET_PERMISSION)
 public class AdminSetCommand {
 

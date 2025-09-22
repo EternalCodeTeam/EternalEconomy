@@ -1,4 +1,4 @@
-package com.eternalcode.economy.command.admin;
+package com.eternalcode.economy.command.impl.admin;
 
 import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
@@ -11,7 +11,7 @@ import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import org.bukkit.command.CommandSender;
 
-@Command(name = "economy admin reset")
+@Command(name = "economy reset", aliases = "eco reset")
 @Permission(EconomyPermissionConstant.ADMIN_RESET_PERMISSION)
 public class AdminResetCommand {
 

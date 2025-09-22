@@ -11,11 +11,11 @@ import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.account.database.AccountRepository;
 import com.eternalcode.economy.account.database.AccountRepositoryImpl;
 import com.eternalcode.economy.bridge.BridgeManager;
-import com.eternalcode.economy.command.admin.AdminAddCommand;
-import com.eternalcode.economy.command.admin.AdminBalanceCommand;
-import com.eternalcode.economy.command.admin.AdminRemoveCommand;
-import com.eternalcode.economy.command.admin.AdminResetCommand;
-import com.eternalcode.economy.command.admin.AdminSetCommand;
+import com.eternalcode.economy.command.impl.admin.AdminAddCommand;
+import com.eternalcode.economy.command.impl.admin.AdminBalanceCommand;
+import com.eternalcode.economy.command.impl.admin.AdminRemoveCommand;
+import com.eternalcode.economy.command.impl.admin.AdminResetCommand;
+import com.eternalcode.economy.command.impl.admin.AdminSetCommand;
 import com.eternalcode.economy.command.argument.AccountArgument;
 import com.eternalcode.economy.command.context.AccountContext;
 import com.eternalcode.economy.command.cooldown.CommandCooldownEditor;
@@ -23,8 +23,8 @@ import com.eternalcode.economy.command.cooldown.CommandCooldownMessage;
 import com.eternalcode.economy.command.handler.InvalidUsageHandlerImpl;
 import com.eternalcode.economy.command.handler.MissingPermissionHandlerImpl;
 import com.eternalcode.economy.command.message.InvalidBigDecimalMessage;
-import com.eternalcode.economy.command.player.MoneyBalanceCommand;
-import com.eternalcode.economy.command.player.MoneyTransferCommand;
+import com.eternalcode.economy.command.impl.MoneyBalanceCommand;
+import com.eternalcode.economy.command.impl.MoneyTransferCommand;
 import com.eternalcode.economy.database.DatabaseManager;
 import com.eternalcode.economy.leaderboard.LeaderboardCommand;
 import com.eternalcode.economy.command.validator.notsender.NotSender;
@@ -119,6 +119,10 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             .invalidUsage(new InvalidUsageHandlerImpl(noticeService))
 
             .message(LiteMessages.COMMAND_COOLDOWN, new CommandCooldownMessage(noticeService, commandsConfig))
+            .message(LiteMessages.INVALID_NUMBER, (invocation, amount)  -> noticeService.create()
+                .notice(messageConfig.positiveNumberRequired)
+                .placeholder("{AMOUNT}", amount)
+                .viewer(invocation.sender()))
             .editorGlobal(new CommandCooldownEditor(commandsConfig))
 
             .commands(

@@ -1,4 +1,4 @@
-package com.eternalcode.economy.command.admin;
+package com.eternalcode.economy.command.impl;
 
 import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
@@ -11,24 +11,34 @@ import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import org.bukkit.command.CommandSender;
 
-@Command(name = "economy admin balance")
-@Permission(EconomyPermissionConstant.ADMIN_BALANCE_PERMISSION)
-public class AdminBalanceCommand {
+@Command(name = "balance", aliases = {"bal", "money"})
+@Permission(EconomyPermissionConstant.PLAYER_BALANCE_PERMISSION)
+public class MoneyBalanceCommand {
 
     private final NoticeService noticeService;
     private final DecimalFormatter decimalFormatter;
 
-    public AdminBalanceCommand(NoticeService noticeService, DecimalFormatter decimalFormatter) {
+    public MoneyBalanceCommand(NoticeService noticeService, DecimalFormatter decimalFormatter) {
         this.noticeService = noticeService;
         this.decimalFormatter = decimalFormatter;
     }
 
     @Execute
-    public void execute(@Context CommandSender sender, @Arg Account account) {
+    void execute(@Context Account account) {
         this.noticeService.create()
-            .notice(notice -> notice.admin.balance)
+            .notice(messageConfig -> messageConfig.player.balance)
             .placeholder("{BALANCE}", this.decimalFormatter.format(account.balance()))
+            .player(account.uuid())
+            .send();
+    }
+
+    @Execute
+    @Permission(EconomyPermissionConstant.PLAYER_BALANCE_OTHER_PERMISSION)
+    void execute(@Context CommandSender sender, @Arg Account account) {
+        this.noticeService.create()
+            .notice(messageConfig -> messageConfig.player.balanceOther)
             .placeholder("{PLAYER}", account.name())
+            .placeholder("{BALANCE}", this.decimalFormatter.format(account.balance()))
             .viewer(sender)
             .send();
     }
