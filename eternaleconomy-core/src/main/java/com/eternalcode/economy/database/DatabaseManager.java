@@ -1,16 +1,5 @@
 package com.eternalcode.economy.database;
 
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.H2_DRIVER;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.H2_JDBC_URL;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MARIADB_DRIVER;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MARIADB_JDBC_URL;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MYSQL_DRIVER;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MYSQL_JDBC_URL;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.POSTGRESQL_DRIVER;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.POSTGRESQL_JDBC_URL;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.SQLITE_DRIVER;
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.SQLITE_JDBC_URL;
-
 import com.google.common.base.Stopwatch;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -28,15 +17,15 @@ public class DatabaseManager {
 
     private final Logger logger;
     private final File dataFolder;
-    private final DatabaseSettings databaseSettings;
+    private final DatabaseSettings settings;
     private final Map<Class<?>, Dao<?, ?>> cachedDao = new ConcurrentHashMap<>();
     private HikariDataSource dataSource;
     private ConnectionSource connectionSource;
 
-    public DatabaseManager(Logger logger, File dataFolder, DatabaseSettings databaseSettings) {
+    public DatabaseManager(Logger logger, File dataFolder, DatabaseSettings settings) {
         this.logger = logger;
         this.dataFolder = dataFolder;
-        this.databaseSettings = databaseSettings;
+        this.settings = settings;
     }
 
     public void connect() {
@@ -44,9 +33,6 @@ public class DatabaseManager {
             Stopwatch stopwatch = Stopwatch.createStarted();
 
             this.dataSource = new HikariDataSource();
-
-            DatabaseSettings settings = this.databaseSettings;
-
             this.dataSource.addDataSourceProperty("cachePrepStmts", "true");
             this.dataSource.addDataSourceProperty("prepStmtCacheSize", "250");
             this.dataSource.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
@@ -54,68 +40,42 @@ public class DatabaseManager {
 
             this.dataSource.setMaximumPoolSize(settings.poolSize());
             this.dataSource.setConnectionTimeout(settings.timeout());
-            this.dataSource.setUsername(settings.getUsername());
-            this.dataSource.setPassword(settings.getPassword());
+            this.dataSource.setUsername(settings.username());
+            this.dataSource.setPassword(settings.password());
 
-            DatabaseDriverType driverType = settings.getDriverType();
-            switch (driverType) {
-                case MY_SQL -> {
-                    this.dataSource.setDriverClassName(MYSQL_DRIVER);
-                    this.dataSource.setJdbcUrl(String.format(
-                        MYSQL_JDBC_URL,
-                        settings.getHostname(),
-                        settings.getPort(),
-                        settings.getDatabase(),
-                        this.databaseSettings.isSSL(),
-                        this.databaseSettings.isSSL())
-                    );
-                }
+            DatabaseDriverType type = settings.databaseType();
+            this.dataSource.setDriverClassName(type.getDriver());
 
-                case MARIA_DB -> {
-                    this.dataSource.setDriverClassName(MARIADB_DRIVER);
-                    this.dataSource.setJdbcUrl(String.format(
-                        MARIADB_JDBC_URL,
-                        settings.getHostname(),
-                        settings.getPort(),
-                        settings.getDatabase(),
-                        this.databaseSettings.isSSL(),
-                        this.databaseSettings.isSSL())
-                    );
-                }
+            String jdbcUrl = switch (type) {
+                case H2, SQLITE -> type.formatUrl(dataFolder);
+                case POSTGRESQL -> type.formatUrl(
+                    settings.hostname(),
+                    settings.port(),
+                    settings.database(),
+                    DatabaseConnectionDriverConstant.sslParamForPostgreSQL(settings.ssl())
+                );
+                case MYSQL -> type.formatUrl(
+                    settings.hostname(),
+                    settings.port(),
+                    settings.database(),
+                    DatabaseConnectionDriverConstant.sslParamForMySQL(settings.ssl())
+                );
+                case MARIADB -> type.formatUrl(
+                    settings.hostname(),
+                    settings.port(),
+                    settings.database(),
+                    String.valueOf(settings.ssl())
+                );
+            };
 
-                case H2 -> {
-                    this.dataSource.setDriverClassName(H2_DRIVER);
-                    this.dataSource.setJdbcUrl(String.format(
-                        H2_JDBC_URL,
-                        this.dataFolder)
-                    );
-                }
+            this.dataSource.setJdbcUrl(jdbcUrl);
 
-                case SQLITE -> {
-                    this.dataSource.setDriverClassName(SQLITE_DRIVER);
-                    this.dataSource.setJdbcUrl(String.format(
-                        SQLITE_JDBC_URL,
-                        this.dataFolder)
-                    );
-                }
+            this.connectionSource = new DataSourceConnectionSource(this.dataSource, jdbcUrl);
 
-                case POSTGRE_SQL -> {
-                    this.dataSource.setDriverClassName(POSTGRESQL_DRIVER);
-                    this.dataSource.setJdbcUrl(String.format(
-                        POSTGRESQL_JDBC_URL,
-                        settings.getHostname(), settings.getPort(), this.databaseSettings.isSSL())
-                    );
-                }
-
-                default -> throw new DatabaseException("SQL type '" + driverType + "' not found");
-            }
-
-            this.connectionSource = new DataSourceConnectionSource(this.dataSource, this.dataSource.getJdbcUrl());
-            this.logger.info("Loaded database " + driverType + " in " +
-                stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms");
+            this.logger.info("Loaded database " + type + " in " + stopwatch.elapsed(TimeUnit.MILLISECONDS) + "ms");
         }
-        catch (DatabaseException | SQLException exception) {
-            throw new RuntimeException("Failed to connect to the database", exception);
+        catch (Exception exception) {
+            throw new DatabaseException("Failed to connect to the database", exception);
         }
     }
 
@@ -131,19 +91,15 @@ public class DatabaseManager {
 
     @SuppressWarnings("unchecked")
     public <T, ID> Dao<T, ID> getDao(Class<T> type) {
-        try {
-            Dao<?, ?> dao = this.cachedDao.get(type);
-
-            if (dao == null) {
-                dao = DaoManager.createDao(this.connectionSource, type);
-                this.cachedDao.put(type, dao);
-            }
-
-            return (Dao<T, ID>) dao;
-        }
-        catch (SQLException exception) {
-            throw new RuntimeException(exception);
-        }
+        return (Dao<T, ID>) this.cachedDao.computeIfAbsent(
+            type, clazz -> {
+                try {
+                    return DaoManager.createDao(this.connectionSource, clazz);
+                }
+                catch (SQLException exception) {
+                    throw new DatabaseException("Failed to create DAO for " + clazz.getName(), exception);
+                }
+            });
     }
 
     public ConnectionSource connectionSource() {
