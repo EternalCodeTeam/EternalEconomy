@@ -12,10 +12,10 @@ class AccountWrapper {
     @DatabaseField(id = true)
     private UUID uuid;
 
-    @DatabaseField
+    @DatabaseField(index = true, unique = true)
     private String name;
 
-    @DatabaseField
+    @DatabaseField(index = true)
     private BigDecimal balance;
 
     public AccountWrapper() {
