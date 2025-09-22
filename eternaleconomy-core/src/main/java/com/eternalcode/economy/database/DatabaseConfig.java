@@ -6,10 +6,10 @@ import eu.okaeri.configs.annotation.Comment;
 @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
 public class DatabaseConfig extends OkaeriConfig implements DatabaseSettings {
 
-    @Comment({"Type of the database driver (e.g., SQLITE, H2, MY_SQL, MARIA_DB, POSTGRE_SQL).", "Determines the "
+    @Comment({"Type of the database driver (e.g., SQLITE, H2, MYSQL, MARIADB, POSTGRESQL).", "Determines the "
         + "database type "
         + "to be used."})
-    public DatabaseDriverType driverType = DatabaseDriverType.SQLITE;
+    public DatabaseDriverType databaseType = DatabaseDriverType.SQLITE;
 
     @Comment({"Hostname of the database server.", "For local databases, this is usually 'localhost'."})
     public String hostname = "localhost";
@@ -40,37 +40,37 @@ public class DatabaseConfig extends OkaeriConfig implements DatabaseSettings {
     public int timeout = 30000;
 
     @Override
-    public DatabaseDriverType getDriverType() {
-        return this.driverType;
+    public DatabaseDriverType databaseType() {
+        return this.databaseType;
     }
 
     @Override
-    public String getHostname() {
+    public String hostname() {
         return this.hostname;
     }
 
     @Override
-    public int getPort() {
+    public int port() {
         return this.port;
     }
 
     @Override
-    public String getDatabase() {
+    public String database() {
         return this.database;
     }
 
     @Override
-    public String getUsername() {
+    public String username() {
         return this.username;
     }
 
     @Override
-    public String getPassword() {
+    public String password() {
         return this.password;
     }
 
     @Override
-    public boolean isSSL() {
+    public boolean ssl() {
         return this.ssl;
     }
 
