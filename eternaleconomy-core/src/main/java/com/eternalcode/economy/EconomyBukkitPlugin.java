@@ -11,11 +11,7 @@ import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.account.database.AccountRepository;
 import com.eternalcode.economy.account.database.AccountRepositoryImpl;
 import com.eternalcode.economy.bridge.BridgeManager;
-import com.eternalcode.economy.command.impl.admin.AdminAddCommand;
-import com.eternalcode.economy.command.impl.admin.AdminBalanceCommand;
-import com.eternalcode.economy.command.impl.admin.AdminRemoveCommand;
-import com.eternalcode.economy.command.impl.admin.AdminResetCommand;
-import com.eternalcode.economy.command.impl.admin.AdminSetCommand;
+import com.eternalcode.economy.command.impl.admin.*;
 import com.eternalcode.economy.command.argument.AccountArgument;
 import com.eternalcode.economy.command.context.AccountContext;
 import com.eternalcode.economy.command.cooldown.CommandCooldownEditor;
@@ -38,6 +34,9 @@ import com.eternalcode.economy.format.DecimalFormatterImpl;
 import com.eternalcode.economy.multification.NoticeBroadcastHandler;
 import com.eternalcode.economy.multification.NoticeHandler;
 import com.eternalcode.economy.multification.NoticeService;
+import com.eternalcode.economy.paycheck.PaycheckCommand;
+import com.eternalcode.economy.paycheck.PaycheckManager;
+import com.eternalcode.economy.paycheck.PaycheckTagger;
 import com.eternalcode.economy.vault.VaultEconomyProvider;
 import com.eternalcode.multification.notice.Notice;
 import com.eternalcode.multification.notice.NoticeBroadcast;
@@ -101,6 +100,9 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
 
+        PaycheckTagger paycheckTagger = new PaycheckTagger(this);
+        PaycheckManager paycheckManager = new PaycheckManager(noticeService, pluginConfig, paycheckTagger);
+
         VaultEconomyProvider vaultEconomyProvider =
             new VaultEconomyProvider(this, decimalFormatter, accountPaymentService, accountManager);
         server.getServicesManager().register(Economy.class, vaultEconomyProvider, this, ServicePriority.Highest);
@@ -131,6 +133,8 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 new AdminSetCommand(accountPaymentService, decimalFormatter, noticeService),
                 new AdminResetCommand(accountPaymentService, noticeService),
                 new AdminBalanceCommand(noticeService, decimalFormatter),
+                new AdminItemCommand(paycheckManager),
+                new PaycheckCommand(paycheckManager, noticeService),
                 new MoneyBalanceCommand(noticeService, decimalFormatter),
                 new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService, pluginConfig),
                 new EconomyReloadCommand(configService, noticeService),

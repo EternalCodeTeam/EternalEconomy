@@ -49,6 +49,7 @@ dependencies {
     // okaeri configs
     implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:${Versions.OKAERI_CONFIGS}")
     implementation("eu.okaeri:okaeri-configs-serdes-commons:${Versions.OKAERI_CONFIGS}")
+    implementation("eu.okaeri:okaeri-configs-serdes-bukkit:${Versions.OKAERI_CONFIGS}")
 
     compileOnly("me.clip:placeholderapi:${Versions.PLACEHOLDER_API}")
 

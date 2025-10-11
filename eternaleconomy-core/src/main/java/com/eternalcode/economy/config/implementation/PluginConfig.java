@@ -4,6 +4,9 @@ import com.eternalcode.economy.database.DatabaseConfig;
 import com.eternalcode.economy.format.DecimalUnit;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +32,9 @@ public class PluginConfig extends OkaeriConfig {
     @Comment("Should leaderboard command show player's position in the leaderboard")
     public boolean showLeaderboardPosition = true;
 
+    @Comment("Currency item settings")
+    public CurrencyItem currencyItem = new CurrencyItem();
+
     public static class Units extends OkaeriConfig {
 
         public List<DecimalUnit> format = Arrays.asList(
@@ -39,5 +45,14 @@ public class PluginConfig extends OkaeriConfig {
             new DecimalUnit(1_000_000_000_000_000L, 'p'),
             new DecimalUnit(1_000_000_000_000_000_000L, 'e')
         );
+    }
+
+    public static class CurrencyItem extends OkaeriConfig {
+        @Comment({"Name of the item",
+        "{VALUE} - value of the check",})
+        public String name = "<white>Check worth <green>{VALUE}$";
+
+        @Comment("Item")
+        public ItemStack item = new ItemStack(Material.PAPER);
     }
 }

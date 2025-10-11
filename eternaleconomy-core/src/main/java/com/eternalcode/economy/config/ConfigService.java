@@ -7,6 +7,7 @@ import com.eternalcode.multification.okaeri.MultificationSerdesPack;
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.serdes.commons.SerdesCommons;
+import eu.okaeri.configs.yaml.bukkit.serdes.SerdesBukkit;
 import eu.okaeri.configs.yaml.snakeyaml.YamlSnakeYamlConfigurer;
 import java.io.File;
 import java.util.HashSet;
@@ -30,7 +31,7 @@ public class ConfigService {
         NoticeResolverRegistry noticeRegistry = NoticeResolverDefaults.createRegistry()
             .registerResolver(new SoundBukkitResolver());
         configFile
-            .withConfigurer(yamlConfigurer, new SerdesCommons())
+            .withConfigurer(yamlConfigurer, new SerdesCommons(), new SerdesBukkit())
             .withConfigurer(yamlConfigurer, new MultificationSerdesPack(noticeRegistry))
             .withBindFile(file)
             .withRemoveOrphans(true)
