@@ -1,4 +1,4 @@
-package com.eternalcode.economy.paycheck;
+package com.eternalcode.economy.withdraw;
 
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.AccountManager;
@@ -20,10 +20,10 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.UUID;
 
-public class PaycheckManager {
+public class WithdrawManager {
     private final NoticeService noticeService;
     private final PluginConfig config;
-    private final PaycheckTagger paycheckTagger;
+    private final WithdrawTagger withdrawTagger;
     private final DecimalFormatter decimalFormatter;
 
     private final AccountPaymentService accountPaymentService;
@@ -31,18 +31,18 @@ public class PaycheckManager {
 
     private final MiniMessage mm;
 
-    public PaycheckManager(
+    public WithdrawManager(
         NoticeService noticeService,
         PluginConfig pluginConfig,
         DecimalFormatter decimalFormatter,
-        PaycheckTagger paycheckTagger,
+        WithdrawTagger withdrawTagger,
         AccountPaymentService accountPaymentService,
         AccountManager accountManager
     ) {
         this.noticeService = noticeService;
         this.config = pluginConfig;
         this.decimalFormatter = decimalFormatter;
-        this.paycheckTagger = paycheckTagger;
+        this.withdrawTagger = withdrawTagger;
 
         this.accountPaymentService = accountPaymentService;
         this.accountManager = accountManager;
@@ -86,7 +86,7 @@ public class PaycheckManager {
             return;
         }
 
-        ItemStack item = paycheckTagger.tagItem(setUpItem(value), value);
+        ItemStack item = withdrawTagger.tagItem(setUpItem(value), value);
         player.getInventory().addItem(item);
         player.updateInventory();
 

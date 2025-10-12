@@ -1,4 +1,4 @@
-package com.eternalcode.economy.paycheck;
+package com.eternalcode.economy.withdraw;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,13 +11,13 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 
-public class PaycheckListener implements Listener {
-    private final PaycheckManager paycheckManager;
-    private final PaycheckTagger paycheckTagger;
+public class WithdrawListener implements Listener {
+    private final WithdrawManager withdrawManager;
+    private final WithdrawTagger withdrawTagger;
 
-    public PaycheckListener(PaycheckManager paycheckManager, PaycheckTagger paycheckTagger) {
-        this.paycheckManager = paycheckManager;
-        this.paycheckTagger = paycheckTagger;
+    public WithdrawListener(WithdrawManager withdrawManager, WithdrawTagger withdrawTagger) {
+        this.withdrawManager = withdrawManager;
+        this.withdrawTagger = withdrawTagger;
     }
 
 
@@ -30,7 +30,7 @@ public class PaycheckListener implements Listener {
 
         item = item.clone();
 
-        BigDecimal value = paycheckTagger.getValue(item);
+        BigDecimal value = withdrawTagger.getValue(item);
 
         if (Objects.equals(value, BigDecimal.ZERO)) {
             return;
@@ -41,10 +41,10 @@ public class PaycheckListener implements Listener {
 
         if (event.getAction() == Action.RIGHT_CLICK_AIR) {
             if (player.isSneaking()) {
-                paycheckManager.redeem(player, item, value);
+                withdrawManager.redeem(player, item, value);
             } else {
                 item.setAmount(1);
-                paycheckManager.redeem(player, item, value);
+                withdrawManager.redeem(player, item, value);
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.eternalcode.economy.paycheck;
+package com.eternalcode.economy.withdraw;
 
 import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
@@ -17,17 +17,17 @@ import java.math.BigDecimal;
 
 @Command(name = "withdraw", aliases = {"paycheck", "check"})
 @Permission(EconomyPermissionConstant.ADMIN_ITEM_PERMISSION)
-public class PaycheckCommand {
-    private final PaycheckManager paycheckManager;
+public class WithdrawCommand {
+    private final WithdrawManager withdrawManager;
     private final NoticeService noticeService;
     private final DecimalFormatter decimalFormatter;
 
-    public PaycheckCommand(
-        PaycheckManager paycheckManager,
+    public WithdrawCommand(
+        WithdrawManager withdrawManager,
         NoticeService noticeService,
         DecimalFormatter decimalFormatter
     ) {
-        this.paycheckManager = paycheckManager;
+        this.withdrawManager = withdrawManager;
         this.noticeService = noticeService;
         this.decimalFormatter = decimalFormatter;
     }
@@ -47,6 +47,6 @@ public class PaycheckCommand {
             return;
         }
 
-        paycheckManager.givePaycheck(account.uuid(), value);
+        withdrawManager.givePaycheck(account.uuid(), value);
     }
 }

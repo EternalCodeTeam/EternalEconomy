@@ -1,4 +1,4 @@
-package com.eternalcode.economy.paycheck;
+package com.eternalcode.economy.withdraw;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -8,10 +8,10 @@ import org.bukkit.plugin.Plugin;
 
 import java.math.BigDecimal;
 
-public class PaycheckTagger {
+public class WithdrawTagger {
     private final NamespacedKey amountKey;
 
-    public PaycheckTagger(Plugin plugin) {
+    public WithdrawTagger(Plugin plugin) {
         this.amountKey = new NamespacedKey(plugin, "value");
     }
 

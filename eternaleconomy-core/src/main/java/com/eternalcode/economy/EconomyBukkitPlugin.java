@@ -35,10 +35,10 @@ import com.eternalcode.economy.leaderboard.LeaderboardCommand;
 import com.eternalcode.economy.multification.NoticeBroadcastHandler;
 import com.eternalcode.economy.multification.NoticeHandler;
 import com.eternalcode.economy.multification.NoticeService;
-import com.eternalcode.economy.paycheck.PaycheckCommand;
-import com.eternalcode.economy.paycheck.PaycheckListener;
-import com.eternalcode.economy.paycheck.PaycheckManager;
-import com.eternalcode.economy.paycheck.PaycheckTagger;
+import com.eternalcode.economy.withdraw.WithdrawCommand;
+import com.eternalcode.economy.withdraw.WithdrawListener;
+import com.eternalcode.economy.withdraw.WithdrawManager;
+import com.eternalcode.economy.withdraw.WithdrawTagger;
 import com.eternalcode.economy.vault.VaultEconomyProvider;
 import com.eternalcode.multification.notice.Notice;
 import com.eternalcode.multification.notice.NoticeBroadcast;
@@ -104,8 +104,8 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
 
-        PaycheckTagger paycheckTagger = new PaycheckTagger(this);
-        PaycheckManager paycheckManager = new PaycheckManager(noticeService, pluginConfig, decimalFormatter, paycheckTagger, accountPaymentService, accountManager);
+        WithdrawTagger withdrawTagger = new WithdrawTagger(this);
+        WithdrawManager withdrawManager = new WithdrawManager(noticeService, pluginConfig, decimalFormatter, withdrawTagger, accountPaymentService, accountManager);
 
         VaultEconomyProvider vaultEconomyProvider =
             new VaultEconomyProvider(this, decimalFormatter, accountPaymentService, accountManager);
@@ -137,8 +137,8 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 new AdminSetCommand(accountPaymentService, decimalFormatter, noticeService),
                 new AdminResetCommand(accountPaymentService, noticeService),
                 new AdminBalanceCommand(noticeService, decimalFormatter),
-                new AdminItemCommand(paycheckManager),
-                new PaycheckCommand(paycheckManager, noticeService, decimalFormatter),
+                new AdminItemCommand(withdrawManager),
+                new WithdrawCommand(withdrawManager, noticeService, decimalFormatter),
                 new MoneyBalanceCommand(noticeService, decimalFormatter),
                 new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService, pluginConfig),
                 new EconomyReloadCommand(configService, noticeService),
@@ -157,7 +157,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
         server.getPluginManager().registerEvents(new AccountController(accountManager), this);
 
-        server.getPluginManager().registerEvents(new PaycheckListener(paycheckManager, paycheckTagger), this);
+        server.getPluginManager().registerEvents(new WithdrawListener(withdrawManager, withdrawTagger), this);
 
         BridgeManager bridgeManager = new BridgeManager(
             this.getDescription(),
