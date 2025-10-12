@@ -1,8 +1,13 @@
 package com.eternalcode.economy.paycheck;
 
+import com.eternalcode.economy.account.Account;
+import com.eternalcode.economy.account.AccountManager;
+import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.config.implementation.PluginConfig;
+import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
@@ -19,23 +24,36 @@ public class PaycheckManager {
     private final NoticeService noticeService;
     private final PluginConfig config;
     private final PaycheckTagger paycheckTagger;
+    private final DecimalFormatter decimalFormatter;
+
+    private final AccountPaymentService accountPaymentService;
+    private final AccountManager accountManager;
+
     private final MiniMessage mm;
 
     public PaycheckManager(
         NoticeService noticeService,
         PluginConfig pluginConfig,
-        PaycheckTagger paycheckTagger
+        DecimalFormatter decimalFormatter,
+        PaycheckTagger paycheckTagger,
+        AccountPaymentService accountPaymentService,
+        AccountManager accountManager
     ) {
         this.noticeService = noticeService;
         this.config = pluginConfig;
+        this.decimalFormatter = decimalFormatter;
         this.paycheckTagger = paycheckTagger;
+
+        this.accountPaymentService = accountPaymentService;
+        this.accountManager = accountManager;
+
         this.mm = MiniMessage.miniMessage();
     }
 
     public void setItem(Player player) {
         ItemStack item = player.getInventory().getItemInMainHand();
 
-        if(item.getType() == Material.AIR) {
+        if (item.getType() == Material.AIR) {
             noticeService.create()
                 .notice(messageConfig -> messageConfig.paycheck.noItem)
                 .player(player.getUniqueId())
@@ -46,9 +64,8 @@ public class PaycheckManager {
 
         this.config.currencyItem.item = item;
 
-
         String displayName = item.getItemMeta().getDisplayName();
-        if(displayName.isEmpty()) {
+        if (displayName.isEmpty()) {
             this.config.currencyItem.name = item.getType().name();
         } else {
             this.config.currencyItem.name = displayName;
@@ -65,29 +82,71 @@ public class PaycheckManager {
 
     public void givePaycheck(UUID uuid, BigDecimal value) {
         Player player = Bukkit.getPlayer(uuid);
-        if(player == null) {
+        if (player == null) {
             return;
         }
 
+        ItemStack item = paycheckTagger.tagItem(setUpItem(value), value);
+        player.getInventory().addItem(item);
+        player.updateInventory();
+
+        Account account = accountManager.getAccount(player.getUniqueId());
+        accountPaymentService.removeBalance(account, value);
+
+        noticeService.create()
+            .notice(messageConfig -> messageConfig.paycheck.withdraw)
+            .placeholder("{VALUE}", decimalFormatter.format(value))
+            .player(player.getUniqueId())
+            .send();
+    }
+
+    public void redeem(Player player, ItemStack item, BigDecimal value) {
+        ItemStack activeItem;
+        ItemStack itemInHand = player.getInventory().getItemInMainHand();
+        ItemStack itemInOffHand = player.getInventory().getItemInOffHand();
+
+        if (itemInHand.isSimilar(item)) {
+            activeItem = itemInHand;
+        } else if (itemInOffHand.isSimilar(item)) {
+            activeItem = itemInOffHand;
+        } else {
+            noticeService.create()
+                .notice(messageConfig -> messageConfig.paycheck.noCheck)
+                .player(player.getUniqueId())
+                .send();
+            return;
+        }
+
+        player.getInventory().removeItem(activeItem);
+        activeItem.setAmount(activeItem.getAmount() - item.getAmount());
+        player.getInventory().addItem(activeItem);
+        player.updateInventory();
+
+        BigDecimal finalValue = value.multiply(BigDecimal.valueOf(item.getAmount()));
+
+        Account account = accountManager.getAccount(player.getUniqueId());
+        accountPaymentService.addBalance(account, finalValue);
+
+        noticeService.create()
+            .notice(messageConfig -> messageConfig.paycheck.redeem)
+            .placeholder("{VALUE}", decimalFormatter.format(finalValue))
+            .player(player.getUniqueId())
+            .send();
+    }
+
+    private ItemStack setUpItem(BigDecimal value) {
         ItemStack item = this.config.currencyItem.item;
         ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
 
         String displayName = this.config.currencyItem.name
-            .replace("{VALUE}", value.toString());
+            .replace("{VALUE}", decimalFormatter.format(value));
 
-        Component component = mm.deserialize(displayName);
+        Component component = mm.deserialize(displayName).decoration(TextDecoration.ITALIC, false);
         String legacyName = LegacyComponentSerializer.legacySection().serialize(component);
 
         meta.setDisplayName(legacyName);
         item.setItemMeta(meta);
 
-        item = paycheckTagger.tagItem(item, value);
-        player.getInventory().addItem(item);
-
-        noticeService.create()
-            .notice(messageConfig -> messageConfig.paycheck.withdraw)
-            .placeholder("{VALUE}", value.toString())
-            .player(player.getUniqueId())
-            .send();
+        return item;
     }
 }

@@ -11,30 +11,32 @@ import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.account.database.AccountRepository;
 import com.eternalcode.economy.account.database.AccountRepositoryImpl;
 import com.eternalcode.economy.bridge.BridgeManager;
-import com.eternalcode.economy.command.impl.admin.*;
 import com.eternalcode.economy.command.argument.AccountArgument;
+import com.eternalcode.economy.command.argument.PriceArgumentResolver;
 import com.eternalcode.economy.command.context.AccountContext;
 import com.eternalcode.economy.command.cooldown.CommandCooldownEditor;
 import com.eternalcode.economy.command.cooldown.CommandCooldownMessage;
 import com.eternalcode.economy.command.handler.InvalidUsageHandlerImpl;
 import com.eternalcode.economy.command.handler.MissingPermissionHandlerImpl;
-import com.eternalcode.economy.command.message.InvalidBigDecimalMessage;
 import com.eternalcode.economy.command.impl.MoneyBalanceCommand;
 import com.eternalcode.economy.command.impl.MoneyTransferCommand;
-import com.eternalcode.economy.database.DatabaseManager;
-import com.eternalcode.economy.leaderboard.LeaderboardCommand;
+import com.eternalcode.economy.command.impl.admin.*;
+import com.eternalcode.economy.command.message.InvalidBigDecimalMessage;
 import com.eternalcode.economy.command.validator.notsender.NotSender;
 import com.eternalcode.economy.command.validator.notsender.NotSenderValidator;
 import com.eternalcode.economy.config.ConfigService;
 import com.eternalcode.economy.config.implementation.CommandsConfig;
 import com.eternalcode.economy.config.implementation.PluginConfig;
 import com.eternalcode.economy.config.implementation.messages.MessageConfig;
+import com.eternalcode.economy.database.DatabaseManager;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.format.DecimalFormatterImpl;
+import com.eternalcode.economy.leaderboard.LeaderboardCommand;
 import com.eternalcode.economy.multification.NoticeBroadcastHandler;
 import com.eternalcode.economy.multification.NoticeHandler;
 import com.eternalcode.economy.multification.NoticeService;
 import com.eternalcode.economy.paycheck.PaycheckCommand;
+import com.eternalcode.economy.paycheck.PaycheckListener;
 import com.eternalcode.economy.paycheck.PaycheckManager;
 import com.eternalcode.economy.paycheck.PaycheckTagger;
 import com.eternalcode.economy.vault.VaultEconomyProvider;
@@ -42,13 +44,11 @@ import com.eternalcode.multification.notice.Notice;
 import com.eternalcode.multification.notice.NoticeBroadcast;
 import com.google.common.base.Stopwatch;
 import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.jakarta.LiteJakartaExtension;
 import dev.rollczi.litecommands.message.LiteMessages;
 import jakarta.validation.constraints.Positive;
-import java.io.File;
-import java.math.BigDecimal;
-import java.time.Duration;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -57,6 +57,10 @@ import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.time.Duration;
 
 @SuppressWarnings("unused")
 public class EconomyBukkitPlugin extends JavaPlugin {
@@ -101,7 +105,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
 
         PaycheckTagger paycheckTagger = new PaycheckTagger(this);
-        PaycheckManager paycheckManager = new PaycheckManager(noticeService, pluginConfig, paycheckTagger);
+        PaycheckManager paycheckManager = new PaycheckManager(noticeService, pluginConfig, decimalFormatter, paycheckTagger, accountPaymentService, accountManager);
 
         VaultEconomyProvider vaultEconomyProvider =
             new VaultEconomyProvider(this, decimalFormatter, accountPaymentService, accountManager);
@@ -121,7 +125,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             .invalidUsage(new InvalidUsageHandlerImpl(noticeService))
 
             .message(LiteMessages.COMMAND_COOLDOWN, new CommandCooldownMessage(noticeService, commandsConfig))
-            .message(LiteMessages.INVALID_NUMBER, (invocation, amount)  -> noticeService.create()
+            .message(LiteMessages.INVALID_NUMBER, (invocation, amount) -> noticeService.create()
                 .notice(messageConfig.positiveNumberRequired)
                 .placeholder("{AMOUNT}", amount)
                 .viewer(invocation.sender()))
@@ -134,7 +138,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 new AdminResetCommand(accountPaymentService, noticeService),
                 new AdminBalanceCommand(noticeService, decimalFormatter),
                 new AdminItemCommand(paycheckManager),
-                new PaycheckCommand(paycheckManager, noticeService),
+                new PaycheckCommand(paycheckManager, noticeService, decimalFormatter),
                 new MoneyBalanceCommand(noticeService, decimalFormatter),
                 new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService, pluginConfig),
                 new EconomyReloadCommand(configService, noticeService),
@@ -144,12 +148,16 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             .context(Account.class, new AccountContext(accountManager, messageConfig))
             .argument(Account.class, new AccountArgument(accountManager, noticeService, server))
 
+            .argument(BigDecimal.class, ArgumentKey.of(PriceArgumentResolver.KEY), new PriceArgumentResolver(pluginConfig, messageConfig))
+
             .result(Notice.class, new NoticeHandler(noticeService))
             .result(NoticeBroadcast.class, new NoticeBroadcastHandler())
 
             .build();
 
         server.getPluginManager().registerEvents(new AccountController(accountManager), this);
+
+        server.getPluginManager().registerEvents(new PaycheckListener(paycheckManager, paycheckTagger), this);
 
         BridgeManager bridgeManager = new BridgeManager(
             this.getDescription(),

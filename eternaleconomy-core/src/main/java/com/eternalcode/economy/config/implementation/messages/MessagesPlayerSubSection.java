@@ -21,7 +21,7 @@ public class MessagesPlayerSubSection extends OkaeriConfig {
             + " <white><gradient:#00FFA2:#34AE00>{PLAYER}</gradient>'s balance is <gradient:#00FFA2:#34AE00>{BALANCE}</gradient>.</white>");
     public Notice insufficientBalance = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> "
         + "<dark_gray>➤</dark_gray> <white>Insufficient funds,"
-        + " you are missing <gradient:#00FFA2:#34AE00> {MISSING_BALANCE}</gradient>.</white>");
+        + " you are missing <gradient:#00FFA2:#34AE00>{MISSING_BALANCE}</gradient>.</white>");
     public Notice transferSuccess = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray"
         + ">➤</dark_gray> <white>Successfully transferred <gradient:#00FFA2:#34AE00>{AMOUNT}</gradient> to "
         + "<gradient:#00FFA2:#34AE00>{PLAYER}</gradient>.</white>");
