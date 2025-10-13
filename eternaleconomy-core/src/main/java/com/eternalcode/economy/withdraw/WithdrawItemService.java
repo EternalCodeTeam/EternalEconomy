@@ -3,10 +3,10 @@ package com.eternalcode.economy.withdraw;
 import com.eternalcode.economy.config.implementation.PluginConfig;
 import com.eternalcode.economy.format.DecimalFormatter;
 import java.math.BigDecimal;
-import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -65,6 +65,10 @@ public class WithdrawItemService {
 
     public ItemStack setUpItem(BigDecimal value) {
         ItemStack item = this.config.currencyItem.item.clone();
+
+        if (item.getType() == Material.AIR) {
+            item.setType(Material.PAPER);
+        }
 
         String displayName = this.config.currencyItem.name
             .replace("{VALUE}", decimalFormatter.format(value));
