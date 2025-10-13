@@ -6,48 +6,52 @@ import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.config.implementation.PluginConfig;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
+import java.math.BigDecimal;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.math.BigDecimal;
-import java.util.Objects;
-import java.util.UUID;
-
-public class WithdrawManager {
+public class WithdrawService {
+    private final Server server;
     private final NoticeService noticeService;
     private final PluginConfig config;
-    private final WithdrawTagger withdrawTagger;
+    private final WithdrawItemService withdrawItemService;
     private final DecimalFormatter decimalFormatter;
 
     private final AccountPaymentService accountPaymentService;
     private final AccountManager accountManager;
 
-    private final MiniMessage mm;
+    private final MiniMessage miniMessage;
 
-    public WithdrawManager(
+    public WithdrawService(
+        Server server,
         NoticeService noticeService,
         PluginConfig pluginConfig,
         DecimalFormatter decimalFormatter,
-        WithdrawTagger withdrawTagger,
+        WithdrawItemService withdrawItemService,
         AccountPaymentService accountPaymentService,
-        AccountManager accountManager
+        AccountManager accountManager,
+        MiniMessage miniMessage
     ) {
+        this.server = server;
         this.noticeService = noticeService;
         this.config = pluginConfig;
         this.decimalFormatter = decimalFormatter;
-        this.withdrawTagger = withdrawTagger;
+        this.withdrawItemService = withdrawItemService;
 
         this.accountPaymentService = accountPaymentService;
         this.accountManager = accountManager;
 
-        this.mm = MiniMessage.miniMessage();
+        this.miniMessage = miniMessage;
     }
 
     public void setItem(Player player) {
@@ -55,7 +59,7 @@ public class WithdrawManager {
 
         if (item.getType() == Material.AIR) {
             noticeService.create()
-                .notice(messageConfig -> messageConfig.paycheck.noItem)
+                .notice(messageConfig -> messageConfig.withdraw.noItem)
                 .player(player.getUniqueId())
                 .send();
 
@@ -64,37 +68,42 @@ public class WithdrawManager {
 
         this.config.currencyItem.item = item;
 
-        String displayName = item.getItemMeta().getDisplayName();
-        if (displayName.isEmpty()) {
-            this.config.currencyItem.name = item.getType().name();
-        } else {
-            this.config.currencyItem.name = displayName;
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta != null) {
+            String displayName = meta.getDisplayName();
+
+            if (displayName.isEmpty()) {
+                this.config.currencyItem.name = item.getType().name();
+            }
+            else {
+                this.config.currencyItem.name = displayName;
+            }
         }
 
-        this.config.save();
+        CompletableFuture.runAsync(this.config::save);
 
         noticeService.create()
-            .notice(messageConfig -> messageConfig.paycheck.setItem)
+            .notice(messageConfig -> messageConfig.withdraw.itemSet)
             .placeholder("{ITEM}", this.config.currencyItem.name)
             .player(player.getUniqueId())
             .send();
     }
 
-    public void givePaycheck(UUID uuid, BigDecimal value) {
-        Player player = Bukkit.getPlayer(uuid);
+    public void addBanknote(UUID uuid, BigDecimal value) {
+        Player player = server.getPlayer(uuid);
         if (player == null) {
             return;
         }
 
-        ItemStack item = withdrawTagger.tagItem(setUpItem(value), value);
+        ItemStack item = withdrawItemService.markAsBanknote(setUpItem(value), value);
         player.getInventory().addItem(item);
-        player.updateInventory();
 
         Account account = accountManager.getAccount(player.getUniqueId());
         accountPaymentService.removeBalance(account, value);
 
         noticeService.create()
-            .notice(messageConfig -> messageConfig.paycheck.withdraw)
+            .notice(messageConfig -> messageConfig.withdraw.banknoteWithdrawn)
             .placeholder("{VALUE}", decimalFormatter.format(value))
             .player(player.getUniqueId())
             .send();
@@ -107,11 +116,13 @@ public class WithdrawManager {
 
         if (itemInHand.isSimilar(item)) {
             activeItem = itemInHand;
-        } else if (itemInOffHand.isSimilar(item)) {
+        }
+        else if (itemInOffHand.isSimilar(item)) {
             activeItem = itemInOffHand;
-        } else {
+        }
+        else {
             noticeService.create()
-                .notice(messageConfig -> messageConfig.paycheck.noCheck)
+                .notice(messageConfig -> messageConfig.withdraw.noCheck)
                 .player(player.getUniqueId())
                 .send();
             return;
@@ -128,7 +139,7 @@ public class WithdrawManager {
         accountPaymentService.addBalance(account, finalValue);
 
         noticeService.create()
-            .notice(messageConfig -> messageConfig.paycheck.redeem)
+            .notice(messageConfig -> messageConfig.withdraw.banknoteRedeemed)
             .placeholder("{VALUE}", decimalFormatter.format(finalValue))
             .player(player.getUniqueId())
             .send();
@@ -141,7 +152,7 @@ public class WithdrawManager {
         String displayName = this.config.currencyItem.name
             .replace("{VALUE}", decimalFormatter.format(value));
 
-        Component component = mm.deserialize(displayName).decoration(TextDecoration.ITALIC, false);
+        Component component = miniMessage.deserialize(displayName).decoration(TextDecoration.ITALIC, false);
         String legacyName = LegacyComponentSerializer.legacySection().serialize(component);
 
         meta.setDisplayName(legacyName);

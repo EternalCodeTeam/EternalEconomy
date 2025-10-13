@@ -11,29 +11,27 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
-import jakarta.validation.constraints.Positive;
-
 import java.math.BigDecimal;
 
 @Command(name = "withdraw", aliases = {"paycheck", "check"})
-@Permission(EconomyPermissionConstant.ADMIN_ITEM_PERMISSION)
+@Permission(EconomyPermissionConstant.PLAYER_WITHDRAW_PERMISSION)
 public class WithdrawCommand {
-    private final WithdrawManager withdrawManager;
+    private final WithdrawService withdrawService;
     private final NoticeService noticeService;
     private final DecimalFormatter decimalFormatter;
 
     public WithdrawCommand(
-        WithdrawManager withdrawManager,
+        WithdrawService withdrawService,
         NoticeService noticeService,
         DecimalFormatter decimalFormatter
     ) {
-        this.withdrawManager = withdrawManager;
+        this.withdrawService = withdrawService;
         this.noticeService = noticeService;
         this.decimalFormatter = decimalFormatter;
     }
 
     @Execute
-    void execute(@Context Account account, @Arg @Positive @Key(PriceArgumentResolver.KEY) BigDecimal value) {
+    void execute(@Context Account account, @Arg @Key(PriceArgumentResolver.KEY) BigDecimal value) {
         BigDecimal balance = account.balance();
         BigDecimal subtract = balance.subtract(value);
 
@@ -47,6 +45,6 @@ public class WithdrawCommand {
             return;
         }
 
-        withdrawManager.givePaycheck(account.uuid(), value);
+        withdrawService.addBanknote(account.uuid(), value);
     }
 }

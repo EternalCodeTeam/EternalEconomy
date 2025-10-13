@@ -27,5 +27,5 @@ public class MessageConfig extends OkaeriConfig {
 
     public MessageAdminSubSection admin = new MessageAdminSubSection();
     public MessagesPlayerSubSection player = new MessagesPlayerSubSection();
-    public MessagePaycheckSubSection paycheck = new MessagePaycheckSubSection();
+    public MessageWithdrawSubSection withdraw = new MessageWithdrawSubSection();
 }
