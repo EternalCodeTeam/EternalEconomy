@@ -67,7 +67,7 @@ public class PriceArgumentResolver extends ArgumentResolver<CommandSender, BigDe
                 value = value.multiply(multiplier);
             }
 
-            if (value.compareTo(BigDecimal.ZERO) <= 0.01) {
+            if (value.compareTo(BigDecimal.valueOf(0.09)) <= 0.09) {
                 return ParseResult.failure(this.messages.priceNeedToBeGreaterThanZero);
             }
 
