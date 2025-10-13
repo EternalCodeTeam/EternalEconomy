@@ -1,5 +1,6 @@
 package com.eternalcode.economy.config.implementation.messages;
 
+import com.eternalcode.economy.withdraw.WithdrawMessageConfig;
 import com.eternalcode.multification.notice.Notice;
 import eu.okaeri.configs.OkaeriConfig;
 
@@ -22,10 +23,11 @@ public class MessageConfig extends OkaeriConfig {
         "<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> <white>Missing permission: <gradient:#00FFA2:#34AE00>{PERMISSION}</gradient>.</white>");
 
     public Notice invalidPrice =
-        Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> <red>Nieprawidłowy format ceny! Użyj: 1000, 1k, 1.5k, 1m, etc.");
-    public Notice priceNeedToBeGreaterThanZero = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> <red>Cena musi być większa od 0!");
+        Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> <red>Invalid price format! Use: 1000, 1k, 1.5k, 1m, etc.");
+    public Notice priceNeedToBeGreaterThanZero = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> "
+        + "<dark_gray>➤</dark_gray> <red>Price must be greater than 0!");
 
     public MessageAdminSubSection admin = new MessageAdminSubSection();
     public MessagesPlayerSubSection player = new MessagesPlayerSubSection();
-    public MessageWithdrawSubSection withdraw = new MessageWithdrawSubSection();
+    public WithdrawMessageConfig withdraw = new WithdrawMessageConfig();
 }

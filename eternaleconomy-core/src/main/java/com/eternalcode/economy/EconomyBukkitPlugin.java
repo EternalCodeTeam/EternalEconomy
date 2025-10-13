@@ -20,7 +20,11 @@ import com.eternalcode.economy.command.handler.InvalidUsageHandlerImpl;
 import com.eternalcode.economy.command.handler.MissingPermissionHandlerImpl;
 import com.eternalcode.economy.command.impl.MoneyBalanceCommand;
 import com.eternalcode.economy.command.impl.MoneyTransferCommand;
-import com.eternalcode.economy.command.impl.admin.*;
+import com.eternalcode.economy.command.impl.admin.AdminAddCommand;
+import com.eternalcode.economy.command.impl.admin.AdminBalanceCommand;
+import com.eternalcode.economy.command.impl.admin.AdminRemoveCommand;
+import com.eternalcode.economy.command.impl.admin.AdminResetCommand;
+import com.eternalcode.economy.command.impl.admin.AdminSetCommand;
 import com.eternalcode.economy.command.message.InvalidBigDecimalMessage;
 import com.eternalcode.economy.command.validator.notsender.NotSender;
 import com.eternalcode.economy.command.validator.notsender.NotSenderValidator;
@@ -35,13 +39,13 @@ import com.eternalcode.economy.leaderboard.LeaderboardCommand;
 import com.eternalcode.economy.multification.NoticeBroadcastHandler;
 import com.eternalcode.economy.multification.NoticeHandler;
 import com.eternalcode.economy.multification.NoticeService;
-import com.eternalcode.economy.withdraw.WithdrawSetItemCommand;
+import com.eternalcode.economy.vault.VaultEconomyProvider;
 import com.eternalcode.economy.withdraw.WithdrawCommand;
+import com.eternalcode.economy.withdraw.WithdrawItemService;
+import com.eternalcode.economy.withdraw.WithdrawService;
+import com.eternalcode.economy.withdraw.WithdrawSetItemCommand;
 import com.eternalcode.economy.withdraw.controller.WithdrawAnvilController;
 import com.eternalcode.economy.withdraw.controller.WithdrawController;
-import com.eternalcode.economy.withdraw.WithdrawService;
-import com.eternalcode.economy.withdraw.WithdrawItemService;
-import com.eternalcode.economy.vault.VaultEconomyProvider;
 import com.eternalcode.multification.notice.Notice;
 import com.eternalcode.multification.notice.NoticeBroadcast;
 import com.google.common.base.Stopwatch;
@@ -51,6 +55,9 @@ import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.jakarta.LiteJakartaExtension;
 import dev.rollczi.litecommands.message.LiteMessages;
 import jakarta.validation.constraints.Positive;
+import java.io.File;
+import java.math.BigDecimal;
+import java.time.Duration;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -59,10 +66,6 @@ import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.time.Duration;
 
 @SuppressWarnings("unused")
 public class EconomyBukkitPlugin extends JavaPlugin {
@@ -91,7 +94,8 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         ConfigService configService = new ConfigService();
         MessageConfig messageConfig = configService.create(MessageConfig.class, new File(dataFolder, "messages.yml"));
         PluginConfig pluginConfig = configService.create(PluginConfig.class, new File(dataFolder, "config.yml"));
-        CommandsConfig commandsConfig = configService.create(CommandsConfig.class, new File(dataFolder, "commands.yml"));
+        CommandsConfig commandsConfig =
+            configService.create(CommandsConfig.class, new File(dataFolder, "commands.yml"));
 
         NoticeService noticeService = new NoticeService(messageConfig, this.audienceProvider, miniMessage);
 
@@ -107,7 +111,8 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
 
         WithdrawItemService withdrawItemService = new WithdrawItemService(this);
-        WithdrawService withdrawService = new WithdrawService(server, noticeService, pluginConfig, decimalFormatter,
+        WithdrawService withdrawService = new WithdrawService(
+            server, noticeService, pluginConfig, decimalFormatter,
             withdrawItemService, accountPaymentService, accountManager, miniMessage);
 
         VaultEconomyProvider vaultEconomyProvider =
@@ -115,8 +120,9 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         server.getServicesManager().register(Economy.class, vaultEconomyProvider, this, ServicePriority.Highest);
 
         this.liteCommands = LiteBukkitFactory.builder("eternaleconomy", this, server)
-            .extension(new LiteJakartaExtension<>(), settings -> settings
-                .violationMessage(Positive.class, BigDecimal.class, new InvalidBigDecimalMessage<>(noticeService))
+            .extension(
+                new LiteJakartaExtension<>(), settings -> settings
+                    .violationMessage(Positive.class, BigDecimal.class, new InvalidBigDecimalMessage<>(noticeService))
             )
 
             .annotations(extension -> extension.validator(
@@ -128,10 +134,11 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             .invalidUsage(new InvalidUsageHandlerImpl(noticeService))
 
             .message(LiteMessages.COMMAND_COOLDOWN, new CommandCooldownMessage(noticeService, commandsConfig))
-            .message(LiteMessages.INVALID_NUMBER, (invocation, amount) -> noticeService.create()
-                .notice(messageConfig.positiveNumberRequired)
-                .placeholder("{AMOUNT}", amount)
-                .viewer(invocation.sender()))
+            .message(
+                LiteMessages.INVALID_NUMBER, (invocation, amount) -> noticeService.create()
+                    .notice(messageConfig.positiveNumberRequired)
+                    .placeholder("{AMOUNT}", amount)
+                    .viewer(invocation.sender()))
             .editorGlobal(new CommandCooldownEditor(commandsConfig))
 
             .commands(
@@ -151,7 +158,10 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             .context(Account.class, new AccountContext(accountManager, messageConfig))
             .argument(Account.class, new AccountArgument(accountManager, noticeService, server))
 
-            .argument(BigDecimal.class, ArgumentKey.of(PriceArgumentResolver.KEY), new PriceArgumentResolver(pluginConfig, messageConfig))
+            .argument(
+                BigDecimal.class,
+                ArgumentKey.of(PriceArgumentResolver.KEY),
+                new PriceArgumentResolver(pluginConfig, messageConfig))
 
             .result(Notice.class, new NoticeHandler(noticeService))
             .result(NoticeBroadcast.class, new NoticeBroadcastHandler())

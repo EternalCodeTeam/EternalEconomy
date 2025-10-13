@@ -59,7 +59,7 @@ public class WithdrawService {
 
         if (item.getType() == Material.AIR) {
             noticeService.create()
-                .notice(messageConfig -> messageConfig.withdraw.noItem)
+                .notice(messageConfig -> messageConfig.withdraw.noItemHeld)
                 .player(player.getUniqueId())
                 .send();
 
@@ -92,6 +92,7 @@ public class WithdrawService {
 
     public void addBanknote(UUID uuid, BigDecimal value) {
         Player player = server.getPlayer(uuid);
+
         if (player == null) {
             return;
         }
@@ -122,7 +123,7 @@ public class WithdrawService {
         }
         else {
             noticeService.create()
-                .notice(messageConfig -> messageConfig.withdraw.noCheck)
+                .notice(messageConfig -> messageConfig.withdraw.noBanknoteInHand)
                 .player(player.getUniqueId())
                 .send();
             return;
@@ -146,7 +147,7 @@ public class WithdrawService {
     }
 
     private ItemStack setUpItem(BigDecimal value) {
-        ItemStack item = this.config.currencyItem.item;
+        ItemStack item = this.config.currencyItem.item.clone();
         ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
 
         String displayName = this.config.currencyItem.name

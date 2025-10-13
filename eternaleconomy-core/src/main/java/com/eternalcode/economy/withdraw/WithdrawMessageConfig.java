@@ -1,15 +1,15 @@
-package com.eternalcode.economy.config.implementation.messages;
+package com.eternalcode.economy.withdraw;
 
 import com.eternalcode.multification.notice.Notice;
 import eu.okaeri.configs.OkaeriConfig;
 
-public class MessageWithdrawSubSection extends OkaeriConfig {
-    public Notice noItem = Notice.chat(
-        "<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> <red>You must hold item to create paycheck!"
+public class WithdrawMessageConfig extends OkaeriConfig {
+    public Notice noItemHeld = Notice.chat(
+        "<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> <red>You must hold an item to create a banknote!"
     );
 
-    public Notice noCheck = Notice.chat(
-        "<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> <red>You must hold an paycheck to redeem it!"
+    public Notice noBanknoteInHand = Notice.chat(
+        "<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> <red>You must hold a banknote in your hand to redeem it!"
     );
 
     public Notice itemSet = Notice.chat(

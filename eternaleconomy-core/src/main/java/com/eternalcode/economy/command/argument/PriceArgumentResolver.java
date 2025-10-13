@@ -17,8 +17,7 @@ import java.util.regex.Pattern;
 
 public class PriceArgumentResolver extends ArgumentResolver<CommandSender, BigDecimal> {
     public static final String KEY = "price";
-    private static final Pattern PRICE_PATTERN =
-        Pattern.compile("^(\\d+(?:[.,]\\d+)?)([kmb])?$", Pattern.CASE_INSENSITIVE);
+    private final Pattern pricePattern;
 
     private final PluginConfig config;
     private final MessageConfig messages;
@@ -30,6 +29,14 @@ public class PriceArgumentResolver extends ArgumentResolver<CommandSender, BigDe
         this.messages = messages;
         this.multipliers = new HashMap<>();
 
+        StringBuilder suffixes = new StringBuilder();
+        this.config.units.format.forEach(unit -> {
+            this.multipliers.put(unit.getSuffix(), BigDecimal.valueOf(unit.getFactor()));
+            suffixes.append(unit.getSuffix());
+        });
+
+        this.pricePattern = Pattern.compile("^(\\d+(?:[.,]\\d+)?)([" + suffixes + "])?$", Pattern.CASE_INSENSITIVE);
+
         config.units.format.forEach(unit -> {
             this.multipliers.put(unit.getSuffix(), BigDecimal.valueOf(unit.getFactor()));
         });
@@ -38,7 +45,7 @@ public class PriceArgumentResolver extends ArgumentResolver<CommandSender, BigDe
     @Override
     protected ParseResult<BigDecimal> parse(
         Invocation<CommandSender> invocation, Argument<BigDecimal> argument, String raw) {
-        Matcher matcher = PRICE_PATTERN.matcher(raw.toLowerCase());
+        Matcher matcher = this.pricePattern.matcher(raw.toLowerCase());
 
         if (!matcher.matches()) {
             return ParseResult.failure(this.messages.invalidPrice);
@@ -66,7 +73,7 @@ public class PriceArgumentResolver extends ArgumentResolver<CommandSender, BigDe
 
             return ParseResult.success(value.setScale(2, RoundingMode.DOWN));
 
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException exception) {
             return ParseResult.failure(this.messages.invalidPrice);
         }
     }
