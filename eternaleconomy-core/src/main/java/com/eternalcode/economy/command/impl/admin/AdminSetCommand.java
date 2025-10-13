@@ -12,7 +12,6 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
-import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import org.bukkit.command.CommandSender;
 
@@ -35,7 +34,10 @@ public class AdminSetCommand {
     }
 
     @Execute
-    void execute(@Context CommandSender sender, @Arg Account receiver, @Arg @Key(PriceArgumentResolver.KEY) BigDecimal amount) {
+    void execute(
+        @Context CommandSender sender,
+        @Arg Account receiver,
+        @Arg @Key(PriceArgumentResolver.KEY) BigDecimal amount) {
         this.accountPaymentService.setBalance(receiver, amount);
 
         this.noticeService.create()
