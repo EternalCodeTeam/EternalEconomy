@@ -4,42 +4,42 @@ import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.AccountManager;
 import com.eternalcode.economy.bridge.BridgeInitializer;
 import com.eternalcode.economy.format.DecimalFormatter;
+import io.papermc.paper.plugin.configuration.PluginMeta;
 import java.util.UUID;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PlaceholderEconomyExpansion extends PlaceholderExpansion implements BridgeInitializer {
 
-    private final PluginDescriptionFile pluginDescriptionFile;
+    private final PluginMeta pluginMeta;
     private final AccountManager accountManager;
     private final DecimalFormatter decimalFormatter;
 
     public PlaceholderEconomyExpansion(
-        PluginDescriptionFile pluginDescriptionFile,
+        PluginMeta pluginMeta,
         AccountManager accountManager,
         DecimalFormatter decimalFormatter
     ) {
-        this.pluginDescriptionFile = pluginDescriptionFile;
+        this.pluginMeta = pluginMeta;
         this.accountManager = accountManager;
         this.decimalFormatter = decimalFormatter;
     }
 
     @Override
     public @NotNull String getIdentifier() {
-        return this.pluginDescriptionFile.getName().toLowerCase();
+        return this.pluginMeta.getName().toLowerCase();
     }
 
     @Override
     public @NotNull String getAuthor() {
-        return this.pluginDescriptionFile.getAuthors().get(0);
+        return this.pluginMeta.getAuthors().get(0);
     }
 
     @Override
     public @NotNull String getVersion() {
-        return this.pluginDescriptionFile.getVersion();
+        return this.pluginMeta.getVersion();
     }
 
     @Override

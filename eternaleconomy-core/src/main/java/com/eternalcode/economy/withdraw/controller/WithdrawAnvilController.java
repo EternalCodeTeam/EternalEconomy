@@ -7,7 +7,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,9 +26,8 @@ public class WithdrawAnvilController implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onAnvilUse(InventoryClickEvent event) {
         Inventory topInventory = event.getInventory();
-        Inventory clickedInventory = event.getClickedInventory();
 
-        if (!(event.getView().getTopInventory() instanceof AnvilInventory anvilInventory)) {
+        if (!(topInventory instanceof AnvilInventory) && !(topInventory instanceof CraftingInventory)) {
             return;
         }
 
@@ -44,9 +45,25 @@ public class WithdrawAnvilController implements Listener {
             event.getView().close();
 
             this.noticeService.create()
-                .notice(messageConfig -> messageConfig.withdraw.anvilInteract)
+                .notice(messageConfig -> messageConfig.withdraw.inventoryInteract)
                 .viewer(event.getWhoClicked())
                 .send();
         }
     }
+
+    // @EventHandler
+    // public void onPlayerDrag(InventoryDragEvent event) {
+    //     Inventory topInventory = event.getView().getTopInventory();
+    //
+    //     if (!(topInventory instanceof AnvilInventory) && !(topInventory instanceof CraftingInventory)) {
+    //         return;
+    //     }
+    //     event.get
+    //     int topSize = topInventory.getSize();
+    //     for (int rawSlot : event.getRawSlots()) {
+    //         if (rawSlot < topSize) {
+    //             event.setCancelled(true);
+    //         }
+    //     }
+    // }
 }

@@ -24,8 +24,12 @@ public class WithdrawMessageConfig extends OkaeriConfig {
         "<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> <green>You have redeemed your banknote worth <white>{VALUE}<green>!"
     );
 
-    public Notice anvilInteract = Notice.chat(
-        "<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> <red>You cannot rename the "
-            + "banknote item in an anvil!"
+    public Notice inventoryInteract = Notice.chat(
+        "<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> <red>You cannot use the "
+            + "banknote item in an anvil or crafting!"
+    );
+
+    public Notice noSpace = Notice.chat(
+        "<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> <red>You do not have enough space in your inventory to withdraw a banknote!"
     );
 }

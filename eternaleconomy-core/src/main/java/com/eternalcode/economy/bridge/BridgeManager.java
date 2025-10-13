@@ -3,6 +3,7 @@ package com.eternalcode.economy.bridge;
 import com.eternalcode.economy.account.AccountManager;
 import com.eternalcode.economy.bridge.placeholderapi.PlaceholderEconomyExpansion;
 import com.eternalcode.economy.format.DecimalFormatter;
+import io.papermc.paper.plugin.configuration.PluginMeta;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -12,7 +13,7 @@ import org.bukkit.plugin.PluginManager;
 
 public class BridgeManager {
 
-    private final PluginDescriptionFile pluginDescriptionFile;
+    private final PluginMeta pluginMeta;
 
     private final AccountManager accountManager;
     private final DecimalFormatter decimalFormatter;
@@ -22,14 +23,14 @@ public class BridgeManager {
     private final Logger logger;
 
     public BridgeManager(
-        PluginDescriptionFile pluginDescriptionFile,
+        PluginMeta pluginMeta,
         AccountManager accountManager,
         DecimalFormatter decimalFormatter,
         Server server,
         Plugin plugin,
         Logger logger
     ) {
-        this.pluginDescriptionFile = pluginDescriptionFile;
+        this.pluginMeta = pluginMeta;
         this.accountManager = accountManager;
         this.decimalFormatter = decimalFormatter;
         this.server = server;
@@ -44,7 +45,7 @@ public class BridgeManager {
         Bukkit.getScheduler().runTask(this.plugin, () -> {
             this.setupBridge("PlaceholderAPI", () -> {
                 PlaceholderEconomyExpansion placeholderEconomyExpansion = new PlaceholderEconomyExpansion(
-                    this.pluginDescriptionFile,
+                    this.pluginMeta,
                     this.accountManager,
                     this.decimalFormatter
                 );

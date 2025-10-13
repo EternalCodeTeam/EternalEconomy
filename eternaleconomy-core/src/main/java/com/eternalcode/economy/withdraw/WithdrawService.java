@@ -14,6 +14,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -68,17 +69,12 @@ public class WithdrawService {
 
         this.config.currencyItem.item = item;
 
-        ItemMeta meta = item.getItemMeta();
+        Component displayName = Objects.requireNonNull(item.getItemMeta()).displayName();
 
-        if (meta != null) {
-            String displayName = meta.getDisplayName();
-
-            if (displayName.isEmpty()) {
-                this.config.currencyItem.name = item.getType().name();
-            }
-            else {
-                this.config.currencyItem.name = displayName;
-            }
+        if (displayName != null) {
+            this.config.currencyItem.name = PlainTextComponentSerializer.plainText().serialize(displayName);
+        } else {
+            this.config.currencyItem.name = item.getType().name();
         }
 
         CompletableFuture.runAsync(this.config::save);
@@ -97,7 +93,15 @@ public class WithdrawService {
             return;
         }
 
-        ItemStack item = withdrawItemService.markAsBanknote(setUpItem(value), value);
+        if(player.getInventory().firstEmpty() == -1) {
+            noticeService.create()
+                .notice(messageConfig -> messageConfig.withdraw.noSpace)
+                .player(player.getUniqueId())
+                .send();
+            return;
+        }
+
+        ItemStack item = withdrawItemService.markAsBanknote(withdrawItemService.setUpItem(value), value);
         player.getInventory().addItem(item);
 
         Account account = accountManager.getAccount(player.getUniqueId());
@@ -110,18 +114,8 @@ public class WithdrawService {
             .send();
     }
 
-    public void redeem(Player player, ItemStack item, BigDecimal value) {
-        ItemStack activeItem;
-        ItemStack itemInHand = player.getInventory().getItemInMainHand();
-        ItemStack itemInOffHand = player.getInventory().getItemInOffHand();
-
-        if (itemInHand.isSimilar(item)) {
-            activeItem = itemInHand;
-        }
-        else if (itemInOffHand.isSimilar(item)) {
-            activeItem = itemInOffHand;
-        }
-        else {
+    public void redeem(Player player, ItemStack item, BigDecimal value, int amount) {
+        if(item.getType() == Material.AIR) {
             noticeService.create()
                 .notice(messageConfig -> messageConfig.withdraw.noBanknoteInHand)
                 .player(player.getUniqueId())
@@ -129,12 +123,9 @@ public class WithdrawService {
             return;
         }
 
-        player.getInventory().removeItem(activeItem);
-        activeItem.setAmount(activeItem.getAmount() - item.getAmount());
-        player.getInventory().addItem(activeItem);
-        player.updateInventory();
+        item.setAmount(item.getAmount() - amount);
 
-        BigDecimal finalValue = value.multiply(BigDecimal.valueOf(item.getAmount()));
+        BigDecimal finalValue = value.multiply(BigDecimal.valueOf(amount));
 
         Account account = accountManager.getAccount(player.getUniqueId());
         accountPaymentService.addBalance(account, finalValue);
@@ -144,21 +135,5 @@ public class WithdrawService {
             .placeholder("{VALUE}", decimalFormatter.format(finalValue))
             .player(player.getUniqueId())
             .send();
-    }
-
-    private ItemStack setUpItem(BigDecimal value) {
-        ItemStack item = this.config.currencyItem.item.clone();
-        ItemMeta meta = Objects.requireNonNull(item.getItemMeta());
-
-        String displayName = this.config.currencyItem.name
-            .replace("{VALUE}", decimalFormatter.format(value));
-
-        Component component = miniMessage.deserialize(displayName).decoration(TextDecoration.ITALIC, false);
-        String legacyName = LegacyComponentSerializer.legacySection().serialize(component);
-
-        meta.setDisplayName(legacyName);
-        item.setItemMeta(meta);
-
-        return item;
     }
 }

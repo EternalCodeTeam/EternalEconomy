@@ -11,12 +11,20 @@ plugins {
     id("me.champeau.jmh")
 }
 
+
+repositories {
+    maven {
+        name = "papermc"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
+    }
+}
+
 dependencies {
     // api module
     implementation(project(":eternaleconomy-api"))
 
-    // spigot-api
-    compileOnly("org.spigotmc:spigot-api:${Versions.SPIGOT_API}")
+    // paper-api
+    compileOnly("io.papermc.paper:paper-api:${Versions.PAPER_API}")
 
     // eternalcode commons
     implementation("com.eternalcode:eternalcode-commons-adventure:${Versions.ETERNALCODE_COMMONS}")
@@ -40,8 +48,8 @@ dependencies {
     implementation("com.eternalcode:multification-okaeri:${Versions.MULTIFICATION}")
 
     // kyori
-    implementation("net.kyori:adventure-platform-bukkit:${Versions.ADVENTURE_PLATFORM_BUKKIT}")
-    implementation("net.kyori:adventure-text-minimessage:${Versions.ADVENTURE_API}")
+//    implementation("net.kyori:adventure-platform-bukkit:${Versions.ADVENTURE_PLATFORM_BUKKIT}")
+//    implementation("net.kyori:adventure-text-minimessage:${Versions.ADVENTURE_API}")
 
     // vault
     compileOnly("com.github.MilkBowl:VaultAPI:${Versions.VAULT_API}")
@@ -107,7 +115,7 @@ tasks.shadowJar {
         "eu.okaeri",
         "panda",
         "org.yaml",
-        "net.kyori",
+//        "net.kyori",
         "com.eternalcode.commons",
         "net.jodah",
     ).forEach { relocate(it, prefix) }

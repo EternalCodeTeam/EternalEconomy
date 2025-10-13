@@ -23,7 +23,7 @@ public class CommandCooldownMessage implements InvokedMessage<CommandSender, Obj
 
     @Override
     public Object get(Invocation<CommandSender> invocation, CooldownState cooldownState) {
-        CommandCooldownConfig cooldown = commandsConfig.cooldowns.get(cooldownState.getCooldownContext().getKey());
+        CommandCooldownConfig cooldown = commandsConfig.cooldowns.get(cooldownState.getKey());
 
         if (cooldown == null) {
             return LiteMessages.COMMAND_COOLDOWN.getDefaultMessage(cooldownState);

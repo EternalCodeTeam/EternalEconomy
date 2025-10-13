@@ -7,7 +7,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class WithdrawController implements Listener {
@@ -42,12 +46,12 @@ public class WithdrawController implements Listener {
 
         event.setCancelled(true);
 
-        ItemStack itemToRedeem = item.clone();
+        int itemAmount = item.getAmount();
 
         if (!player.isSneaking()) {
-            itemToRedeem.setAmount(1);
+            itemAmount = 1;
         }
 
-        this.withdrawService.redeem(player, itemToRedeem, value);
+        this.withdrawService.redeem(player, item, value, itemAmount);
     }
 }

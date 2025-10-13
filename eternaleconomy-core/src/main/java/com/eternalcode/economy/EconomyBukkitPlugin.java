@@ -58,8 +58,6 @@ import jakarta.validation.constraints.Positive;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.Duration;
-import net.kyori.adventure.platform.AudienceProvider;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Server;
@@ -72,7 +70,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
     private static final String PLUGIN_STARTED = "EternalEconomy has been enabled in %dms.";
 
-    private AudienceProvider audienceProvider;
+    // private AudienceProvider audienceProvider;
     private DatabaseManager databaseManager;
 
     private LiteCommands<CommandSender> liteCommands;
@@ -82,7 +80,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         Stopwatch started = Stopwatch.createStarted();
         Server server = this.getServer();
 
-        this.audienceProvider = BukkitAudiences.create(this);
+        // this.audienceProvider = BukkitAudiences.create(this);
         MiniMessage miniMessage = MiniMessage.builder()
             .postProcessor(new AdventureUrlPostProcessor())
             .postProcessor(new AdventureLegacyColorPostProcessor())
@@ -97,7 +95,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         CommandsConfig commandsConfig =
             configService.create(CommandsConfig.class, new File(dataFolder, "commands.yml"));
 
-        NoticeService noticeService = new NoticeService(messageConfig, this.audienceProvider, miniMessage);
+        NoticeService noticeService = new NoticeService(messageConfig, miniMessage);
 
         Scheduler scheduler = EconomySchedulerAdapter.getAdaptiveScheduler(this);
 
@@ -110,7 +108,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
 
-        WithdrawItemService withdrawItemService = new WithdrawItemService(this);
+        WithdrawItemService withdrawItemService = new WithdrawItemService(this, pluginConfig, decimalFormatter, miniMessage);
         WithdrawService withdrawService = new WithdrawService(
             server, noticeService, pluginConfig, decimalFormatter,
             withdrawItemService, accountPaymentService, accountManager, miniMessage);
@@ -174,7 +172,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         server.getPluginManager().registerEvents(new WithdrawAnvilController(withdrawItemService, noticeService), this);
 
         BridgeManager bridgeManager = new BridgeManager(
-            this.getDescription(),
+            this.getPluginMeta(),
             accountManager,
             decimalFormatter,
             server,
@@ -189,9 +187,9 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (this.audienceProvider != null) {
-            this.audienceProvider.close();
-        }
+        // if (this.audienceProvider != null) {
+        //     this.audienceProvider.close();
+        // }
 
         if (this.liteCommands != null) {
             this.liteCommands.unregister();
