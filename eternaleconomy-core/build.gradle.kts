@@ -3,7 +3,6 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 plugins {
     `economy-java`
     `economy-repositories`
-//    `economy-checkstyle`
 
     id("net.minecrell.plugin-yml.bukkit")
     id("com.gradleup.shadow")
@@ -46,10 +45,6 @@ dependencies {
     // multification
     implementation("com.eternalcode:multification-bukkit:${Versions.MULTIFICATION}")
     implementation("com.eternalcode:multification-okaeri:${Versions.MULTIFICATION}")
-
-    // kyori
-//    implementation("net.kyori:adventure-platform-bukkit:${Versions.ADVENTURE_PLATFORM_BUKKIT}")
-//    implementation("net.kyori:adventure-text-minimessage:${Versions.ADVENTURE_API}")
 
     // vault
     compileOnly("com.github.MilkBowl:VaultAPI:${Versions.VAULT_API}")
@@ -115,7 +110,6 @@ tasks.shadowJar {
         "eu.okaeri",
         "panda",
         "org.yaml",
-//        "net.kyori",
         "com.eternalcode.commons",
         "net.jodah",
     ).forEach { relocate(it, prefix) }

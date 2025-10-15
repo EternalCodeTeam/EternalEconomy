@@ -81,7 +81,8 @@ public class WithdrawService {
             .toList();
 
         this.config.currencyItem.item.material = item.getType();
-        this.config.currencyItem.item.texture = item.getItemMeta().getCustomModelData();
+        this.config.currencyItem.item.texture = item.getItemMeta().hasCustomModelData() ?
+            item.getItemMeta().getCustomModelData() : null;
 
         CompletableFuture.runAsync(this.config::save);
 
