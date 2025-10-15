@@ -41,7 +41,7 @@ import com.eternalcode.economy.multification.NoticeHandler;
 import com.eternalcode.economy.multification.NoticeService;
 import com.eternalcode.economy.vault.VaultEconomyProvider;
 import com.eternalcode.economy.withdraw.WithdrawCommand;
-import com.eternalcode.economy.withdraw.WithdrawItemService;
+import com.eternalcode.economy.withdraw.WithdrawItemServiceImpl;
 import com.eternalcode.economy.withdraw.WithdrawService;
 import com.eternalcode.economy.withdraw.WithdrawSetItemCommand;
 import com.eternalcode.economy.withdraw.controller.WithdrawAnvilController;
@@ -108,10 +108,11 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
 
-        WithdrawItemService withdrawItemService = new WithdrawItemService(this, pluginConfig, decimalFormatter, miniMessage);
+        WithdrawItemServiceImpl
+            withdrawItemServiceImpl = new WithdrawItemServiceImpl(this, pluginConfig, decimalFormatter, miniMessage);
         WithdrawService withdrawService = new WithdrawService(
             server, noticeService, pluginConfig, decimalFormatter,
-            withdrawItemService, accountPaymentService, accountManager, miniMessage);
+            withdrawItemServiceImpl, accountPaymentService, accountManager, miniMessage);
 
         VaultEconomyProvider vaultEconomyProvider =
             new VaultEconomyProvider(this, decimalFormatter, accountPaymentService, accountManager);
@@ -168,8 +169,8 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
         server.getPluginManager().registerEvents(new AccountController(accountManager), this);
 
-        server.getPluginManager().registerEvents(new WithdrawController(withdrawService, withdrawItemService), this);
-        server.getPluginManager().registerEvents(new WithdrawAnvilController(withdrawItemService, noticeService), this);
+        server.getPluginManager().registerEvents(new WithdrawController(withdrawService, withdrawItemServiceImpl), this);
+        server.getPluginManager().registerEvents(new WithdrawAnvilController(withdrawItemServiceImpl, noticeService), this);
 
         BridgeManager bridgeManager = new BridgeManager(
             this.getPluginMeta(),

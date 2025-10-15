@@ -7,19 +7,17 @@ import com.eternalcode.economy.config.implementation.PluginConfig;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class WithdrawService {
     private final Server server;
@@ -60,28 +58,36 @@ public class WithdrawService {
 
         if (item.getType() == Material.AIR) {
             noticeService.create()
-                .notice(messageConfig -> messageConfig.withdraw.noItemHeld)
+                .notice(messageConfig -> messageConfig.withdraw.noItemInHand)
                 .player(player.getUniqueId())
                 .send();
 
             return;
         }
 
-        this.config.currencyItem.item = item;
-
         Component displayName = Objects.requireNonNull(item.getItemMeta()).displayName();
 
         if (displayName != null) {
-            this.config.currencyItem.name = PlainTextComponentSerializer.plainText().serialize(displayName);
-        } else {
-            this.config.currencyItem.name = item.getType().name();
+            this.config.currencyItem.item.name = PlainTextComponentSerializer.plainText().serialize(displayName);
         }
+        else {
+            this.config.currencyItem.item.name = item.getType().name();
+        }
+
+        this.config.currencyItem.item.glow = item.getItemMeta().hasEnchants();
+        this.config.currencyItem.item.lore = Objects.requireNonNullElse(item.getItemMeta().lore(), List.<Component>of())
+            .stream()
+            .map(miniMessage::serialize)
+            .toList();
+
+        this.config.currencyItem.item.material = item.getType();
+        this.config.currencyItem.item.texture = item.getItemMeta().getCustomModelData();
 
         CompletableFuture.runAsync(this.config::save);
 
         noticeService.create()
-            .notice(messageConfig -> messageConfig.withdraw.itemSet)
-            .placeholder("{ITEM}", this.config.currencyItem.name)
+            .notice(messageConfig -> messageConfig.withdraw.itemSetSuccess)
+            .placeholder("{ITEM}", this.config.currencyItem.item.name)
             .player(player.getUniqueId())
             .send();
     }
@@ -93,15 +99,15 @@ public class WithdrawService {
             return;
         }
 
-        if(player.getInventory().firstEmpty() == -1) {
+        if (player.getInventory().firstEmpty() == -1) {
             noticeService.create()
-                .notice(messageConfig -> messageConfig.withdraw.noSpace)
+                .notice(messageConfig -> messageConfig.withdraw.noInventorySpace)
                 .player(player.getUniqueId())
                 .send();
             return;
         }
 
-        ItemStack item = withdrawItemService.markAsBanknote(withdrawItemService.setUpItem(value), value);
+        ItemStack item = withdrawItemService.createBanknote(value);
         player.getInventory().addItem(item);
 
         Account account = accountManager.getAccount(player.getUniqueId());
@@ -115,7 +121,7 @@ public class WithdrawService {
     }
 
     public void redeem(Player player, ItemStack item, BigDecimal value, int amount) {
-        if(item.getType() == Material.AIR) {
+        if (item.getType() == Material.AIR) {
             noticeService.create()
                 .notice(messageConfig -> messageConfig.withdraw.noBanknoteInHand)
                 .player(player.getUniqueId())

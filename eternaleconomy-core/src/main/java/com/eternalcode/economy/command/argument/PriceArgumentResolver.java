@@ -6,17 +6,18 @@ import dev.rollczi.litecommands.argument.Argument;
 import dev.rollczi.litecommands.argument.parser.ParseResult;
 import dev.rollczi.litecommands.argument.resolver.ArgumentResolver;
 import dev.rollczi.litecommands.invocation.Invocation;
-import org.bukkit.command.CommandSender;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.bukkit.command.CommandSender;
 
 public class PriceArgumentResolver extends ArgumentResolver<CommandSender, BigDecimal> {
+
     public static final String KEY = "price";
+
     private final Pattern pricePattern;
 
     private final PluginConfig config;
@@ -72,8 +73,8 @@ public class PriceArgumentResolver extends ArgumentResolver<CommandSender, BigDe
             }
 
             return ParseResult.success(value.setScale(2, RoundingMode.DOWN));
-
-        } catch (NumberFormatException exception) {
+        }
+        catch (NumberFormatException exception) {
             return ParseResult.failure(this.messages.invalidPrice);
         }
     }

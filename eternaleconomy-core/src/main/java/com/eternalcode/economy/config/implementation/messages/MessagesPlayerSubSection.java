@@ -14,22 +14,22 @@ public class MessagesPlayerSubSection extends OkaeriConfig {
         + "<white>Set your balance to <gradient:#00FFA2:#34AE00>{AMOUNT}</gradient>.</white>");
     public Notice reset = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> "
         + "<white>Resetted your balance.</white>");
-    public Notice balance = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
-        + " <white>Your balance is <gradient:#00FFA2:#34AE00>{BALANCE}</gradient>.</white>");
+    public Notice balance = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> "
+        + "<white>Your balance is <gradient:#00FFA2:#34AE00>{BALANCE}</gradient>.</white>");
     public Notice balanceOther =
-        Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
-            + " <white><gradient:#00FFA2:#34AE00>{PLAYER}</gradient>'s balance is <gradient:#00FFA2:#34AE00>{BALANCE}</gradient>.</white>");
-    public Notice insufficientBalance = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> "
-        + "<dark_gray>➤</dark_gray> <white>Insufficient funds,"
+        Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> "
+            + "<white><gradient:#00FFA2:#34AE00>{PLAYER}</gradient>'s balance is <gradient:#00FFA2:#34AE00>{BALANCE}</gradient>.</white>");
+    public Notice insufficientBalance = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> "
+        + "<white>Insufficient funds,"
         + " you are missing <gradient:#00FFA2:#34AE00>{MISSING_BALANCE}</gradient>.</white>");
-    public Notice transferSuccess = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray"
-        + ">➤</dark_gray> <white>Successfully transferred <gradient:#00FFA2:#34AE00>{AMOUNT}</gradient> to "
+    public Notice transferSuccess = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> "
+        + "<white>Successfully transferred <gradient:#00FFA2:#34AE00>{AMOUNT}</gradient> to "
         + "<gradient:#00FFA2:#34AE00>{PLAYER}</gradient>.</white>");
-    public Notice transferReceived = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> "
-        + "<dark_gray>➤</dark_gray> <white>Received <gradient:#00FFA2:#34AE00>{AMOUNT}</gradient> from "
+    public Notice transferReceived = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> "
+        + "<white>Received <gradient:#00FFA2:#34AE00>{AMOUNT}</gradient> from "
         + "<gradient:#00FFA2:#34AE00>{PLAYER}</gradient>.</white>");
-    public Notice transferLimit = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray>"
-        + " <white>Transaction limit is <gradient:#00FFA2:#34AE00>{LIMIT}</gradient>.</white>");
+    public Notice transferLimit = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> "
+        + "<white>Transaction limit is <gradient:#00FFA2:#34AE00>{LIMIT}</gradient>.</white>");
 
     @Comment({
         "Use {PAGE} placeholder to show the current page number",
@@ -65,6 +65,6 @@ public class MessagesPlayerSubSection extends OkaeriConfig {
         .build();
 
     @Comment("Leaderboard is empty notice")
-    public Notice leaderboardEmpty = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> "
-        + "<dark_gray>➤</dark_gray> <white>Leaderboard is empty :(</white>");
+    public Notice leaderboardEmpty = Notice.chat("<b><gradient:#00FFA2:#34AE00>ECONOMY</gradient></b> <dark_gray>➤</dark_gray> "
+        + "<white>Leaderboard is empty :(</white>");
 }

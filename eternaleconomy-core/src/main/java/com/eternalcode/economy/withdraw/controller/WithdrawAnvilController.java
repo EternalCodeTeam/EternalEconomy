@@ -7,7 +7,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
@@ -42,28 +41,15 @@ public class WithdrawAnvilController implements Listener {
         }
 
         if (this.withdrawItemService.isBanknote(item)) {
+            event.setCancelled(true);
             event.getView().close();
 
             this.noticeService.create()
-                .notice(messageConfig -> messageConfig.withdraw.inventoryInteract)
+                .notice(messageConfig -> messageConfig.withdraw.invalidInteraction)
                 .viewer(event.getWhoClicked())
                 .send();
         }
     }
 
-    // @EventHandler
-    // public void onPlayerDrag(InventoryDragEvent event) {
-    //     Inventory topInventory = event.getView().getTopInventory();
-    //
-    //     if (!(topInventory instanceof AnvilInventory) && !(topInventory instanceof CraftingInventory)) {
-    //         return;
-    //     }
-    //     event.get
-    //     int topSize = topInventory.getSize();
-    //     for (int rawSlot : event.getRawSlots()) {
-    //         if (rawSlot < topSize) {
-    //             event.setCancelled(true);
-    //         }
-    //     }
-    // }
+    // TODO: Implement blocking item drag into inventory
 }
