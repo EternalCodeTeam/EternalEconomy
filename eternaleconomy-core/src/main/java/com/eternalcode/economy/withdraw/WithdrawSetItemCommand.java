@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 @Command(name = "economy withdraw setitem")
 @Permission(EconomyPermissionConstant.ADMIN_ITEM_PERMISSION)
 public class WithdrawSetItemCommand {
+
     private final WithdrawService withdrawService;
 
     public WithdrawSetItemCommand(WithdrawService withdrawService) {
@@ -18,6 +19,6 @@ public class WithdrawSetItemCommand {
 
     @Execute
     void execute(@Context Player player) {
-        withdrawService.setItem(player);
+        this.withdrawService.setItem(player);
     }
 }

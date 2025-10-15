@@ -1,11 +1,12 @@
 package com.eternalcode.economy.config.implementation;
 
+import com.eternalcode.economy.config.item.ConfigItem;
 import com.eternalcode.economy.database.DatabaseConfig;
 import com.eternalcode.economy.format.DecimalUnit;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -48,11 +49,12 @@ public class PluginConfig extends OkaeriConfig {
     }
 
     public static class CurrencyItem extends OkaeriConfig {
-        @Comment({"Name of the item",
-        "{VALUE} - value of the check",})
-        public String name = "<white>Check worth <green>{VALUE}$";
-
-        @Comment("Item")
-        public ItemStack item = new ItemStack(Material.PAPER);
+        public ConfigItem item = new ConfigItem(
+            "<white>Check worth <green>{VALUE}$",
+            List.of("<gray>Right click to redeem"),
+            Material.PAPER,
+            null,
+            true
+        );
     }
 }

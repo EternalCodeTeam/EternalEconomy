@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 @Command(name = "withdraw", aliases = {"paycheck", "check"})
 @Permission(EconomyPermissionConstant.PLAYER_WITHDRAW_PERMISSION)
 public class WithdrawCommand {
+
     private final WithdrawService withdrawService;
     private final NoticeService noticeService;
     private final DecimalFormatter decimalFormatter;
