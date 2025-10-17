@@ -3,11 +3,19 @@ package com.eternalcode.economy.withdraw;
 import com.eternalcode.economy.config.implementation.PluginConfig;
 import com.eternalcode.economy.config.item.ConfigItem;
 import com.eternalcode.economy.format.DecimalFormatter;
+import com.eternalcode.economy.multification.NoticeService;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -20,17 +28,20 @@ public class WithdrawItemServiceImpl implements WithdrawItemService {
     private final DecimalFormatter moneyFormatter;
     private final MiniMessage miniMessage;
     private final NamespacedKey banknoteValueKey;
+    private final NoticeService noticeService;
 
     public WithdrawItemServiceImpl(
         Plugin plugin,
         PluginConfig pluginConfig,
         DecimalFormatter moneyFormatter,
+        NoticeService noticeService,
         MiniMessage miniMessage
     ) {
-        this.banknoteValueKey = new NamespacedKey(plugin, "eternaleconomy_withdraw_value");
+        this.banknoteValueKey = new NamespacedKey(plugin, "withdraw_value");
         this.pluginConfig = pluginConfig;
         this.moneyFormatter = moneyFormatter;
         this.miniMessage = miniMessage;
+        this.noticeService = noticeService;
     }
 
     @Override
@@ -59,6 +70,47 @@ public class WithdrawItemServiceImpl implements WithdrawItemService {
         return storedValue != null ? new BigDecimal(storedValue) : BigDecimal.ZERO;
     }
 
+    @Override
+    public void setItem(Player player) {
+        ItemStack item = player.getInventory().getItemInMainHand();
+
+        if (item.getType() == Material.AIR) {
+            noticeService.create()
+                .notice(messageConfig -> messageConfig.withdraw.noItemInHand)
+                .player(player.getUniqueId())
+                .send();
+
+            return;
+        }
+
+        Component displayName = Objects.requireNonNull(item.getItemMeta()).displayName();
+
+        if (displayName != null) {
+            this.pluginConfig.currencyItem.item.name = PlainTextComponentSerializer.plainText().serialize(displayName);
+        }
+        else {
+            this.pluginConfig.currencyItem.item.name = item.getType().name();
+        }
+
+        this.pluginConfig.currencyItem.item.glow = item.getItemMeta().hasEnchants();
+        this.pluginConfig.currencyItem.item.lore = Objects.requireNonNullElse(item.getItemMeta().lore(), List.<Component>of())
+            .stream()
+            .map(miniMessage::serialize)
+            .toList();
+
+        this.pluginConfig.currencyItem.item.material = item.getType();
+        this.pluginConfig.currencyItem.item.texture = item.getItemMeta().hasCustomModelData() ?
+            item.getItemMeta().getCustomModelData() : null;
+
+        CompletableFuture.runAsync(this.pluginConfig::save);
+
+        noticeService.create()
+            .notice(messageConfig -> messageConfig.withdraw.itemSetSuccess)
+            .placeholder("{ITEM}", this.pluginConfig.currencyItem.item.name)
+            .player(player.getUniqueId())
+            .send();
+    }
+
     private ItemStack createBaseBanknoteItem(BigDecimal value) {
         ConfigItem configItem = this.pluginConfig.currencyItem.item;
 
@@ -68,7 +120,8 @@ public class WithdrawItemServiceImpl implements WithdrawItemService {
             meta.setCustomModelData(configItem.texture);
             meta.displayName(miniMessage.deserialize(configItem.name.replace("{VALUE}", moneyFormatter.format(value)), TagResolver.empty()));
             meta.lore(configItem.lore.stream()
-                .map(line -> miniMessage.deserialize(line, TagResolver.empty()))
+                .map(line -> miniMessage.deserialize(line.replace("{VALUE}", moneyFormatter.format(value)),
+                    TagResolver.empty()))
                 .toList());
         });
 

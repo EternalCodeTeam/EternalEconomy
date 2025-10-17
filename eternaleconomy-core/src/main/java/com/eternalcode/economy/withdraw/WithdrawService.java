@@ -22,75 +22,27 @@ import org.bukkit.inventory.ItemStack;
 public class WithdrawService {
     private final Server server;
     private final NoticeService noticeService;
-    private final PluginConfig config;
     private final WithdrawItemService withdrawItemService;
     private final DecimalFormatter decimalFormatter;
 
     private final AccountPaymentService accountPaymentService;
     private final AccountManager accountManager;
 
-    private final MiniMessage miniMessage;
-
     public WithdrawService(
         Server server,
         NoticeService noticeService,
-        PluginConfig pluginConfig,
         DecimalFormatter decimalFormatter,
         WithdrawItemService withdrawItemService,
         AccountPaymentService accountPaymentService,
-        AccountManager accountManager,
-        MiniMessage miniMessage
+        AccountManager accountManager
     ) {
         this.server = server;
         this.noticeService = noticeService;
-        this.config = pluginConfig;
         this.decimalFormatter = decimalFormatter;
         this.withdrawItemService = withdrawItemService;
 
         this.accountPaymentService = accountPaymentService;
         this.accountManager = accountManager;
-
-        this.miniMessage = miniMessage;
-    }
-
-    public void setItem(Player player) {
-        ItemStack item = player.getInventory().getItemInMainHand();
-
-        if (item.getType() == Material.AIR) {
-            noticeService.create()
-                .notice(messageConfig -> messageConfig.withdraw.noItemInHand)
-                .player(player.getUniqueId())
-                .send();
-
-            return;
-        }
-
-        Component displayName = Objects.requireNonNull(item.getItemMeta()).displayName();
-
-        if (displayName != null) {
-            this.config.currencyItem.item.name = PlainTextComponentSerializer.plainText().serialize(displayName);
-        }
-        else {
-            this.config.currencyItem.item.name = item.getType().name();
-        }
-
-        this.config.currencyItem.item.glow = item.getItemMeta().hasEnchants();
-        this.config.currencyItem.item.lore = Objects.requireNonNullElse(item.getItemMeta().lore(), List.<Component>of())
-            .stream()
-            .map(miniMessage::serialize)
-            .toList();
-
-        this.config.currencyItem.item.material = item.getType();
-        this.config.currencyItem.item.texture = item.getItemMeta().hasCustomModelData() ?
-            item.getItemMeta().getCustomModelData() : null;
-
-        CompletableFuture.runAsync(this.config::save);
-
-        noticeService.create()
-            .notice(messageConfig -> messageConfig.withdraw.itemSetSuccess)
-            .placeholder("{ITEM}", this.config.currencyItem.item.name)
-            .player(player.getUniqueId())
-            .send();
     }
 
     public void addBanknote(UUID uuid, BigDecimal value) {

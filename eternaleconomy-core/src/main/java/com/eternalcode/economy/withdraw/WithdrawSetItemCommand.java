@@ -11,14 +11,14 @@ import org.bukkit.entity.Player;
 @Permission(EconomyPermissionConstant.ADMIN_ITEM_PERMISSION)
 public class WithdrawSetItemCommand {
 
-    private final WithdrawService withdrawService;
+    private final WithdrawItemService withdrawItemService;
 
-    public WithdrawSetItemCommand(WithdrawService withdrawService) {
-        this.withdrawService = withdrawService;
+    public WithdrawSetItemCommand(WithdrawItemService withdrawItemService) {
+        this.withdrawItemService = withdrawItemService;
     }
 
     @Execute
     void execute(@Context Player player) {
-        this.withdrawService.setItem(player);
+        this.withdrawItemService.setItem(player);
     }
 }

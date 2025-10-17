@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.bukkit.command.CommandSender;
 
-public class PriceArgumentResolver extends ArgumentResolver<CommandSender, BigDecimal> {
+public class MoneyFormatArgument extends ArgumentResolver<CommandSender, BigDecimal> {
 
     public static final String KEY = "price";
 
@@ -25,7 +25,7 @@ public class PriceArgumentResolver extends ArgumentResolver<CommandSender, BigDe
 
     private final Map<Character, BigDecimal> multipliers;
 
-    public PriceArgumentResolver(PluginConfig config, MessageConfig messages) {
+    public MoneyFormatArgument(PluginConfig config, MessageConfig messages) {
         this.config = config;
         this.messages = messages;
         this.multipliers = new HashMap<>();
@@ -37,10 +37,6 @@ public class PriceArgumentResolver extends ArgumentResolver<CommandSender, BigDe
         });
 
         this.pricePattern = Pattern.compile("^(\\d+(?:[.,]\\d+)?)([" + suffixes + "])?$", Pattern.CASE_INSENSITIVE);
-
-        config.units.format.forEach(unit -> {
-            this.multipliers.put(unit.getSuffix(), BigDecimal.valueOf(unit.getFactor()));
-        });
     }
 
     @Override
@@ -49,7 +45,7 @@ public class PriceArgumentResolver extends ArgumentResolver<CommandSender, BigDe
         Matcher matcher = this.pricePattern.matcher(raw.toLowerCase());
 
         if (!matcher.matches()) {
-            return ParseResult.failure(this.messages.invalidPrice);
+            return ParseResult.failure(this.messages.invalidMoney);
         }
 
         String numberPart = matcher.group(1).replace(',', '.');
@@ -62,20 +58,20 @@ public class PriceArgumentResolver extends ArgumentResolver<CommandSender, BigDe
                 BigDecimal multiplier = multipliers.get(Character.toLowerCase(suffix.charAt(0)));
 
                 if (multiplier == null) {
-                    return ParseResult.failure(this.messages.invalidPrice);
+                    return ParseResult.failure(this.messages.invalidMoney);
                 }
 
                 value = value.multiply(multiplier);
             }
 
-            if (value.compareTo(BigDecimal.valueOf(0.09)) <= 0.09) {
-                return ParseResult.failure(this.messages.priceNeedToBeGreaterThanZero);
+            if (value.compareTo(BigDecimal.valueOf(0.09)) < 0.09) {
+                return ParseResult.failure(this.messages.incorrectMoneyArgument);
             }
 
             return ParseResult.success(value.setScale(2, RoundingMode.DOWN));
         }
         catch (NumberFormatException exception) {
-            return ParseResult.failure(this.messages.invalidPrice);
+            return ParseResult.failure(this.messages.invalidMoney);
         }
     }
 }

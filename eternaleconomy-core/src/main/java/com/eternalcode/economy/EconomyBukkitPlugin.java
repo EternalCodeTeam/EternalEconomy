@@ -12,7 +12,7 @@ import com.eternalcode.economy.account.database.AccountRepository;
 import com.eternalcode.economy.account.database.AccountRepositoryImpl;
 import com.eternalcode.economy.bridge.BridgeManager;
 import com.eternalcode.economy.command.argument.AccountArgument;
-import com.eternalcode.economy.command.argument.PriceArgumentResolver;
+import com.eternalcode.economy.command.argument.MoneyFormatArgument;
 import com.eternalcode.economy.command.context.AccountContext;
 import com.eternalcode.economy.command.cooldown.CommandCooldownEditor;
 import com.eternalcode.economy.command.cooldown.CommandCooldownMessage;
@@ -70,7 +70,6 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
     private static final String PLUGIN_STARTED = "EternalEconomy has been enabled in %dms.";
 
-    // private AudienceProvider audienceProvider;
     private DatabaseManager databaseManager;
 
     private LiteCommands<CommandSender> liteCommands;
@@ -80,7 +79,6 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         Stopwatch started = Stopwatch.createStarted();
         Server server = this.getServer();
 
-        // this.audienceProvider = BukkitAudiences.create(this);
         MiniMessage miniMessage = MiniMessage.builder()
             .postProcessor(new AdventureUrlPostProcessor())
             .postProcessor(new AdventureLegacyColorPostProcessor())
@@ -109,10 +107,11 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
 
         WithdrawItemServiceImpl
-            withdrawItemServiceImpl = new WithdrawItemServiceImpl(this, pluginConfig, decimalFormatter, miniMessage);
+            withdrawItemServiceImpl = new WithdrawItemServiceImpl(this, pluginConfig, decimalFormatter,
+            noticeService, miniMessage);
         WithdrawService withdrawService = new WithdrawService(
-            server, noticeService, pluginConfig, decimalFormatter,
-            withdrawItemServiceImpl, accountPaymentService, accountManager, miniMessage);
+            server, noticeService, decimalFormatter,
+            withdrawItemServiceImpl, accountPaymentService, accountManager);
 
         VaultEconomyProvider vaultEconomyProvider =
             new VaultEconomyProvider(this, decimalFormatter, accountPaymentService, accountManager);
@@ -146,7 +145,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 new AdminSetCommand(accountPaymentService, decimalFormatter, noticeService),
                 new AdminResetCommand(accountPaymentService, noticeService),
                 new AdminBalanceCommand(noticeService, decimalFormatter),
-                new WithdrawSetItemCommand(withdrawService),
+                new WithdrawSetItemCommand(withdrawItemServiceImpl),
                 new WithdrawCommand(withdrawService, noticeService, decimalFormatter),
                 new MoneyBalanceCommand(noticeService, decimalFormatter),
                 new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService, pluginConfig),
@@ -159,8 +158,8 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
             .argument(
                 BigDecimal.class,
-                ArgumentKey.of(PriceArgumentResolver.KEY),
-                new PriceArgumentResolver(pluginConfig, messageConfig))
+                ArgumentKey.of(MoneyFormatArgument.KEY),
+                new MoneyFormatArgument(pluginConfig, messageConfig))
 
             .result(Notice.class, new NoticeHandler(noticeService))
             .result(NoticeBroadcast.class, new NoticeBroadcastHandler())
@@ -188,10 +187,6 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // if (this.audienceProvider != null) {
-        //     this.audienceProvider.close();
-        // }
-
         if (this.liteCommands != null) {
             this.liteCommands.unregister();
         }

@@ -3,7 +3,7 @@ package com.eternalcode.economy.command.impl.admin;
 import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.AccountPaymentService;
-import com.eternalcode.economy.command.argument.PriceArgumentResolver;
+import com.eternalcode.economy.command.argument.MoneyFormatArgument;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import dev.rollczi.litecommands.annotations.argument.Arg;
@@ -12,7 +12,6 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
-import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import org.bukkit.command.CommandSender;
 
@@ -35,7 +34,7 @@ public class AdminRemoveCommand {
     }
 
     @Execute
-    void execute(@Context CommandSender sender, @Arg Account receiver, @Arg @Key(PriceArgumentResolver.KEY) BigDecimal amount) {
+    void execute(@Context CommandSender sender, @Arg Account receiver, @Arg @Key(MoneyFormatArgument.KEY) BigDecimal amount) {
         if (receiver.balance().compareTo(amount) < 0) {
             BigDecimal subtract = amount.subtract(receiver.balance());
             this.noticeService.create()
