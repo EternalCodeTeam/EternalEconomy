@@ -2,13 +2,14 @@ package com.eternalcode.economy.withdraw.controller;
 
 import com.eternalcode.economy.multification.NoticeService;
 import com.eternalcode.economy.withdraw.WithdrawItemService;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.AnvilInventory;
-import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,25 +23,18 @@ public class WithdrawAnvilController implements Listener {
         this.noticeService = noticeService;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onAnvilUse(InventoryClickEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onAnvilClick(InventoryClickEvent event) {
         Inventory topInventory = event.getInventory();
 
-        if (!(topInventory instanceof AnvilInventory) && !(topInventory instanceof CraftingInventory)) {
+        if (this.isRestrictedInventory(topInventory)) {
             return;
         }
 
-        ItemStack item = event.getCurrentItem();
+        ItemStack clickedItem = event.getCurrentItem();
+        ItemStack cursorItem = event.getCursor();
 
-        if (item == null) {
-            return;
-        }
-
-        if (event.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY) {
-            return;
-        }
-
-        if (this.withdrawItemService.isBanknote(item)) {
+        if (this.isBanknoteInteraction(clickedItem, cursorItem, event.getAction())) {
             event.setCancelled(true);
             event.getView().close();
 
@@ -51,5 +45,50 @@ public class WithdrawAnvilController implements Listener {
         }
     }
 
-    // TODO: Implement blocking item drag into inventory
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onAnvilDrag(InventoryDragEvent event) {
+        Inventory inventory = event.getInventory();
+
+        if (this.isRestrictedInventory(inventory)) {
+            return;
+        }
+
+        ItemStack draggedItem = event.getOldCursor();
+        if (draggedItem == null) {
+            return;
+        }
+
+        boolean isDraggingToTopInventory = event.getRawSlots().stream()
+            .anyMatch(slot -> slot < inventory.getSize());
+
+        if (isDraggingToTopInventory && this.withdrawItemService.isBanknote(draggedItem)) {
+            event.setCancelled(true);
+            event.getView().close();
+
+            if (event.getWhoClicked() instanceof Player) {
+                this.noticeService.create()
+                    .notice(messageConfig -> messageConfig.withdraw.invalidInteraction)
+                    .viewer(event.getWhoClicked())
+                    .send();
+            }
+        }
+    }
+
+    private boolean isRestrictedInventory(Inventory inventory) {
+        InventoryType type = inventory.getType();
+        return type != InventoryType.ANVIL && type != InventoryType.CRAFTING && type != InventoryType.WORKBENCH;
+    }
+
+    private boolean isBanknoteInteraction(ItemStack clickedItem, ItemStack cursorItem, InventoryAction action) {
+        if (action == InventoryAction.MOVE_TO_OTHER_INVENTORY && this.withdrawItemService.isBanknote(clickedItem)) {
+            return true;
+        }
+
+        if (action == InventoryAction.PLACE_ALL || action == InventoryAction.PLACE_ONE
+            || action == InventoryAction.PLACE_SOME) {
+            return this.withdrawItemService.isBanknote(cursorItem);
+        }
+
+        return false;
+    }
 }

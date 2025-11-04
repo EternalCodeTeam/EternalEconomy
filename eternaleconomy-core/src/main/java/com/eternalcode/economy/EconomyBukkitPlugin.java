@@ -43,7 +43,6 @@ import com.eternalcode.economy.vault.VaultEconomyProvider;
 import com.eternalcode.economy.withdraw.WithdrawCommand;
 import com.eternalcode.economy.withdraw.WithdrawItemServiceImpl;
 import com.eternalcode.economy.withdraw.WithdrawService;
-import com.eternalcode.economy.withdraw.WithdrawSetItemCommand;
 import com.eternalcode.economy.withdraw.controller.WithdrawAnvilController;
 import com.eternalcode.economy.withdraw.controller.WithdrawController;
 import com.eternalcode.multification.notice.Notice;
@@ -108,7 +107,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
         WithdrawItemServiceImpl
             withdrawItemServiceImpl = new WithdrawItemServiceImpl(this, pluginConfig, decimalFormatter,
-            noticeService, miniMessage);
+            miniMessage);
         WithdrawService withdrawService = new WithdrawService(
             server, noticeService, decimalFormatter,
             withdrawItemServiceImpl, accountPaymentService, accountManager);
@@ -145,7 +144,6 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 new AdminSetCommand(accountPaymentService, decimalFormatter, noticeService),
                 new AdminResetCommand(accountPaymentService, noticeService),
                 new AdminBalanceCommand(noticeService, decimalFormatter),
-                new WithdrawSetItemCommand(withdrawItemServiceImpl),
                 new WithdrawCommand(withdrawService, noticeService, decimalFormatter),
                 new MoneyBalanceCommand(noticeService, decimalFormatter),
                 new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService, pluginConfig),

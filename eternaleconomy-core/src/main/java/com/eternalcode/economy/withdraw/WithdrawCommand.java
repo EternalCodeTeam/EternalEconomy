@@ -32,20 +32,20 @@ public class WithdrawCommand {
     }
 
     @Execute
-    void execute(@Context Account account, @Arg @Key(MoneyFormatArgument.KEY) BigDecimal value) {
+    void execute(@Context Account account, @Arg("amount") @Key(MoneyFormatArgument.KEY) BigDecimal value) {
         BigDecimal balance = account.balance();
         BigDecimal subtract = balance.subtract(value);
 
         if (subtract.compareTo(BigDecimal.ZERO) < 0) {
-            noticeService.create()
+            this.noticeService.create()
                 .notice(messageConfig -> messageConfig.player.insufficientBalance)
-                .placeholder("{MISSING_BALANCE}", decimalFormatter.format(subtract.abs()))
+                .placeholder("{MISSING_BALANCE}", this.decimalFormatter.format(subtract.abs()))
                 .player(account.uuid())
                 .send();
 
             return;
         }
 
-        withdrawService.addBanknote(account.uuid(), value);
+        this.withdrawService.addBanknote(account.uuid(), value);
     }
 }

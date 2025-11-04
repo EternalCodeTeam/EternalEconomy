@@ -1,10 +1,11 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+import net.minecrell.pluginyml.paper.PaperPluginDescription
 
 plugins {
     `economy-java`
     `economy-repositories`
 
-    id("net.minecrell.plugin-yml.bukkit")
+    id("net.minecrell.plugin-yml.paper")
     id("com.gradleup.shadow")
     id("xyz.jpenilla.run-paper")
     id("me.champeau.jmh")
@@ -26,33 +27,35 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:${Versions.PAPER_API}")
 
     // eternalcode commons
-    implementation("com.eternalcode:eternalcode-commons-adventure:${Versions.ETERNALCODE_COMMONS}")
-    implementation("com.eternalcode:eternalcode-commons-bukkit:${Versions.ETERNALCODE_COMMONS}")
-    implementation("com.eternalcode:eternalcode-commons-shared:${Versions.ETERNALCODE_COMMONS}")
-    implementation("com.eternalcode:eternalcode-commons-folia:${Versions.ETERNALCODE_COMMONS}")
+    paperLibrary("com.eternalcode:eternalcode-commons-adventure:${Versions.ETERNALCODE_COMMONS}")
+    paperLibrary("com.eternalcode:eternalcode-commons-bukkit:${Versions.ETERNALCODE_COMMONS}")
+    paperLibrary("com.eternalcode:eternalcode-commons-shared:${Versions.ETERNALCODE_COMMONS}")
+    paperLibrary("com.eternalcode:eternalcode-commons-folia:${Versions.ETERNALCODE_COMMONS}")
 
-    bukkitLibrary("org.mariadb.jdbc:mariadb-java-client:${Versions.MARIA_DB}")
-    bukkitLibrary("org.postgresql:postgresql:${Versions.POSTGRESQL}")
-    bukkitLibrary("com.h2database:h2:${Versions.H2}")
-    bukkitLibrary("com.j256.ormlite:ormlite-core:${Versions.ORMLITE}")
-    bukkitLibrary("com.j256.ormlite:ormlite-jdbc:${Versions.ORMLITE}")
-    bukkitLibrary("com.zaxxer:HikariCP:${Versions.HIKARI_CP}")
+    paperLibrary("org.mariadb.jdbc:mariadb-java-client:${Versions.MARIA_DB}")
+    paperLibrary("org.postgresql:postgresql:${Versions.POSTGRESQL}")
+    paperLibrary("com.h2database:h2:${Versions.H2}")
+    paperLibrary("com.j256.ormlite:ormlite-core:${Versions.ORMLITE}")
+    paperLibrary("com.j256.ormlite:ormlite-jdbc:${Versions.ORMLITE}")
+    paperLibrary("com.zaxxer:HikariCP:${Versions.HIKARI_CP}")
 
-    implementation("dev.rollczi:litecommands-bukkit:${Versions.LITE_COMMANDS}")
-    implementation("dev.rollczi:litecommands-adventure:${Versions.LITE_COMMANDS}")
-    implementation("dev.rollczi:litecommands-jakarta:${Versions.LITE_COMMANDS}")
+    paperLibrary("dev.rollczi:litecommands-bukkit:${Versions.LITE_COMMANDS}")
+    paperLibrary("dev.rollczi:litecommands-adventure:${Versions.LITE_COMMANDS}")
+    paperLibrary("dev.rollczi:litecommands-jakarta:${Versions.LITE_COMMANDS}")
 
     // multification
-    implementation("com.eternalcode:multification-bukkit:${Versions.MULTIFICATION}")
-    implementation("com.eternalcode:multification-okaeri:${Versions.MULTIFICATION}")
+    paperLibrary("com.eternalcode:multification-bukkit:${Versions.MULTIFICATION}")
+    paperLibrary("com.eternalcode:multification-okaeri:${Versions.MULTIFICATION}")
 
     // vault
     compileOnly("com.github.MilkBowl:VaultAPI:${Versions.VAULT_API}")
 
     // okaeri configs
-    implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:${Versions.OKAERI_CONFIGS}")
-    implementation("eu.okaeri:okaeri-configs-serdes-commons:${Versions.OKAERI_CONFIGS}")
-    implementation("eu.okaeri:okaeri-configs-serdes-bukkit:${Versions.OKAERI_CONFIGS}")
+    paperLibrary("eu.okaeri:okaeri-configs-yaml-snakeyaml:${Versions.OKAERI_CONFIGS}")
+    paperLibrary("eu.okaeri:okaeri-configs-serdes-commons:${Versions.OKAERI_CONFIGS}")
+    paperLibrary("eu.okaeri:okaeri-configs-serdes-bukkit:${Versions.OKAERI_CONFIGS}")
+
+    paperLibrary("com.github.cryptomorin:XSeries:13.5.1")
 
     compileOnly("me.clip:placeholderapi:${Versions.PLACEHOLDER_API}")
 
@@ -70,9 +73,10 @@ tasks.test {
     useJUnitPlatform()
 }
 
-bukkit {
+paper {
     main = "com.eternalcode.economy.EconomyBukkitPlugin"
-    apiVersion = "1.13"
+    loader = "com.eternalcode.economy.EconomyBukkitLoader"
+    apiVersion = "1.19"
     prefix = "EternalEconomy"
     author = "EternalCodeTeam"
     name = "EternalEconomy"
@@ -83,10 +87,19 @@ bukkit {
     load = BukkitPluginDescription.PluginLoadOrder.STARTUP
     version = "${project.version}"
 
-    depend = listOf("Vault")
-    softDepend = listOf("PlaceholderAPI")
+    serverDependencies {
+        register("Vault") {
+            required = true
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+        register("PlaceholderAPI") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+    }
 
     foliaSupported = true
+    generateLibrariesJson = true
 }
 
 tasks.runServer {
@@ -104,13 +117,8 @@ tasks.shadowJar {
         "org/jetbrains/annotations/**"
     )
 
-    val prefix = "com.eternalcode.economy.libs"
-    listOf(
-        "dev.rollczi",
-        "eu.okaeri",
-        "panda",
-        "org.yaml",
-        "com.eternalcode.commons",
-        "net.jodah",
-    ).forEach { relocate(it, prefix) }
+//    val prefix = "com.eternalcode.economy.libs"
+//    listOf(
+//
+//    ).forEach { relocate(it, prefix) }
 }

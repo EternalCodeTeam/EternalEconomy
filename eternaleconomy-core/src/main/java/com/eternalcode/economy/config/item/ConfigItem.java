@@ -1,29 +1,34 @@
 package com.eternalcode.economy.config.item;
 
 import eu.okaeri.configs.OkaeriConfig;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import net.kyori.adventure.text.Component;
+import java.util.Objects;
 import org.bukkit.Material;
 
 public class ConfigItem extends OkaeriConfig {
 
-    public String name = "&6Item";
-    public List<String> lore = Collections.singletonList("&7This is an item");
-    public Material material = Material.PLAYER_HEAD;
-    public Integer texture = null;
-    public boolean glow = false;
+    private String name;
+    private List<String> lore;
+    private Material material;
+    private Integer texture;
+    private boolean glow;
 
     public ConfigItem(String name, List<String> lore, Material material, Integer texture, boolean glow) {
         this.name = name;
-        this.lore = lore;
+        this.lore = lore != null ? new ArrayList<>(lore) : new ArrayList<>();
         this.material = material;
         this.texture = texture;
         this.glow = glow;
     }
 
     public ConfigItem() {
-
+        this.name = "&6Item";
+        this.lore = new ArrayList<>(Collections.singletonList("&7This is an item"));
+        this.material = Material.PLAYER_HEAD;
+        this.texture = null;
+        this.glow = false;
     }
 
     public static Builder builder() {
@@ -35,7 +40,7 @@ public class ConfigItem extends OkaeriConfig {
     }
 
     public List<String> lore() {
-        return this.lore;
+        return Collections.unmodifiableList(this.lore);
     }
 
     public Material material() {
@@ -51,40 +56,39 @@ public class ConfigItem extends OkaeriConfig {
     }
 
     public static class Builder {
-        private final ConfigItem configItem = new ConfigItem();
+        private String name = "&6Item";
+        private List<String> lore = new ArrayList<>(Collections.singletonList("&7This is an item"));
+        private Material material = Material.PLAYER_HEAD;
+        private Integer texture = null;
+        private boolean glow = false;
 
         public Builder withName(String name) {
-            this.configItem.name = name;
-
+            this.name = name;
             return this;
         }
 
         public Builder withLore(List<String> lore) {
-            this.configItem.lore = lore;
-
+            this.lore = lore != null ? new ArrayList<>(lore) : new ArrayList<>();
             return this;
         }
 
         public Builder withMaterial(Material material) {
-            this.configItem.material = material;
-
+            this.material = material;
             return this;
         }
 
         public Builder withTexture(Integer texture) {
-            this.configItem.texture = texture;
-
+            this.texture = texture;
             return this;
         }
 
         public Builder withGlow(boolean glow) {
-            this.configItem.glow = glow;
-
+            this.glow = glow;
             return this;
         }
 
         public ConfigItem build() {
-            return this.configItem;
+            return new ConfigItem(this.name, this.lore, this.material, this.texture, this.glow);
         }
     }
 }

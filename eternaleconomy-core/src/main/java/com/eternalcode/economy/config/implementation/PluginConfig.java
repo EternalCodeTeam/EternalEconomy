@@ -5,7 +5,6 @@ import com.eternalcode.economy.database.DatabaseConfig;
 import com.eternalcode.economy.format.DecimalUnit;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 
 import java.math.BigDecimal;
@@ -34,7 +33,7 @@ public class PluginConfig extends OkaeriConfig {
     public boolean showLeaderboardPosition = true;
 
     @Comment("Currency item settings")
-    public CurrencyItem currencyItem = new CurrencyItem();
+    public WithdrawItem withdrawItem = new WithdrawItem();
 
     public static class Units extends OkaeriConfig {
 
@@ -48,13 +47,13 @@ public class PluginConfig extends OkaeriConfig {
         );
     }
 
-    public static class CurrencyItem extends OkaeriConfig {
-        public ConfigItem item = new ConfigItem(
-            "<white>Check worth <green>{VALUE}$",
-            List.of("<gray>Right click to redeem"),
-            Material.PAPER,
-            null,
-            true
-        );
+    public static class WithdrawItem extends OkaeriConfig {
+        public ConfigItem item = ConfigItem.builder()
+            .withName("<white>Check worth <green>{VALUE}$")
+            .withLore(List.of("<gray>Right click to redeem"))
+            .withMaterial(Material.PAPER)
+            .withTexture(0)
+            .withGlow(true)
+            .build();
     }
 }

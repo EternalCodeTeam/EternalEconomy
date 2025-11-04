@@ -1,6 +1,6 @@
 object Versions {
 
-    const val PAPER_API = "1.19.4-R0.1-SNAPSHOT"
+    const val PAPER_API = "1.20.4-R0.1-SNAPSHOT"
 
     const val OKAERI_CONFIGS = "5.0.5"
     const val LITE_COMMANDS = "3.10.5"

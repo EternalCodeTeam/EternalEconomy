@@ -3,28 +3,24 @@ package com.eternalcode.economy.withdraw;
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.AccountManager;
 import com.eternalcode.economy.account.AccountPaymentService;
-import com.eternalcode.economy.config.implementation.PluginConfig;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class WithdrawService {
+
+    private static final int MINIMUM_AMOUNT = 1;
+
     private final Server server;
     private final NoticeService noticeService;
     private final WithdrawItemService withdrawItemService;
     private final DecimalFormatter decimalFormatter;
-
     private final AccountPaymentService accountPaymentService;
     private final AccountManager accountManager;
 
@@ -40,58 +36,74 @@ public class WithdrawService {
         this.noticeService = noticeService;
         this.decimalFormatter = decimalFormatter;
         this.withdrawItemService = withdrawItemService;
-
         this.accountPaymentService = accountPaymentService;
         this.accountManager = accountManager;
     }
 
     public void addBanknote(UUID uuid, BigDecimal value) {
-        Player player = server.getPlayer(uuid);
+        if (value.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Banknote value must be positive, got: " + value);
+        }
 
+        Player player = this.server.getPlayer(uuid);
         if (player == null) {
             return;
         }
 
         if (player.getInventory().firstEmpty() == -1) {
-            noticeService.create()
+            this.noticeService.create()
                 .notice(messageConfig -> messageConfig.withdraw.noInventorySpace)
                 .player(player.getUniqueId())
                 .send();
             return;
         }
 
-        ItemStack item = withdrawItemService.createBanknote(value);
-        player.getInventory().addItem(item);
+        ItemStack banknote = this.withdrawItemService.createBanknote(value);
+        player.getInventory().addItem(banknote);
 
-        Account account = accountManager.getAccount(player.getUniqueId());
-        accountPaymentService.removeBalance(account, value);
+        Account account = this.accountManager.getAccount(player.getUniqueId());
+        this.accountPaymentService.removeBalance(account, value);
 
-        noticeService.create()
+        this.noticeService.create()
             .notice(messageConfig -> messageConfig.withdraw.banknoteWithdrawn)
-            .placeholder("{VALUE}", decimalFormatter.format(value))
+            .placeholder("{VALUE}", this.decimalFormatter.format(value))
             .player(player.getUniqueId())
             .send();
     }
 
     public void redeem(Player player, ItemStack item, BigDecimal value, int amount) {
+        if (amount < MINIMUM_AMOUNT) {
+            throw new IllegalArgumentException("Amount must be at least " + MINIMUM_AMOUNT + ", got: " + amount);
+        }
+
+        if (value.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Banknote value must be positive, got: " + value);
+        }
+
         if (item.getType() == Material.AIR) {
-            noticeService.create()
+            this.noticeService.create()
                 .notice(messageConfig -> messageConfig.withdraw.noBanknoteInHand)
                 .player(player.getUniqueId())
                 .send();
             return;
         }
 
+        if (item.getAmount() < amount) {
+            throw new IllegalArgumentException(
+                "Cannot redeem " + amount + " items when only " + item.getAmount() + " are available"
+            );
+        }
+
         item.setAmount(item.getAmount() - amount);
 
-        BigDecimal finalValue = value.multiply(BigDecimal.valueOf(amount));
+        BigDecimal totalValue = value.multiply(BigDecimal.valueOf(amount));
 
-        Account account = accountManager.getAccount(player.getUniqueId());
-        accountPaymentService.addBalance(account, finalValue);
+        Account account = this.accountManager.getAccount(player.getUniqueId());
+        this.accountPaymentService.addBalance(account, totalValue);
 
-        noticeService.create()
+        this.noticeService.create()
             .notice(messageConfig -> messageConfig.withdraw.banknoteRedeemed)
-            .placeholder("{VALUE}", decimalFormatter.format(finalValue))
+            .placeholder("{VALUE}", this.decimalFormatter.format(totalValue))
             .player(player.getUniqueId())
             .send();
     }
