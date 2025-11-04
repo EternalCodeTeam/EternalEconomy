@@ -2,7 +2,6 @@ package com.eternalcode.economy.withdraw;
 
 import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
-import com.eternalcode.economy.command.argument.MoneyFormatArgument;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import dev.rollczi.litecommands.annotations.argument.Arg;
@@ -11,6 +10,7 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
+import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 @Command(name = "withdraw", aliases = {"paycheck", "check"})
@@ -32,7 +32,7 @@ public class WithdrawCommand {
     }
 
     @Execute
-    void execute(@Context Account account, @Arg("amount") @Key(MoneyFormatArgument.KEY) BigDecimal value) {
+    void execute(@Context Account account, @Arg("amount") @Positive BigDecimal value) {
         BigDecimal balance = account.balance();
         BigDecimal subtract = balance.subtract(value);
 

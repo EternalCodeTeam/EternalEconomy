@@ -91,7 +91,7 @@ public class WithdrawItemServiceImpl implements WithdrawItemService {
     }
 
     private ItemStack createBaseBanknoteItem(BigDecimal value) {
-        ConfigItem configItem = this.pluginConfig.withdrawItem.item;
+        ConfigItem configItem = this.pluginConfig.withdraw.item;
         String formattedValue = this.moneyFormatter.format(value);
 
         ItemStack banknoteItem = new ItemStack(configItem.material());

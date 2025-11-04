@@ -33,7 +33,7 @@ public class PluginConfig extends OkaeriConfig {
     public boolean showLeaderboardPosition = true;
 
     @Comment("Currency item settings")
-    public WithdrawItem withdrawItem = new WithdrawItem();
+    public WithdrawItem withdraw = new WithdrawItem();
 
     public static class Units extends OkaeriConfig {
 

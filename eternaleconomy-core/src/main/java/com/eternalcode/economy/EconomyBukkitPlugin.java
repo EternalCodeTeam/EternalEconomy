@@ -12,7 +12,6 @@ import com.eternalcode.economy.account.database.AccountRepository;
 import com.eternalcode.economy.account.database.AccountRepositoryImpl;
 import com.eternalcode.economy.bridge.BridgeManager;
 import com.eternalcode.economy.command.argument.AccountArgument;
-import com.eternalcode.economy.command.argument.MoneyFormatArgument;
 import com.eternalcode.economy.command.context.AccountContext;
 import com.eternalcode.economy.command.cooldown.CommandCooldownEditor;
 import com.eternalcode.economy.command.cooldown.CommandCooldownMessage;
@@ -49,7 +48,6 @@ import com.eternalcode.multification.notice.Notice;
 import com.eternalcode.multification.notice.NoticeBroadcast;
 import com.google.common.base.Stopwatch;
 import dev.rollczi.litecommands.LiteCommands;
-import dev.rollczi.litecommands.argument.ArgumentKey;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.jakarta.LiteJakartaExtension;
 import dev.rollczi.litecommands.message.LiteMessages;
@@ -153,11 +151,6 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
             .context(Account.class, new AccountContext(accountManager, messageConfig))
             .argument(Account.class, new AccountArgument(accountManager, noticeService, server))
-
-            .argument(
-                BigDecimal.class,
-                ArgumentKey.of(MoneyFormatArgument.KEY),
-                new MoneyFormatArgument(pluginConfig, messageConfig))
 
             .result(Notice.class, new NoticeHandler(noticeService))
             .result(NoticeBroadcast.class, new NoticeBroadcastHandler())
