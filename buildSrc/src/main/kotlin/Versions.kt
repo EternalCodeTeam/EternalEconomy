@@ -11,7 +11,7 @@ object Versions {
     const val JETBRAINS_ANNOTATIONS = "24.1.0"
 
     const val ADVENTURE_PLATFORM_BUKKIT = "4.4.1"
-    const val ADVENTURE_API = "4.24.0"
+    const val ADVENTURE_API = "4.26.1"
 
     const val VAULT_API = "1.7.1"
 
