@@ -6,12 +6,11 @@ import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import dev.rollczi.litecommands.annotations.argument.Arg;
-import dev.rollczi.litecommands.annotations.argument.Key;
 import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Min;
 import java.math.BigDecimal;
 import org.bukkit.command.CommandSender;
 
@@ -26,15 +25,23 @@ public class AdminSetCommand {
     public AdminSetCommand(
         AccountPaymentService accountPaymentService,
         DecimalFormatter decimalFormatter,
-        NoticeService noticeService
-    ) {
+        NoticeService noticeService) {
         this.accountPaymentService = accountPaymentService;
         this.decimalFormatter = decimalFormatter;
         this.noticeService = noticeService;
     }
 
     @Execute
-    void execute(@Context CommandSender sender, @Arg Account receiver, @Arg @Positive BigDecimal amount) {
+    void execute(@Context CommandSender sender, @Arg Account receiver, @Arg @Min(1) BigDecimal amount) {
+        this.setAccountBalance(sender, receiver, amount);
+    }
+
+    @Execute(name = "0")
+    void execute(@Context CommandSender sender, @Arg Account receiver) {
+        this.setAccountBalance(sender, receiver, BigDecimal.ZERO);
+    }
+
+    private void setAccountBalance(CommandSender sender, Account receiver, BigDecimal amount) {
         this.accountPaymentService.setBalance(receiver, amount);
 
         this.noticeService.create()
@@ -51,4 +58,5 @@ public class AdminSetCommand {
             .player(receiver.uuid())
             .send();
     }
+
 }

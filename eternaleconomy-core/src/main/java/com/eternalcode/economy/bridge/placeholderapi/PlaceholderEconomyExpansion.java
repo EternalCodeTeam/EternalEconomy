@@ -18,10 +18,9 @@ public class PlaceholderEconomyExpansion extends PlaceholderExpansion implements
     private final DecimalFormatter decimalFormatter;
 
     public PlaceholderEconomyExpansion(
-        PluginMeta pluginMeta,
-        AccountManager accountManager,
-        DecimalFormatter decimalFormatter
-    ) {
+            PluginMeta pluginMeta,
+            AccountManager accountManager,
+            DecimalFormatter decimalFormatter) {
         this.pluginMeta = pluginMeta;
         this.accountManager = accountManager;
         this.decimalFormatter = decimalFormatter;
@@ -54,7 +53,7 @@ public class PlaceholderEconomyExpansion extends PlaceholderExpansion implements
 
         switch (params) {
             case "balance" -> {
-                return String.format("%.2f", account.balance());
+                return this.decimalFormatter.format(account.balance());
             }
             case "balance_formatted" -> {
                 return this.decimalFormatter.format(account.balance());

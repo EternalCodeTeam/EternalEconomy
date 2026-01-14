@@ -2,7 +2,6 @@ package com.eternalcode.economy.withdraw.controller;
 
 import com.eternalcode.economy.multification.NoticeService;
 import com.eternalcode.economy.withdraw.WithdrawItemService;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -54,23 +53,28 @@ public class WithdrawAnvilController implements Listener {
         }
 
         ItemStack draggedItem = event.getOldCursor();
-        if (draggedItem == null) {
+        if (draggedItem == null || !this.withdrawItemService.isBanknote(draggedItem)) {
             return;
         }
 
-        boolean isDraggingToTopInventory = event.getRawSlots().stream()
-            .anyMatch(slot -> slot < inventory.getSize());
+        int inventorySize = inventory.getSize();
+        boolean isDraggingToTopInventory = false;
 
-        if (isDraggingToTopInventory && this.withdrawItemService.isBanknote(draggedItem)) {
+        for (Integer slot : event.getRawSlots()) {
+            if (slot < inventorySize) {
+                isDraggingToTopInventory = true;
+                break;
+            }
+        }
+
+        if (isDraggingToTopInventory) {
             event.setCancelled(true);
             event.getView().close();
 
-            if (event.getWhoClicked() instanceof Player) {
-                this.noticeService.create()
-                    .notice(messageConfig -> messageConfig.withdraw.invalidInteraction)
-                    .viewer(event.getWhoClicked())
-                    .send();
-            }
+            this.noticeService.create()
+                .notice(messageConfig -> messageConfig.withdraw.invalidInteraction)
+                .viewer(event.getWhoClicked())
+                .send();
         }
     }
 

@@ -1,10 +1,8 @@
 package com.eternalcode.economy.config.item;
 
 import eu.okaeri.configs.OkaeriConfig;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import org.bukkit.Material;
 
 public class ConfigItem extends OkaeriConfig {
@@ -17,15 +15,15 @@ public class ConfigItem extends OkaeriConfig {
 
     public ConfigItem(String name, List<String> lore, Material material, Integer texture, boolean glow) {
         this.name = name;
-        this.lore = lore != null ? new ArrayList<>(lore) : new ArrayList<>();
+        this.lore = lore != null ? lore : List.of();
         this.material = material;
         this.texture = texture;
         this.glow = glow;
     }
 
     public ConfigItem() {
-        this.name = "&6Item";
-        this.lore = new ArrayList<>(Collections.singletonList("&7This is an item"));
+        this.name = "§6Item";
+        this.lore = List.of("§7This is an item");
         this.material = Material.PLAYER_HEAD;
         this.texture = null;
         this.glow = false;
@@ -40,7 +38,7 @@ public class ConfigItem extends OkaeriConfig {
     }
 
     public List<String> lore() {
-        return Collections.unmodifiableList(this.lore);
+        return this.lore;
     }
 
     public Material material() {
@@ -56,8 +54,8 @@ public class ConfigItem extends OkaeriConfig {
     }
 
     public static class Builder {
-        private String name = "&6Item";
-        private List<String> lore = new ArrayList<>(Collections.singletonList("&7This is an item"));
+        private String name = "§6Item";
+        private List<String> lore = List.of("§7This is an item");
         private Material material = Material.PLAYER_HEAD;
         private Integer texture = null;
         private boolean glow = false;
@@ -68,7 +66,7 @@ public class ConfigItem extends OkaeriConfig {
         }
 
         public Builder withLore(List<String> lore) {
-            this.lore = lore != null ? new ArrayList<>(lore) : new ArrayList<>();
+            this.lore = lore != null ? lore : List.of();
             return this;
         }
 

@@ -6,7 +6,6 @@ import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import java.math.BigDecimal;
-import java.util.Objects;
 import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.Server;
