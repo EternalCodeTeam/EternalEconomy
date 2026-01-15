@@ -10,7 +10,7 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Min;
 import java.math.BigDecimal;
 import org.bukkit.command.CommandSender;
 
@@ -33,7 +33,7 @@ public class AdminRemoveCommand {
     }
 
     @Execute
-    void execute(@Context CommandSender sender, @Arg Account receiver, @Arg @Positive BigDecimal amount) {
+    void execute(@Context CommandSender sender, @Arg Account receiver, @Arg @Min(1) BigDecimal amount) {
         if (receiver.balance().compareTo(amount) < 0) {
             BigDecimal subtract = amount.subtract(receiver.balance());
             this.noticeService.create()

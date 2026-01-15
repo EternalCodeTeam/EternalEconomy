@@ -11,7 +11,7 @@ import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.execute.ExecuteDefault;
 import dev.rollczi.litecommands.annotations.permission.Permission;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Min;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -42,7 +42,7 @@ public class LeaderboardCommand {
     }
 
     @Execute
-    void execute(@Context Account account, @Positive @Arg("page") int page) {
+    void execute(@Context Account account, @Min(1) @Arg("page") int page) {
         LeaderboardPage leaderboardPage = this.leaderboardService.getLeaderboardPage(page - 1, this.pluginConfig.leaderboardPageSize);
         showPage(account, leaderboardPage);
     }
@@ -96,5 +96,4 @@ public class LeaderboardCommand {
                 .send();
         }
     }
-
 }

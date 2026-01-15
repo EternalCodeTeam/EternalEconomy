@@ -11,34 +11,39 @@ import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.account.database.AccountRepository;
 import com.eternalcode.economy.account.database.AccountRepositoryImpl;
 import com.eternalcode.economy.bridge.BridgeManager;
-import com.eternalcode.economy.command.impl.admin.AdminAddCommand;
-import com.eternalcode.economy.command.impl.admin.AdminBalanceCommand;
-import com.eternalcode.economy.command.impl.admin.AdminRemoveCommand;
-import com.eternalcode.economy.command.impl.admin.AdminResetCommand;
-import com.eternalcode.economy.command.impl.admin.AdminSetCommand;
 import com.eternalcode.economy.command.argument.AccountArgument;
 import com.eternalcode.economy.command.context.AccountContext;
 import com.eternalcode.economy.command.cooldown.CommandCooldownEditor;
 import com.eternalcode.economy.command.cooldown.CommandCooldownMessage;
 import com.eternalcode.economy.command.handler.InvalidUsageHandlerImpl;
 import com.eternalcode.economy.command.handler.MissingPermissionHandlerImpl;
-import com.eternalcode.economy.command.message.InvalidBigDecimalMessage;
 import com.eternalcode.economy.command.impl.MoneyBalanceCommand;
 import com.eternalcode.economy.command.impl.MoneyTransferCommand;
-import com.eternalcode.economy.database.DatabaseManager;
-import com.eternalcode.economy.leaderboard.LeaderboardCommand;
+import com.eternalcode.economy.command.impl.admin.AdminAddCommand;
+import com.eternalcode.economy.command.impl.admin.AdminBalanceCommand;
+import com.eternalcode.economy.command.impl.admin.AdminRemoveCommand;
+import com.eternalcode.economy.command.impl.admin.AdminResetCommand;
+import com.eternalcode.economy.command.impl.admin.AdminSetCommand;
+import com.eternalcode.economy.command.message.InvalidBigDecimalMessage;
 import com.eternalcode.economy.command.validator.notsender.NotSender;
 import com.eternalcode.economy.command.validator.notsender.NotSenderValidator;
 import com.eternalcode.economy.config.ConfigService;
 import com.eternalcode.economy.config.implementation.CommandsConfig;
 import com.eternalcode.economy.config.implementation.PluginConfig;
 import com.eternalcode.economy.config.implementation.messages.MessageConfig;
+import com.eternalcode.economy.database.DatabaseManager;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.format.DecimalFormatterImpl;
+import com.eternalcode.economy.leaderboard.LeaderboardCommand;
 import com.eternalcode.economy.multification.NoticeBroadcastHandler;
 import com.eternalcode.economy.multification.NoticeHandler;
 import com.eternalcode.economy.multification.NoticeService;
 import com.eternalcode.economy.vault.VaultEconomyProvider;
+import com.eternalcode.economy.command.impl.WithdrawCommand;
+import com.eternalcode.economy.withdraw.WithdrawItemServiceImpl;
+import com.eternalcode.economy.withdraw.WithdrawService;
+import com.eternalcode.economy.withdraw.controller.WithdrawAnvilController;
+import com.eternalcode.economy.withdraw.controller.WithdrawController;
 import com.eternalcode.multification.notice.Notice;
 import com.eternalcode.multification.notice.NoticeBroadcast;
 import com.google.common.base.Stopwatch;
@@ -46,12 +51,11 @@ import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.jakarta.LiteJakartaExtension;
 import dev.rollczi.litecommands.message.LiteMessages;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.Duration;
-import net.kyori.adventure.platform.AudienceProvider;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Server;
@@ -64,7 +68,6 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
     private static final String PLUGIN_STARTED = "EternalEconomy has been enabled in %dms.";
 
-    private AudienceProvider audienceProvider;
     private DatabaseManager databaseManager;
 
     private LiteCommands<CommandSender> liteCommands;
@@ -74,21 +77,26 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         Stopwatch started = Stopwatch.createStarted();
         Server server = this.getServer();
 
-        this.audienceProvider = BukkitAudiences.create(this);
         MiniMessage miniMessage = MiniMessage.builder()
-            .postProcessor(new AdventureUrlPostProcessor())
-            .postProcessor(new AdventureLegacyColorPostProcessor())
-            .preProcessor(new AdventureLegacyColorPreProcessor())
-            .build();
+                .postProcessor(new AdventureUrlPostProcessor())
+                .postProcessor(new AdventureLegacyColorPostProcessor())
+                .preProcessor(new AdventureLegacyColorPreProcessor())
+                .build();
 
         File dataFolder = this.getDataFolder();
 
         ConfigService configService = new ConfigService();
-        MessageConfig messageConfig = configService.create(MessageConfig.class, new File(dataFolder, "messages.yml"));
-        PluginConfig pluginConfig = configService.create(PluginConfig.class, new File(dataFolder, "config.yml"));
-        CommandsConfig commandsConfig = configService.create(CommandsConfig.class, new File(dataFolder, "commands.yml"));
+        MessageConfig messageConfig = configService.create(
+                MessageConfig.class,
+                new File(dataFolder, "messages.yml"));
+        PluginConfig pluginConfig = configService.create(
+                PluginConfig.class,
+                new File(dataFolder, "config.yml"));
+        CommandsConfig commandsConfig = configService.create(
+                CommandsConfig.class,
+                new File(dataFolder, "commands.yml"));
 
-        NoticeService noticeService = new NoticeService(messageConfig, this.audienceProvider, miniMessage);
+        NoticeService noticeService = new NoticeService(messageConfig, miniMessage);
 
         Scheduler scheduler = EconomySchedulerAdapter.getAdaptiveScheduler(this);
 
@@ -101,60 +109,103 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
 
-        VaultEconomyProvider vaultEconomyProvider =
-            new VaultEconomyProvider(this, decimalFormatter, accountPaymentService, accountManager);
-        server.getServicesManager().register(Economy.class, vaultEconomyProvider, this, ServicePriority.Highest);
+        WithdrawItemServiceImpl withdrawItemServiceImpl = new WithdrawItemServiceImpl(
+                this, pluginConfig,
+                decimalFormatter,
+                miniMessage);
+        WithdrawService withdrawService = new WithdrawService(
+                server,
+                noticeService,
+                decimalFormatter,
+                withdrawItemServiceImpl,
+                accountPaymentService,
+                accountManager);
+
+        Duration cooldownDuration = Duration.ofSeconds(pluginConfig.withdraw.cooldownSeconds);
+
+        VaultEconomyProvider vaultEconomyProvider = new VaultEconomyProvider(
+                this, decimalFormatter,
+                accountPaymentService, accountManager);
+
+        server.getServicesManager().register(
+                Economy.class, vaultEconomyProvider, this,
+                ServicePriority.Highest);
 
         this.liteCommands = LiteBukkitFactory.builder("eternaleconomy", this, server)
-            .extension(new LiteJakartaExtension<>(), settings -> settings
-                .violationMessage(Positive.class, BigDecimal.class, new InvalidBigDecimalMessage<>(noticeService))
-            )
+                .extension(
+                        new LiteJakartaExtension<>(), settings -> settings
+                                .violationMessage(
+                                        Min.class, BigDecimal.class,
+                                        new InvalidBigDecimalMessage<>(
+                                                noticeService)))
 
-            .annotations(extension -> extension.validator(
-                Account.class,
-                NotSender.class,
-                new NotSenderValidator(messageConfig)))
+                .annotations(extension -> extension.validator(
+                        Account.class,
+                        NotSender.class,
+                        new NotSenderValidator(messageConfig)))
 
-            .missingPermission(new MissingPermissionHandlerImpl(noticeService))
-            .invalidUsage(new InvalidUsageHandlerImpl(noticeService))
+                .missingPermission(new MissingPermissionHandlerImpl(noticeService))
+                .invalidUsage(new InvalidUsageHandlerImpl(noticeService))
 
-            .message(LiteMessages.COMMAND_COOLDOWN, new CommandCooldownMessage(noticeService, commandsConfig))
-            .message(LiteMessages.INVALID_NUMBER, (invocation, amount)  -> noticeService.create()
-                .notice(messageConfig.positiveNumberRequired)
-                .placeholder("{AMOUNT}", amount)
-                .viewer(invocation.sender()))
-            .editorGlobal(new CommandCooldownEditor(commandsConfig))
+                .message(
+                        LiteMessages.COMMAND_COOLDOWN,
+                        new CommandCooldownMessage(noticeService, commandsConfig))
+                .message(
+                        LiteMessages.INVALID_NUMBER,
+                        (invocation, amount) -> noticeService.create()
+                                .notice(messageConfig.positiveNumberRequired)
+                                .placeholder("{AMOUNT}", amount)
+                                .viewer(invocation.sender()))
+                .editorGlobal(new CommandCooldownEditor(commandsConfig))
 
-            .commands(
-                new AdminAddCommand(accountPaymentService, decimalFormatter, noticeService),
-                new AdminRemoveCommand(accountPaymentService, decimalFormatter, noticeService),
-                new AdminSetCommand(accountPaymentService, decimalFormatter, noticeService),
-                new AdminResetCommand(accountPaymentService, noticeService),
-                new AdminBalanceCommand(noticeService, decimalFormatter),
-                new MoneyBalanceCommand(noticeService, decimalFormatter),
-                new MoneyTransferCommand(accountPaymentService, decimalFormatter, noticeService, pluginConfig),
-                new EconomyReloadCommand(configService, noticeService),
-                new LeaderboardCommand(noticeService, decimalFormatter, accountManager, pluginConfig)
-            )
+                .commands(
+                        new AdminAddCommand(
+                                accountPaymentService, decimalFormatter,
+                                noticeService),
+                        new AdminRemoveCommand(
+                                accountPaymentService, decimalFormatter,
+                                noticeService),
+                        new AdminSetCommand(
+                                accountPaymentService, decimalFormatter,
+                                noticeService),
+                        new AdminResetCommand(accountPaymentService, noticeService),
+                        new AdminBalanceCommand(noticeService, decimalFormatter),
+                        new WithdrawCommand(
+                                withdrawService, cooldownDuration,
+                                noticeService),
+                        new MoneyBalanceCommand(noticeService, decimalFormatter),
+                        new MoneyTransferCommand(
+                                accountPaymentService, decimalFormatter,
+                                noticeService, pluginConfig),
+                        new EconomyReloadCommand(configService, noticeService),
+                        new LeaderboardCommand(
+                                noticeService, decimalFormatter, accountManager,
+                                pluginConfig))
 
-            .context(Account.class, new AccountContext(accountManager, messageConfig))
-            .argument(Account.class, new AccountArgument(accountManager, noticeService, server))
+                .context(Account.class, new AccountContext(accountManager, messageConfig))
+                .argument(Account.class, new AccountArgument(accountManager, noticeService, server))
 
-            .result(Notice.class, new NoticeHandler(noticeService))
-            .result(NoticeBroadcast.class, new NoticeBroadcastHandler())
+                .result(Notice.class, new NoticeHandler(noticeService))
+                .result(NoticeBroadcast.class, new NoticeBroadcastHandler())
 
-            .build();
+                .build();
 
         server.getPluginManager().registerEvents(new AccountController(accountManager), this);
 
+        server.getPluginManager().registerEvents(
+                new WithdrawController(withdrawService, withdrawItemServiceImpl),
+                this);
+        server.getPluginManager().registerEvents(
+                new WithdrawAnvilController(withdrawItemServiceImpl, noticeService),
+                this);
+
         BridgeManager bridgeManager = new BridgeManager(
-            this.getDescription(),
-            accountManager,
-            decimalFormatter,
-            server,
-            this,
-            this.getLogger()
-        );
+                this.getPluginMeta(),
+                accountManager,
+                decimalFormatter,
+                server,
+                this,
+                this.getLogger());
         bridgeManager.init();
 
         Duration elapsed = started.elapsed();
@@ -163,10 +214,6 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (this.audienceProvider != null) {
-            this.audienceProvider.close();
-        }
-
         if (this.liteCommands != null) {
             this.liteCommands.unregister();
         }

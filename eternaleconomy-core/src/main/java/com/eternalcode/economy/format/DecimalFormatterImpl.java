@@ -8,6 +8,7 @@ import static java.lang.Math.floor;
 
 import com.eternalcode.economy.config.implementation.PluginConfig;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -33,14 +34,19 @@ public class DecimalFormatterImpl implements DecimalFormatter {
     // that use of this method was approximately 15x faster than use
     // of built-in DecimalFormat.
     private static String getTruncatedAmount(double amount) {
+        if (amount < 0.01 && amount > 0) {
+            BigDecimal bd = BigDecimal.valueOf(amount);
+            return bd.setScale(2, RoundingMode.HALF_UP).toPlainString();
+        }
+
         double fractionalPart = getFractionalPart(amount);
         if (fractionalPart < 0.01) {
             return Long.toString((long) amount);
         }
 
         fractionalPart *= 100;
-        fractionalPart =
-            (fractionalPart < 99 && fractionalPart % 1 >= 0.5) ? ceil(fractionalPart) : floor(fractionalPart);
+        fractionalPart = (fractionalPart < 99 && fractionalPart % 1 >= 0.5) ? ceil(fractionalPart)
+                : floor(fractionalPart);
         return (long) amount + TRUNCATED_AMOUNT_DELIMITER + (long) fractionalPart;
     }
 
@@ -61,9 +67,9 @@ public class DecimalFormatterImpl implements DecimalFormatter {
         DecimalUnit decimalUnit = units.get(nearestScaleDivider);
 
         return getFormattedAmountWithSuffix(
-            amount,
-            decimalUnit.getFactor(),
-            decimalUnit.getSuffix());
+                amount,
+                decimalUnit.getFactor(),
+                decimalUnit.getSuffix());
     }
 
     @Override

@@ -12,7 +12,7 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Min;
 import java.math.BigDecimal;
 
 @Command(name = "pay", aliases = "transfer")
@@ -22,7 +22,7 @@ public class MoneyTransferCommand {
     private final AccountPaymentService accountPaymentService;
     private final DecimalFormatter decimalFormatter;
     private final NoticeService noticeService;
-    private PluginConfig pluginConfig;
+    private final PluginConfig pluginConfig;
 
     public MoneyTransferCommand(
         AccountPaymentService accountPaymentService,
@@ -37,18 +37,7 @@ public class MoneyTransferCommand {
     }
 
     @Execute
-    void execute(@Context Account payer, @Arg @NotSender Account receiver, @Arg @Positive BigDecimal amount) {
-        if (payer.balance().compareTo(amount) < 1) {
-            BigDecimal subtract = amount.subtract(payer.balance());
-            this.noticeService.create()
-                .notice(notice -> notice.player.insufficientBalance)
-                .placeholder("{MISSING_BALANCE}", this.decimalFormatter.format(subtract))
-                .player(payer.uuid())
-                .send();
-
-            return;
-        }
-
+    void execute(@Context Account payer, @Arg @NotSender Account receiver, @Arg @Min(1) BigDecimal amount) {
         if (amount.compareTo(this.pluginConfig.transactionLimit) > 0) {
             this.noticeService.create()
                 .notice(notice -> notice.player.transferLimit)

@@ -1,5 +1,6 @@
 package com.eternalcode.economy.config.implementation.messages;
 
+import com.eternalcode.economy.withdraw.WithdrawMessageConfig;
 import com.eternalcode.multification.notice.Notice;
 import eu.okaeri.configs.OkaeriConfig;
 
@@ -23,4 +24,5 @@ public class MessageConfig extends OkaeriConfig {
 
     public MessageAdminSubSection admin = new MessageAdminSubSection();
     public MessagesPlayerSubSection player = new MessagesPlayerSubSection();
+    public WithdrawMessageConfig withdraw = new WithdrawMessageConfig();
 }
