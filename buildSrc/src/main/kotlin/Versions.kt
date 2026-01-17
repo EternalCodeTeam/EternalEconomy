@@ -15,7 +15,7 @@ object Versions {
 
     const val VAULT_API = "1.7.1"
 
-    const val PLACEHOLDER_API = "2.11.6"
+    const val PLACEHOLDER_API = "2.11.7"
 
     const val MARIA_DB = "3.5.1"
     const val POSTGRESQL = "42.7.5"
