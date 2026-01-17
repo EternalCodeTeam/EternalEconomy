@@ -17,7 +17,7 @@ object Versions {
 
     const val PLACEHOLDER_API = "2.11.7"
 
-    const val MARIA_DB = "3.5.1"
+    const val MARIA_DB = "3.5.7"
     const val POSTGRESQL = "42.7.5"
     const val H2 = "2.4.240"
     const val ORMLITE = "6.1"
