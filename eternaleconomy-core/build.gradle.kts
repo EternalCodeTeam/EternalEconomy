@@ -59,7 +59,7 @@ dependencies {
 
     compileOnly("me.clip:placeholderapi:${Versions.PLACEHOLDER_API}")
 
-    testImplementation(platform("org.junit:junit-bom:5.13.4"))
+    testImplementation(platform("org.junit:junit-bom:6.0.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
     testImplementation("com.google.guava:guava:33.4.8-jre")
