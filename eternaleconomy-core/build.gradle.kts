@@ -58,6 +58,7 @@ dependencies {
     paperLibrary("com.github.cryptomorin:XSeries:13.5.1")
 
     compileOnly("me.clip:placeholderapi:${Versions.PLACEHOLDER_API}")
+    compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.3")
 
     testImplementation(platform("org.junit:junit-bom:6.0.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
