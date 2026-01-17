@@ -6,7 +6,7 @@ object Versions {
     const val LITE_COMMANDS = "3.10.9"
 
     const val ETERNALCODE_COMMONS = "1.3.1"
-    const val MULTIFICATION = "1.2.2"
+    const val MULTIFICATION = "1.2.4"
 
     const val JETBRAINS_ANNOTATIONS = "26.0.2-1"
 
