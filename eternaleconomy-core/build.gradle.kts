@@ -63,7 +63,7 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:6.0.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("com.github.ben-manes.caffeine:caffeine:3.2.3")
-    testImplementation("com.google.guava:guava:33.4.8-jre")
+    testImplementation("com.google.guava:guava:33.5.0-jre")
 
     jmh("org.openjdk.jmh:jmh-core:1.37")
     jmh("org.openjdk.jmh:jmh-generator-annprocess:1.37")
