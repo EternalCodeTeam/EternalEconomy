@@ -43,8 +43,8 @@ public class LeaderboardCommand {
 
     @Execute
     void execute(@Context Account account, @Min(1) @Arg("page") int page) {
-        LeaderboardPage leaderboardPage = this.leaderboardService.getLeaderboardPage(page - 1, this.pluginConfig.leaderboardPageSize);
-        showPage(account, leaderboardPage);
+        this.leaderboardService.getLeaderboardPage(page - 1, this.pluginConfig.leaderboardPageSize)
+            .thenAccept(leaderboardPage -> showPage(account, leaderboardPage));
     }
 
     private void showPage(Account account, LeaderboardPage page) {
@@ -78,12 +78,14 @@ public class LeaderboardCommand {
         }
 
         if (this.pluginConfig.showLeaderboardPosition) {
-            LeaderboardEntry entry = this.leaderboardService.getLeaderboardPosition(account);
-            this.noticeService.create()
-                .notice(messageConfig -> messageConfig.player.leaderboardPosition)
-                .placeholder("{POSITION}", String.valueOf(entry.position()))
-                .player(account.uuid())
-                .send();
+            this.leaderboardService.getLeaderboardPosition(account)
+                .thenAccept(entry -> {
+                    this.noticeService.create()
+                        .notice(messageConfig -> messageConfig.player.leaderboardPosition)
+                        .placeholder("{POSITION}", String.valueOf(entry.position()))
+                        .player(account.uuid())
+                        .send();
+                });
         }
 
         if (page.nextPage() != -1) {

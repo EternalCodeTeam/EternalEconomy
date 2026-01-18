@@ -52,7 +52,6 @@ import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.jakarta.LiteJakartaExtension;
 import dev.rollczi.litecommands.message.LiteMessages;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Positive;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -104,7 +103,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
         this.databaseManager.connect();
 
         AccountRepository accountRepository = new AccountRepositoryImpl(this.databaseManager, scheduler);
-        AccountManager accountManager = AccountManager.create(accountRepository, scheduler);
+        AccountManager accountManager = AccountManager.create(accountRepository, pluginConfig);
 
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
@@ -179,7 +178,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                                 noticeService, pluginConfig),
                         new EconomyReloadCommand(configService, noticeService),
                         new LeaderboardCommand(
-                                noticeService, decimalFormatter, accountManager,
+                                noticeService, decimalFormatter, accountManager.getLeaderboardService(),
                                 pluginConfig))
 
                 .context(Account.class, new AccountContext(accountManager, messageConfig))

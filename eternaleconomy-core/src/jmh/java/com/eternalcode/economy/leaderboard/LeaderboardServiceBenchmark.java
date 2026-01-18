@@ -57,9 +57,10 @@ public class LeaderboardServiceBenchmark {
     @Setup(Level.Trial)
     public void setUp() {
         AccountRepositoryInMemory repository = new AccountRepositoryInMemory();
-        AccountManager accountManager = new AccountManager(repository, new SchedulerImpl());
-        AccountPaymentService paymentService = new AccountPaymentService(accountManager, new PluginConfig());
-        this.leaderboardService = accountManager;
+        PluginConfig config = new PluginConfig();
+        AccountManager accountManager = new AccountManager(repository, new SchedulerImpl(), config);
+        AccountPaymentService paymentService = new AccountPaymentService(accountManager, config);
+        this.leaderboardService = accountManager.getLeaderboardService();
 
         ParetoDistribution pareto = new ParetoDistribution(1.0, 2.0);
         ThreadLocalRandom random = ThreadLocalRandom.current();

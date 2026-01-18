@@ -8,6 +8,7 @@ import com.eternalcode.economy.database.DatabaseManager;
 import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class AccountRepositoryImpl extends AbstractRepositoryOrmLite implements AccountRepository {
@@ -41,6 +42,20 @@ public class AccountRepositoryImpl extends AbstractRepositoryOrmLite implements 
         return this.selectAll(AccountWrapper.class)
             .thenApply(accountWrappers -> accountWrappers.stream()
                 .map(accountWrapper -> accountWrapper.toAccount())
+                .toList()
+            );
+    }
+
+    @Override
+    public CompletableFuture<List<Account>> getTopAccounts(int limit, int offset) {
+        return this.getAllAccounts()
+            .thenApply(accounts -> accounts.stream()
+                .sorted((a1, a2) -> {
+                    int balanceCompare = a2.balance().compareTo(a1.balance());
+                    return balanceCompare != 0 ? balanceCompare : a1.uuid().compareTo(a2.uuid());
+                })
+                .skip(offset)
+                .limit(limit)
                 .toList()
             );
     }

@@ -2,6 +2,7 @@ package com.eternalcode.economy.account;
 
 import com.eternalcode.economy.SchedulerImpl;
 import com.eternalcode.economy.account.database.AccountRepositoryInMemory;
+import com.eternalcode.economy.config.implementation.PluginConfig;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +28,7 @@ public class AccountBenchmark {
 
     @Setup
     public void setUp() {
-        accountManager = new AccountManager(new AccountRepositoryInMemory(), new SchedulerImpl());
+        accountManager = new AccountManager(new AccountRepositoryInMemory(), new SchedulerImpl(), new PluginConfig());
 
         // zapełnienie TreeMapy różnymi nazwami zapewnia, że będzie ona miała optymalne wyniki
         // tree mapa rozdziela elementy na podstawie ich klucza, więc im bardziej zróżnicowane klucze, tym "lepsze' wyniki

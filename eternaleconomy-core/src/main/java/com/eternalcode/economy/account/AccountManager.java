@@ -1,55 +1,43 @@
 package com.eternalcode.economy.account;
 
-import com.eternalcode.commons.scheduler.Scheduler;
 import com.eternalcode.economy.account.database.AccountRepository;
-import com.eternalcode.economy.leaderboard.LeaderboardEntry;
-import com.eternalcode.economy.leaderboard.LeaderboardPage;
+import com.eternalcode.economy.config.implementation.PluginConfig;
+import com.eternalcode.economy.leaderboard.LeaderboardServiceImpl;
 import com.eternalcode.economy.leaderboard.LeaderboardService;
-import com.google.common.collect.BoundType;
-import com.google.common.collect.TreeMultimap;
-import com.google.common.collect.TreeMultiset;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class AccountManager implements LeaderboardService {
+public class AccountManager {
 
-    private final Map<UUID, Account> accountByUniqueId = new HashMap<>();
-    private final Map<String, Account> accountByName = new HashMap<>();
-    private final TreeMap<String, Account> accountIndex = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    private final TreeMultimap<BigDecimal, Account> accountsByBalance = TreeMultimap.create(
-        Comparator.reverseOrder(),
-        Comparator.comparing(Account::uuid)
-    );
-    private final TreeMultiset<Account> accountsByBalanceSet = TreeMultiset.create(
-        Comparator.comparing(Account::balance, Comparator.reverseOrder())
-            .thenComparing(Account::uuid)
-    );
+    private final Map<UUID, Account> accountByUniqueId = new ConcurrentHashMap<>();
+    private final Map<String, Account> accountByName = new ConcurrentHashMap<>();
 
     private final AccountRepository accountRepository;
-    private final Scheduler scheduler;
+    private final LeaderboardServiceImpl leaderboardService;
 
-    public AccountManager(AccountRepository accountRepository, Scheduler scheduler) {
+    public AccountManager(AccountRepository accountRepository, PluginConfig config) {
         this.accountRepository = accountRepository;
-        this.scheduler = scheduler;
+        this.leaderboardService = new LeaderboardServiceImpl(accountRepository);
     }
 
-    public static AccountManager create(AccountRepository accountRepository, Scheduler scheduler) {
-        AccountManager accountManager = new AccountManager(accountRepository, scheduler);
+    public static AccountManager create(AccountRepository accountRepository, PluginConfig config) {
+        AccountManager accountManager = new AccountManager(accountRepository, config);
 
-        accountRepository.getAllAccounts().thenAccept(accounts -> {
-            for (Account account : accounts) {
-                accountManager.save(account);
-            }
-        });
+        accountRepository.getAllAccounts()
+                .thenAccept(accounts -> {
+                    for (Account account : accounts) {
+                        accountManager.save(account);
+                    }
+                })
+                .exceptionally(throwable -> {
+                    System.err.println("Failed to load accounts: " + throwable.getMessage());
+                    throwable.printStackTrace();
+                    return null;
+                });
 
         return accountManager;
     }
@@ -63,95 +51,51 @@ public class AccountManager implements LeaderboardService {
     }
 
     public Account getOrCreate(UUID uuid, String name) {
-        Account byUniqueId = this.accountByUniqueId.get(uuid);
+        Account existing = this.accountByUniqueId.get(uuid);
 
-        if (byUniqueId != null) {
-            if (!byUniqueId.name().equals(name)) {
-                Account updated = new Account(uuid, name, byUniqueId.balance());
+        if (existing != null) {
+            if (!existing.name().equals(name)) {
+                Account updated = new Account(uuid, name, existing.balance());
                 this.save(updated);
                 return updated;
             }
-            return byUniqueId;
+            return existing;
         }
 
-        Account byName = this.accountByName.get(name);
-
-        if (byName != null) {
-            return byName;
-        }
-
-        Account account = new Account(uuid, name, BigDecimal.ZERO);
-        this.save(account);
-        return account;
+        Account newAccount = new Account(uuid, name, BigDecimal.ZERO);
+        this.save(newAccount);
+        return newAccount;
     }
 
-    void save(Account newAccount) {
-        Account oldAccount = this.accountByUniqueId.get(newAccount.uuid());
-
-        if (oldAccount != null) {
-            this.accountsByBalance.remove(oldAccount.balance(), oldAccount);
-            this.accountsByBalanceSet.remove(oldAccount);
-            if (!oldAccount.name().equals(newAccount.name())) {
-                this.accountByName.remove(oldAccount.name());
-                this.accountIndex.remove(oldAccount.name());
-            }
+    public void save(Account account) {
+        Account old = this.accountByUniqueId.get(account.uuid());
+        if (old != null && !old.name().equals(account.name())) {
+            this.accountByName.remove(old.name());
         }
 
-        this.accountByUniqueId.put(newAccount.uuid(), newAccount);
-        this.accountByName.put(newAccount.name(), newAccount);
-        this.accountIndex.put(newAccount.name(), newAccount);
-        this.accountsByBalance.put(newAccount.balance(), newAccount);
-        this.accountsByBalanceSet.add(newAccount);
+        this.accountByUniqueId.put(account.uuid(), account);
+        this.accountByName.put(account.name(), account);
 
-        this.accountRepository.save(newAccount);
+        this.leaderboardService.invalidateCache();
+
+        this.accountRepository.save(account).exceptionally(throwable -> {
+            System.err.println("Failed to save account " + account.uuid() + ": " + throwable.getMessage());
+            return null;
+        });
     }
 
     public Collection<Account> getAccountStartingWith(String prefix) {
-        return Collections.unmodifiableCollection(
-            this.accountIndex.subMap(prefix, true, prefix + Character.MAX_VALUE, true).values()
-        );
+        return this.accountByName.values().stream()
+                .filter(account -> account.name().toLowerCase().startsWith(prefix.toLowerCase()))
+                .toList();
     }
 
     public Collection<Account> getAccounts() {
         return Collections.unmodifiableCollection(this.accountByUniqueId.values());
     }
 
-    @Override
-    public LeaderboardEntry getLeaderboardPosition(Account target) {
-        int position = accountsByBalanceSet.headMultiset(target, BoundType.CLOSED).size();
-        return new LeaderboardEntry(target, position);
-    }
-
-    @Override
-    public LeaderboardPage getLeaderboardPage(int page, int pageSize) {
-        List<LeaderboardEntry> list = new ArrayList<>();
-
-        int totalEntries = accountsByBalance.size();
-        int maxPages = (int) Math.ceil((double) totalEntries / pageSize);
-        int nextPage = page + 1 < maxPages ? page + 1 : -1;
-
-        int count = 0;
-        int toSkip = page * pageSize;
-        for (Collection<Account> accounts : accountsByBalance.asMap().values()) {
-            if (count + accounts.size() < toSkip) {
-                count += accounts.size();
-                continue;
-            }
-
-            for (Account account : accounts) {
-                if (list.size() >= pageSize) {
-                    return new LeaderboardPage(list, page, maxPages, nextPage);
-                }
-
-                if (count++ < toSkip) {
-                    continue;
-                }
-
-                list.add(new LeaderboardEntry(account, count));
-            }
-        }
-
-        return new LeaderboardPage(list, page, maxPages, nextPage);
+    public LeaderboardService getLeaderboardService() {
+        return this.leaderboardService;
     }
 
 }

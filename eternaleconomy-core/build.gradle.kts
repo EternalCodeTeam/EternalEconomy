@@ -56,22 +56,19 @@ dependencies {
     paperLibrary("eu.okaeri:okaeri-configs-serdes-bukkit:${Versions.OKAERI_CONFIGS}")
 
     paperLibrary("com.github.cryptomorin:XSeries:13.5.1")
+    compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.0") // already in paper.
 
     compileOnly("me.clip:placeholderapi:${Versions.PLACEHOLDER_API}")
-    compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.3")
 
     testImplementation(platform("org.junit:junit-bom:6.0.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("com.github.ben-manes.caffeine:caffeine:3.2.3")
     testImplementation("com.google.guava:guava:33.4.8-jre")
 
     jmh("org.openjdk.jmh:jmh-core:1.37")
     jmh("org.openjdk.jmh:jmh-generator-annprocess:1.37")
     jmh("org.openjdk.jmh:jmh-generator-bytecode:1.37")
-}
-
-tasks.test {
-    useJUnitPlatform()
 }
 
 paper {
@@ -110,16 +107,20 @@ tasks.runServer {
     }
 }
 
-tasks.shadowJar {
-    archiveFileName.set("EternalEconomy v${project.version}.jar")
+paper {
 
-    exclude(
-        "org/intellij/lang/annotations/**",
-        "org/jetbrains/annotations/**"
-    )
+    tasks.shadowJar {
+        archiveFileName.set("EternalEconomy v${project.version}.jar")
+
+        exclude(
+            "org/intellij/lang/annotations/**",
+            "org/jetbrains/annotations/**"
+        )
 
 //    val prefix = "com.eternalcode.economy.libs"
 //    listOf(
 //
 //    ).forEach { relocate(it, prefix) }
+    }
 }
+
