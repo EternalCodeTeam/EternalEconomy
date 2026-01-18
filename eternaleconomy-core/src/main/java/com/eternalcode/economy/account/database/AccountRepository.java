@@ -14,4 +14,8 @@ public interface AccountRepository {
     CompletableFuture<Collection<Account>> getAllAccounts();
 
     CompletableFuture<List<Account>> getTopAccounts(int limit, int offset);
+
+    CompletableFuture<Integer> getPosition(Account target);
+
+    CompletableFuture<Long> countAccounts();
 }

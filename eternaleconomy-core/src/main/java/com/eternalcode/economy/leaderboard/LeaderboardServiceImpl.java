@@ -6,7 +6,6 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -17,8 +16,8 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
     private final AccountRepository repository;
     private final Cache<String, List<Account>> topCache = Caffeine.newBuilder()
-        .expireAfterWrite(Duration.ofSeconds(30))
-        .build();
+            .expireAfterWrite(Duration.ofSeconds(30))
+            .build();
 
     public LeaderboardServiceImpl(AccountRepository repository) {
         this.repository = repository;
@@ -72,20 +71,19 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
     private CompletableFuture<LeaderboardPage> getPageFromDatabase(int page, int pageSize) {
         return repository.getTopAccounts(pageSize, page * pageSize)
-            .thenCompose(accounts -> repository.getAllAccounts().thenApply(allAccounts -> {
-                List<LeaderboardEntry> entries = new ArrayList<>();
-                int startPosition = page * pageSize;
+                .thenCompose(accounts -> repository.countAccounts().thenApply(totalEntries -> {
+                    List<LeaderboardEntry> entries = new ArrayList<>();
+                    int startPosition = page * pageSize;
 
-                for (int i = 0; i < accounts.size(); i++) {
-                    entries.add(new LeaderboardEntry(accounts.get(i), startPosition + i + 1));
-                }
+                    for (int i = 0; i < accounts.size(); i++) {
+                        entries.add(new LeaderboardEntry(accounts.get(i), startPosition + i + 1));
+                    }
 
-                int totalEntries = allAccounts.size();
-                int maxPages = Math.max(1, (int) Math.ceil((double) totalEntries / pageSize));
-                int nextPage = page + 1 < maxPages ? page + 1 : -1;
+                    int maxPages = Math.max(1, (int) Math.ceil((double) totalEntries / pageSize));
+                    int nextPage = page + 1 < maxPages ? page + 1 : -1;
 
-                return new LeaderboardPage(entries, page, maxPages, nextPage);
-            }));
+                    return new LeaderboardPage(entries, page, maxPages, nextPage);
+                }));
     }
 
     private CompletableFuture<List<Account>> getOrRefreshTopCache() {
@@ -96,22 +94,14 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         }
 
         return repository.getTopAccounts(TOP_CACHE_SIZE, 0)
-            .thenApply(topAccounts -> {
-                topCache.put(CACHE_KEY, topAccounts);
-                return topAccounts;
-            });
+                .thenApply(topAccounts -> {
+                    topCache.put(CACHE_KEY, topAccounts);
+                    return topAccounts;
+                });
     }
 
     private CompletableFuture<LeaderboardEntry> calculatePositionFromAll(Account target) {
-        return repository.getAllAccounts()
-            .thenApply(allAccounts -> {
-                List<Account> sorted = allAccounts.stream()
-                    .sorted(Comparator.comparing(Account::balance).reversed()
-                        .thenComparing(Account::uuid))
-                    .toList();
-
-                int position = sorted.indexOf(target) + 1;
-                return new LeaderboardEntry(target, position);
-            });
+        return repository.getPosition(target)
+                .thenApply(position -> new LeaderboardEntry(target, position));
     }
 }

@@ -33,32 +33,33 @@ import org.openjdk.jmh.infra.Blackhole;
 @Measurement(iterations = 5, time = 5, timeUnit = TimeUnit.SECONDS)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @BenchmarkMode(Mode.AverageTime)
-@Fork(value = 1, jvmArgs = {"-Xms4G", "-Xmx8G", "-XX:+UseG1GC"})
+@Fork(value = 1, jvmArgs = { "-Xms4G", "-Xmx8G", "-XX:+UseG1GC" })
 public class LeaderboardServiceBenchmark {
 
     private static final int PAGE_SIZE = 100;
     private static final int MAX_PAGES = 50;
 
-    @Param({"100000", "1000000", "2000000"})
+    @Param({ "100000", "1000000", "2000000" })
     private int accountsCount;
 
     private LeaderboardService leaderboardService;
     private List<Account> targetAccounts = new ArrayList<>();
 
     private static final String[] FIRST_NAMES = {
-        "Alex", "Ben", "Chris", "Dana", "Emma", "Finn", "Grace", "Hannah", "Ian", "Jake",
-        "Kara", "Liam", "Mia", "Noah", "Olivia", "Paul", "Quinn", "Rose", "Sam", "Tina"
+            "Alex", "Ben", "Chris", "Dana", "Emma", "Finn", "Grace", "Hannah", "Ian", "Jake",
+            "Kara", "Liam", "Mia", "Noah", "Olivia", "Paul", "Quinn", "Rose", "Sam", "Tina"
     };
     private static final String[] SUFFIXES = {
-        "Gamer", "Pro", "X", "123", "Master", "Ninja", "Legend", "King", "Queen", "Star",
-        "Wolf", "Dragon", "Shadow", "Rider", "Blaze"
+            "Gamer", "Pro", "X", "123", "Master", "Ninja", "Legend", "King", "Queen", "Star",
+            "Wolf", "Dragon", "Shadow", "Rider", "Blaze"
     };
 
     @Setup(Level.Trial)
     public void setUp() {
         AccountRepositoryInMemory repository = new AccountRepositoryInMemory();
         PluginConfig config = new PluginConfig();
-        AccountManager accountManager = new AccountManager(repository, new SchedulerImpl(), config);
+        AccountManager accountManager = new AccountManager(repository, config,
+                java.util.logging.Logger.getLogger("Benchmark"));
         AccountPaymentService paymentService = new AccountPaymentService(accountManager, config);
         this.leaderboardService = accountManager.getLeaderboardService();
 

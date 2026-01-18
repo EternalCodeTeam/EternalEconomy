@@ -23,15 +23,18 @@ public class AccountBenchmark {
 
     private final List<String> searches = new ArrayList<>();
     private AccountManager accountManager;
-    // mimo że nie jest to bezpieczne dla wielu wątków, to w przypadku JMH można to zignorować i tak potrzebujemy losowości
+    // mimo że nie jest to bezpieczne dla wielu wątków, to w przypadku JMH można to
+    // zignorować i tak potrzebujemy losowości
     private int index = 0;
 
     @Setup
     public void setUp() {
-        accountManager = new AccountManager(new AccountRepositoryInMemory(), new SchedulerImpl(), new PluginConfig());
+        accountManager = new AccountManager(new AccountRepositoryInMemory(), new PluginConfig(), LOGGER);
 
-        // zapełnienie TreeMapy różnymi nazwami zapewnia, że będzie ona miała optymalne wyniki
-        // tree mapa rozdziela elementy na podstawie ich klucza, więc im bardziej zróżnicowane klucze, tym "lepsze' wyniki
+        // zapełnienie TreeMapy różnymi nazwami zapewnia, że będzie ona miała optymalne
+        // wyniki
+        // tree mapa rozdziela elementy na podstawie ich klucza, więc im bardziej
+        // zróżnicowane klucze, tym "lepsze' wyniki
         for (char first : ALPHABET) {
             for (char second : ALPHABET) {
                 for (char third : ALPHABET) {
@@ -42,7 +45,8 @@ public class AccountBenchmark {
             }
         }
 
-        // pre-generowanie losowych wyszukiwań, które będą wykonywane w benchmarku (nie wpływamy na czas wykonania samego benchmarku)
+        // pre-generowanie losowych wyszukiwań, które będą wykonywane w benchmarku (nie
+        // wpływamy na czas wykonania samego benchmarku)
         for (char first : ALPHABET) {
             searches.add(String.valueOf(first));
             for (char second : ALPHABET) {

@@ -56,7 +56,7 @@ dependencies {
     paperLibrary("eu.okaeri:okaeri-configs-serdes-bukkit:${Versions.OKAERI_CONFIGS}")
 
     paperLibrary("com.github.cryptomorin:XSeries:13.6.0")
-    paperLibrary("com.github.ben-manes.caffeine:caffeine:3.2.0")
+    paperLibrary("com.github.ben-manes.caffeine:caffeine:3.2.3")
 
     compileOnly("me.clip:placeholderapi:${Versions.PLACEHOLDER_API}")
 
@@ -69,6 +69,15 @@ dependencies {
     jmh("org.openjdk.jmh:jmh-core:1.37")
     jmh("org.openjdk.jmh:jmh-generator-annprocess:1.37")
     jmh("org.openjdk.jmh:jmh-generator-bytecode:1.37")
+
+    jmh("com.eternalcode:eternalcode-commons-adventure:${Versions.ETERNALCODE_COMMONS}")
+    jmh("com.eternalcode:eternalcode-commons-bukkit:${Versions.ETERNALCODE_COMMONS}")
+    jmh("com.eternalcode:eternalcode-commons-shared:${Versions.ETERNALCODE_COMMONS}")
+    jmh("com.github.MilkBowl:VaultAPI:${Versions.VAULT_API}")
+
+    jmh("eu.okaeri:okaeri-configs-yaml-snakeyaml:${Versions.OKAERI_CONFIGS}")
+    jmh("eu.okaeri:okaeri-configs-serdes-commons:${Versions.OKAERI_CONFIGS}")
+    jmh("eu.okaeri:okaeri-configs-serdes-bukkit:${Versions.OKAERI_CONFIGS}")
 }
 
 paper {
