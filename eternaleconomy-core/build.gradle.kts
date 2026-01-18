@@ -55,7 +55,7 @@ dependencies {
     paperLibrary("eu.okaeri:okaeri-configs-serdes-commons:${Versions.OKAERI_CONFIGS}")
     paperLibrary("eu.okaeri:okaeri-configs-serdes-bukkit:${Versions.OKAERI_CONFIGS}")
 
-    paperLibrary("com.github.cryptomorin:XSeries:13.5.1")
+    paperLibrary("com.github.cryptomorin:XSeries:13.6.0")
     paperLibrary("com.github.ben-manes.caffeine:caffeine:3.2.0")
 
     compileOnly("me.clip:placeholderapi:${Versions.PLACEHOLDER_API}")
@@ -64,7 +64,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("com.github.ben-manes.caffeine:caffeine:3.2.3")
-    testImplementation("com.google.guava:guava:33.4.8-jre")
+    testImplementation("com.google.guava:guava:33.5.0-jre")
 
     jmh("org.openjdk.jmh:jmh-core:1.37")
     jmh("org.openjdk.jmh:jmh-generator-annprocess:1.37")
