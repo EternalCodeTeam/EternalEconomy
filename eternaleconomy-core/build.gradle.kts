@@ -56,7 +56,7 @@ dependencies {
     paperLibrary("eu.okaeri:okaeri-configs-serdes-bukkit:${Versions.OKAERI_CONFIGS}")
 
     paperLibrary("com.github.cryptomorin:XSeries:13.5.1")
-    compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.0") // already in paper.
+    paperLibrary("com.github.ben-manes.caffeine:caffeine:3.2.0")
 
     compileOnly("me.clip:placeholderapi:${Versions.PLACEHOLDER_API}")
 
