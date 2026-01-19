@@ -68,6 +68,11 @@ public class AccountManager {
             return existing;
         }
 
+        Account byName = this.accountByName.get(name);
+        if (byName != null) {
+            return byName;
+        }
+
         Account newAccount = new Account(uuid, name, BigDecimal.ZERO);
         this.save(newAccount);
         return newAccount;

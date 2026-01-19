@@ -52,7 +52,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     }
 
     private CompletableFuture<LeaderboardPage> getPageFromCache(int page, int pageSize) {
-        return getOrRefreshTopCache().thenApply(topAccounts -> {
+        return getOrRefreshTopCache().thenCombine(this.repository.countAccounts(), (topAccounts, totalEntries) -> {
             int startIndex = page * pageSize;
             int endIndex = Math.min(startIndex + pageSize, topAccounts.size());
 
@@ -61,7 +61,6 @@ public class LeaderboardServiceImpl implements LeaderboardService {
                 entries.add(new LeaderboardEntry(topAccounts.get(i), i + 1));
             }
 
-            int totalEntries = topAccounts.size();
             int maxPages = Math.max(1, (int) Math.ceil((double) totalEntries / pageSize));
             int nextPage = page + 1 < maxPages ? page + 1 : -1;
 
