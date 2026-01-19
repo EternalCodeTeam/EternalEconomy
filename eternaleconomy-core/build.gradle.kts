@@ -69,6 +69,7 @@ dependencies {
     jmh("org.openjdk.jmh:jmh-core:1.37")
     jmh("org.openjdk.jmh:jmh-generator-annprocess:1.37")
     jmh("org.openjdk.jmh:jmh-generator-bytecode:1.37")
+    jmh("io.papermc.paper:paper-api:${Versions.PAPER_API}")
 
     jmh("com.eternalcode:eternalcode-commons-adventure:${Versions.ETERNALCODE_COMMONS}")
     jmh("com.eternalcode:eternalcode-commons-bukkit:${Versions.ETERNALCODE_COMMONS}")

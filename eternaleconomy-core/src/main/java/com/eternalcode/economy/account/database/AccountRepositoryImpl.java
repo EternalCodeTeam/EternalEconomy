@@ -48,40 +48,41 @@ public class AccountRepositoryImpl extends AbstractRepositoryOrmLite implements 
 
     @Override
     public CompletableFuture<List<Account>> getTopAccounts(int limit, int offset) {
-        return this.<AccountWrapper, UUID, List<Account>>action(AccountWrapper.class, dao -> {
-            QueryBuilder<AccountWrapper, UUID> queryBuilder = dao.queryBuilder();
-            queryBuilder.orderBy("balance", false); // false for DESC
-            queryBuilder.orderBy("uuid", true); // true for ASC
+        return this.<AccountWrapper, UUID, List<Account>>action(
+                AccountWrapper.class, dao -> {
+                    QueryBuilder<AccountWrapper, UUID> queryBuilder = dao.queryBuilder();
+                    queryBuilder.orderBy("balance", false);
+                    queryBuilder.orderBy("uuid", true);
 
-            if (limit > 0) {
-                queryBuilder.limit((long) limit);
-            }
+                    if (limit > 0) {
+                        queryBuilder.limit((long) limit);
+                    }
 
-            if (offset > 0) {
-                queryBuilder.offset((long) offset);
-            }
+                    if (offset > 0) {
+                        queryBuilder.offset((long) offset);
+                    }
 
-            return queryBuilder.query().stream()
-                    .map(AccountWrapper::toAccount)
-                    .toList();
-        });
+                    return queryBuilder.query().stream()
+                            .map(AccountWrapper::toAccount)
+                            .toList();
+                });
     }
 
     @Override
     public CompletableFuture<Integer> getPosition(Account target) {
-        return this.<AccountWrapper, UUID, Integer>action(AccountWrapper.class, dao -> {
-            QueryBuilder<AccountWrapper, UUID> qb = dao.queryBuilder();
-            Where<AccountWrapper, UUID> where = qb.where();
+        return this.<AccountWrapper, UUID, Integer>action(
+                AccountWrapper.class, dao -> {
+                    QueryBuilder<AccountWrapper, UUID> qb = dao.queryBuilder();
+                    Where<AccountWrapper, UUID> where = qb.where();
 
-            // (balance > target) OR (balance == target AND uuid < target)
-            where.gt("balance", target.balance());
-            where.or();
-            where.eq("balance", target.balance());
-            where.and();
-            where.lt("uuid", target.uuid());
+                    where.gt("balance", target.balance());
+                    where.or();
+                    where.eq("balance", target.balance());
+                    where.and();
+                    where.lt("uuid", target.uuid());
 
-            return (int) qb.countOf() + 1;
-        });
+                    return (int) qb.countOf() + 1;
+                });
     }
 
     @Override
