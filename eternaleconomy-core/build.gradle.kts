@@ -56,22 +56,29 @@ dependencies {
     paperLibrary("eu.okaeri:okaeri-configs-serdes-bukkit:${Versions.OKAERI_CONFIGS}")
 
     paperLibrary("com.github.cryptomorin:XSeries:13.6.0")
+    paperLibrary("com.github.ben-manes.caffeine:caffeine:3.2.3")
 
     compileOnly("me.clip:placeholderapi:${Versions.PLACEHOLDER_API}")
-    compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.3")
 
     testImplementation(platform("org.junit:junit-bom:6.0.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("com.github.ben-manes.caffeine:caffeine:3.2.3")
     testImplementation("com.google.guava:guava:33.5.0-jre")
 
     jmh("org.openjdk.jmh:jmh-core:1.37")
     jmh("org.openjdk.jmh:jmh-generator-annprocess:1.37")
     jmh("org.openjdk.jmh:jmh-generator-bytecode:1.37")
-}
+    jmh("io.papermc.paper:paper-api:${Versions.PAPER_API}")
 
-tasks.test {
-    useJUnitPlatform()
+    jmh("com.eternalcode:eternalcode-commons-adventure:${Versions.ETERNALCODE_COMMONS}")
+    jmh("com.eternalcode:eternalcode-commons-bukkit:${Versions.ETERNALCODE_COMMONS}")
+    jmh("com.eternalcode:eternalcode-commons-shared:${Versions.ETERNALCODE_COMMONS}")
+    jmh("com.github.MilkBowl:VaultAPI:${Versions.VAULT_API}")
+
+    jmh("eu.okaeri:okaeri-configs-yaml-snakeyaml:${Versions.OKAERI_CONFIGS}")
+    jmh("eu.okaeri:okaeri-configs-serdes-commons:${Versions.OKAERI_CONFIGS}")
+    jmh("eu.okaeri:okaeri-configs-serdes-bukkit:${Versions.OKAERI_CONFIGS}")
 }
 
 paper {
@@ -110,16 +117,20 @@ tasks.runServer {
     }
 }
 
-tasks.shadowJar {
-    archiveFileName.set("EternalEconomy v${project.version}.jar")
+paper {
 
-    exclude(
-        "org/intellij/lang/annotations/**",
-        "org/jetbrains/annotations/**"
-    )
+    tasks.shadowJar {
+        archiveFileName.set("EternalEconomy v${project.version}.jar")
+
+        exclude(
+            "org/intellij/lang/annotations/**",
+            "org/jetbrains/annotations/**"
+        )
 
 //    val prefix = "com.eternalcode.economy.libs"
 //    listOf(
 //
 //    ).forEach { relocate(it, prefix) }
+    }
 }
+

@@ -1,6 +1,5 @@
 package com.eternalcode.economy.leaderboard;
 
-import com.eternalcode.economy.SchedulerImpl;
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.AccountManager;
 import com.eternalcode.economy.account.AccountPaymentService;
@@ -13,6 +12,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 import org.apache.commons.math3.distribution.ParetoDistribution;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -39,12 +39,6 @@ public class LeaderboardServiceBenchmark {
     private static final int PAGE_SIZE = 100;
     private static final int MAX_PAGES = 50;
 
-    @Param({"100000", "1000000", "2000000"})
-    private int accountsCount;
-
-    private LeaderboardService leaderboardService;
-    private List<Account> targetAccounts = new ArrayList<>();
-
     private static final String[] FIRST_NAMES = {
         "Alex", "Ben", "Chris", "Dana", "Emma", "Finn", "Grace", "Hannah", "Ian", "Jake",
         "Kara", "Liam", "Mia", "Noah", "Olivia", "Paul", "Quinn", "Rose", "Sam", "Tina"
@@ -54,12 +48,19 @@ public class LeaderboardServiceBenchmark {
         "Wolf", "Dragon", "Shadow", "Rider", "Blaze"
     };
 
+    private final List<Account> targetAccounts = new ArrayList<>();
+
+    @Param({"100000", "1000000", "2000000"})
+    private int accountsCount;
+    private LeaderboardService leaderboardService;
+
     @Setup(Level.Trial)
     public void setUp() {
         AccountRepositoryInMemory repository = new AccountRepositoryInMemory();
-        AccountManager accountManager = new AccountManager(repository, new SchedulerImpl());
-        AccountPaymentService paymentService = new AccountPaymentService(accountManager, new PluginConfig());
-        this.leaderboardService = accountManager;
+        PluginConfig config = new PluginConfig();
+        AccountManager accountManager = new AccountManager(repository, config, Logger.getLogger("Benchmark"));
+        AccountPaymentService paymentService = new AccountPaymentService(accountManager, config);
+        this.leaderboardService = accountManager.getLeaderboardService();
 
         ParetoDistribution pareto = new ParetoDistribution(1.0, 2.0);
         ThreadLocalRandom random = ThreadLocalRandom.current();

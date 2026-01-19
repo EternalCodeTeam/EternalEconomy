@@ -1,11 +1,12 @@
 package com.eternalcode.economy.leaderboard;
 
 import com.eternalcode.economy.account.Account;
+import java.util.concurrent.CompletableFuture;
 
 public interface LeaderboardService {
 
-    LeaderboardEntry getLeaderboardPosition(Account target);
+    CompletableFuture<LeaderboardEntry> getLeaderboardPosition(Account target);
 
-    LeaderboardPage getLeaderboardPage(int page, int pageSize);
+    CompletableFuture<LeaderboardPage> getLeaderboardPage(int page, int pageSize);
 
 }

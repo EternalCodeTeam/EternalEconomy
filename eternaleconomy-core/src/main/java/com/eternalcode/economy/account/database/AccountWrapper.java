@@ -1,6 +1,7 @@
 package com.eternalcode.economy.account.database;
 
 import com.eternalcode.economy.account.Account;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import java.math.BigDecimal;
@@ -15,7 +16,7 @@ class AccountWrapper {
     @DatabaseField(index = true, unique = true)
     private String name;
 
-    @DatabaseField(index = true)
+    @DatabaseField(dataType = DataType.BIG_DECIMAL_NUMERIC, index = true)
     private BigDecimal balance;
 
     public AccountWrapper() {
