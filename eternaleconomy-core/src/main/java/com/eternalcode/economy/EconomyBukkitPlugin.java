@@ -25,7 +25,6 @@ import com.eternalcode.economy.command.impl.admin.AdminBalanceCommand;
 import com.eternalcode.economy.command.impl.admin.AdminRemoveCommand;
 import com.eternalcode.economy.command.impl.admin.AdminResetCommand;
 import com.eternalcode.economy.command.impl.admin.AdminSetCommand;
-import com.eternalcode.economy.command.impl.admin.GeneratorCommand;
 import com.eternalcode.economy.command.message.InvalidBigDecimalMessage;
 import com.eternalcode.economy.command.validator.notsender.NotSender;
 import com.eternalcode.economy.command.validator.notsender.NotSenderValidator;
@@ -179,7 +178,6 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 new MoneyTransferCommand(
                     accountPaymentService, decimalFormatter,
                     noticeService, pluginConfig),
-                new GeneratorCommand(accountManager),
                 new EconomyReloadCommand(configService, noticeService),
                 new LeaderboardCommand(
                     noticeService, decimalFormatter,
