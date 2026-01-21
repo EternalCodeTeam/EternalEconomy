@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 
 public class BridgeManager {
@@ -42,19 +41,21 @@ public class BridgeManager {
         // Using "load: STARTUP" in plugin.yml causes the plugin to load before PlaceholderAPI.
         // Therefore, we need to delay the bridge initialization until the server is fully started.
         // The scheduler runs the code after the "Done" message, ensuring the server is fully operational.
-        Bukkit.getScheduler().runTask(this.plugin, () -> {
-            this.setupBridge("PlaceholderAPI", () -> {
-                PlaceholderEconomyExpansion placeholderEconomyExpansion = new PlaceholderEconomyExpansion(
-                    this.pluginMeta,
-                    this.accountManager,
-                    this.decimalFormatter
-                );
+        Bukkit.getScheduler().runTask(
+            this.plugin, () -> {
+                this.setupBridge(
+                    "PlaceholderAPI", () -> {
+                        PlaceholderEconomyExpansion placeholderEconomyExpansion = new PlaceholderEconomyExpansion(
+                            this.pluginMeta,
+                            this.accountManager,
+                            this.decimalFormatter
+                        );
 
-                placeholderEconomyExpansion.register();
+                        placeholderEconomyExpansion.register();
 
-                System.out.println("PlaceholderAPI bridge initialized!");
+                        System.out.println("PlaceholderAPI bridge initialized!");
+                    });
             });
-        });
 
         // other bridges (do not put bridges in the scheduler if not needed)
     }

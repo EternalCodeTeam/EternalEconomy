@@ -58,5 +58,4 @@ public class AdminSetCommand {
             .player(receiver.uuid())
             .send();
     }
-
 }

@@ -1,17 +1,16 @@
 package com.eternalcode.economy.config.item;
 
 import eu.okaeri.configs.OkaeriConfig;
-import java.util.Collections;
 import java.util.List;
 import org.bukkit.Material;
 
 public class ConfigItem extends OkaeriConfig {
 
-    private String name;
-    private List<String> lore;
-    private Material material;
-    private Integer texture;
-    private boolean glow;
+    private final String name;
+    private final List<String> lore;
+    private final Material material;
+    private final Integer texture;
+    private final boolean glow;
 
     public ConfigItem(String name, List<String> lore, Material material, Integer texture, boolean glow) {
         this.name = name;
