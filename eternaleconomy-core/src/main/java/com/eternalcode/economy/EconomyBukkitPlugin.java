@@ -22,6 +22,7 @@ import com.eternalcode.economy.command.impl.MoneyTransferCommand;
 import com.eternalcode.economy.command.impl.WithdrawCommand;
 import com.eternalcode.economy.command.impl.admin.AdminAddCommand;
 import com.eternalcode.economy.command.impl.admin.AdminBalanceCommand;
+import com.eternalcode.economy.command.impl.admin.AdminGenerateCommand;
 import com.eternalcode.economy.command.impl.admin.AdminRemoveCommand;
 import com.eternalcode.economy.command.impl.admin.AdminResetCommand;
 import com.eternalcode.economy.command.impl.admin.AdminSetCommand;
@@ -35,7 +36,7 @@ import com.eternalcode.economy.config.implementation.messages.MessageConfig;
 import com.eternalcode.economy.database.DatabaseManager;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.format.DecimalFormatterImpl;
-import com.eternalcode.economy.leaderboard.LeaderboardCommand;
+import com.eternalcode.economy.leaderboard.LeaderboardConfigurer;
 import com.eternalcode.economy.multification.NoticeBroadcastHandler;
 import com.eternalcode.economy.multification.NoticeHandler;
 import com.eternalcode.economy.multification.NoticeService;
@@ -51,6 +52,8 @@ import dev.rollczi.litecommands.LiteCommands;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
 import dev.rollczi.litecommands.jakarta.LiteJakartaExtension;
 import dev.rollczi.litecommands.message.LiteMessages;
+import dev.rollczi.liteskullapi.LiteSkullFactory;
+import dev.rollczi.liteskullapi.SkullAPI;
 import jakarta.validation.constraints.Min;
 import java.io.File;
 import java.math.BigDecimal;
@@ -68,7 +71,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
     private static final String PLUGIN_STARTED = "EternalEconomy has been enabled in %dms.";
 
     private DatabaseManager databaseManager;
-
+    private SkullAPI skullAPI;
     private LiteCommands<CommandSender> liteCommands;
 
     @Override
@@ -96,6 +99,11 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             new File(dataFolder, "commands.yml"));
 
         NoticeService noticeService = new NoticeService(messageConfig, miniMessage);
+
+        this.skullAPI = LiteSkullFactory.builder()
+            .cacheExpireAfterWrite(Duration.ofMinutes(45L))
+            .bukkitScheduler(this)
+            .build();
 
         Scheduler scheduler = EconomySchedulerAdapter.getAdaptiveScheduler(this);
 
@@ -132,13 +140,10 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             Economy.class, vaultEconomyProvider, this,
             ServicePriority.Highest);
 
-        this.liteCommands = LiteBukkitFactory.builder("eternaleconomy", this, server)
+        var liteCommandsBuilder = LiteBukkitFactory.builder("eternaleconomy", this, server)
             .extension(
                 new LiteJakartaExtension<>(), settings -> settings
-                    .violationMessage(
-                        Min.class, BigDecimal.class,
-                        new InvalidBigDecimalMessage<>(
-                            noticeService)))
+                    .violationMessage(Min.class, BigDecimal.class, new InvalidBigDecimalMessage<>(noticeService)))
 
             .annotations(extension -> extension.validator(
                 Account.class,
@@ -162,35 +167,49 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             .commands(
                 new AdminAddCommand(
                     accountPaymentService, decimalFormatter,
-                    noticeService),
+                    noticeService
+                ),
                 new AdminRemoveCommand(
                     accountPaymentService, decimalFormatter,
-                    noticeService),
+                    noticeService
+                ),
                 new AdminSetCommand(
                     accountPaymentService, decimalFormatter,
-                    noticeService),
+                    noticeService
+                ),
                 new AdminResetCommand(accountPaymentService, noticeService),
                 new AdminBalanceCommand(noticeService, decimalFormatter),
+                new AdminGenerateCommand(accountManager, scheduler),
                 new WithdrawCommand(
                     withdrawService, cooldownDuration,
-                    noticeService),
+                    noticeService
+                ),
                 new MoneyBalanceCommand(noticeService, decimalFormatter),
                 new MoneyTransferCommand(
                     accountPaymentService, decimalFormatter,
-                    noticeService, pluginConfig),
-                new EconomyReloadCommand(configService, noticeService),
-                new LeaderboardCommand(
-                    noticeService, decimalFormatter,
-                    accountManager.getLeaderboardService(),
-                    pluginConfig))
+                    noticeService, pluginConfig
+                ),
+                new EconomyReloadCommand(configService, noticeService))
 
             .context(Account.class, new AccountContext(accountManager, messageConfig))
             .argument(Account.class, new AccountArgument(accountManager, noticeService, server))
 
             .result(Notice.class, new NoticeHandler(noticeService))
-            .result(NoticeBroadcast.class, new NoticeBroadcastHandler())
+            .result(NoticeBroadcast.class, new NoticeBroadcastHandler());
 
-            .build();
+        new LeaderboardConfigurer().configure(
+            this,
+            accountManager.getLeaderboardService(),
+            scheduler,
+            configService,
+            pluginConfig,
+            noticeService,
+            decimalFormatter,
+            this.skullAPI,
+            liteCommandsBuilder
+        );
+
+        this.liteCommands = liteCommandsBuilder.build();
 
         server.getPluginManager().registerEvents(new AccountController(accountManager), this);
 
@@ -216,6 +235,10 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (this.skullAPI != null) {
+            this.skullAPI.shutdown();
+        }
+
         if (this.liteCommands != null) {
             this.liteCommands.unregister();
         }

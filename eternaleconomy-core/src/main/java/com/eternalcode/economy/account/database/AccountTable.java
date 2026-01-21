@@ -8,28 +8,32 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @DatabaseTable(tableName = "eternaleconomy_accounts")
-class AccountWrapper {
+class AccountTable {
 
-    @DatabaseField(id = true)
+    static final String UUID = "uuid";
+    static final String NAME = "name";
+    static final String BALANCE = "balance";
+
+    @DatabaseField(id = true, unique = true, columnName = UUID)
     private UUID uuid;
 
-    @DatabaseField(index = true, unique = true)
+    @DatabaseField(index = true, unique = true, columnName = NAME)
     private String name;
 
-    @DatabaseField(dataType = DataType.BIG_DECIMAL_NUMERIC, index = true)
+    @DatabaseField(dataType = DataType.BIG_DECIMAL_NUMERIC, columnName = BALANCE)
     private BigDecimal balance;
 
-    public AccountWrapper() {
+    public AccountTable() {
     }
 
-    public AccountWrapper(UUID uuid, String name, BigDecimal balance) {
+    public AccountTable(UUID uuid, String name, BigDecimal balance) {
         this.uuid = uuid;
         this.name = name;
         this.balance = balance;
     }
 
-    public static AccountWrapper fromAccount(Account account) {
-        return new AccountWrapper(account.uuid(), account.name(), account.balance());
+    public static AccountTable fromAccount(Account account) {
+        return new AccountTable(account.uuid(), account.name(), account.balance());
     }
 
     public Account toAccount() {
