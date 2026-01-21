@@ -18,9 +18,9 @@ public class PlaceholderEconomyExpansion extends PlaceholderExpansion implements
     private final DecimalFormatter decimalFormatter;
 
     public PlaceholderEconomyExpansion(
-            PluginMeta pluginMeta,
-            AccountManager accountManager,
-            DecimalFormatter decimalFormatter) {
+        PluginMeta pluginMeta,
+        AccountManager accountManager,
+        DecimalFormatter decimalFormatter) {
         this.pluginMeta = pluginMeta;
         this.accountManager = accountManager;
         this.decimalFormatter = decimalFormatter;

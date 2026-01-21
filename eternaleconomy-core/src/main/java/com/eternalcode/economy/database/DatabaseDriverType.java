@@ -1,6 +1,15 @@
 package com.eternalcode.economy.database;
 
-import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.*;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.H2_DRIVER;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.H2_JDBC_URL;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MARIADB_DRIVER;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MARIADB_JDBC_URL;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MYSQL_DRIVER;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.MYSQL_JDBC_URL;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.POSTGRESQL_DRIVER;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.POSTGRESQL_JDBC_URL;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.SQLITE_DRIVER;
+import static com.eternalcode.economy.database.DatabaseConnectionDriverConstant.SQLITE_JDBC_URL;
 
 public enum DatabaseDriverType {
 

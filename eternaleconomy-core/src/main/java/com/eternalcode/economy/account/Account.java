@@ -17,7 +17,9 @@ public record Account(UUID uuid, String name, BigDecimal balance) {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Account account = (Account) o;
         return Objects.equals(uuid, account.uuid) && Objects.equals(name, account.name);
     }
@@ -26,5 +28,4 @@ public record Account(UUID uuid, String name, BigDecimal balance) {
     public int hashCode() {
         return Objects.hash(uuid, name);
     }
-
 }

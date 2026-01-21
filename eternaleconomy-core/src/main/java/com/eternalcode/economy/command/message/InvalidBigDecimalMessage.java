@@ -8,7 +8,8 @@ import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 import org.bukkit.command.CommandSender;
 
-public class InvalidBigDecimalMessage<A extends Annotation> implements InvokedMessage<CommandSender, Object, JakartaViolation<A, BigDecimal>> {
+public class InvalidBigDecimalMessage<A extends Annotation>
+    implements InvokedMessage<CommandSender, Object, JakartaViolation<A, BigDecimal>> {
 
     private final NoticeService noticeService;
 

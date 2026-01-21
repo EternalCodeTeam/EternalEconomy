@@ -2,9 +2,7 @@ package com.eternalcode.economy.leaderboard.menu;
 
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import org.bukkit.Material;
 
 public class LeaderboardConfig extends OkaeriConfig {

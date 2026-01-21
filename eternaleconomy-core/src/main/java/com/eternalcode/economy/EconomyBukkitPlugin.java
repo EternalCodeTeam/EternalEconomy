@@ -49,7 +49,9 @@ import com.eternalcode.multification.notice.Notice;
 import com.eternalcode.multification.notice.NoticeBroadcast;
 import com.google.common.base.Stopwatch;
 import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.LiteCommandsBuilder;
 import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
+import dev.rollczi.litecommands.bukkit.LiteBukkitSettings;
 import dev.rollczi.litecommands.jakarta.LiteJakartaExtension;
 import dev.rollczi.litecommands.message.LiteMessages;
 import dev.rollczi.liteskullapi.LiteSkullFactory;
@@ -140,7 +142,8 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             Economy.class, vaultEconomyProvider, this,
             ServicePriority.Highest);
 
-        var liteCommandsBuilder = LiteBukkitFactory.builder("eternaleconomy", this, server)
+        LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?>
+            liteCommandsBuilder = LiteBukkitFactory.builder("eternaleconomy", this, server)
             .extension(
                 new LiteJakartaExtension<>(), settings -> settings
                     .violationMessage(Min.class, BigDecimal.class, new InvalidBigDecimalMessage<>(noticeService)))

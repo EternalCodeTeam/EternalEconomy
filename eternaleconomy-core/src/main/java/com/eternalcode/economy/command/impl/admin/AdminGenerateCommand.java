@@ -86,7 +86,8 @@ public class AdminGenerateCommand {
 
                     try {
                         Thread.sleep(10);
-                    } catch (InterruptedException e) {
+                    }
+                    catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         break;
                     }
@@ -121,15 +122,19 @@ public class AdminGenerateCommand {
 
         if (style < 30) {
             return firstName + random.nextInt(10000);
-        } else if (style < 60) {
+        }
+        else if (style < 60) {
             String suffix = SUFFIXES[random.nextInt(SUFFIXES.length)];
             return firstName + suffix;
-        } else if (style < 80) {
+        }
+        else if (style < 80) {
             String suffix = SUFFIXES[random.nextInt(SUFFIXES.length)];
             return firstName + suffix + random.nextInt(1000);
-        } else if (style < 90) {
+        }
+        else if (style < 90) {
             return firstName + "_" + SUFFIXES[random.nextInt(SUFFIXES.length)];
-        } else {
+        }
+        else {
             String second = FIRST_NAMES[random.nextInt(FIRST_NAMES.length)];
             return firstName + second;
         }
@@ -142,13 +147,17 @@ public class AdminGenerateCommand {
 
         if (distribution < 40) {
             rawBalance = 1 + random.nextDouble() * 100;
-        } else if (distribution < 70) {
+        }
+        else if (distribution < 70) {
             rawBalance = 100 + random.nextDouble() * 1000;
-        } else if (distribution < 85) {
+        }
+        else if (distribution < 85) {
             rawBalance = 1000 + random.nextDouble() * 10000;
-        } else if (distribution < 95) {
+        }
+        else if (distribution < 95) {
             rawBalance = 10000 + random.nextDouble() * 100000;
-        } else {
+        }
+        else {
             rawBalance = 100000 + random.nextDouble() * 900000;
         }
 

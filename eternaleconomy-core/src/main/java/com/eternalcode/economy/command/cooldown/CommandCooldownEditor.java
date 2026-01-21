@@ -5,9 +5,8 @@ import dev.rollczi.litecommands.command.builder.CommandBuilder;
 import dev.rollczi.litecommands.cooldown.CooldownContext;
 import dev.rollczi.litecommands.editor.Editor;
 import dev.rollczi.litecommands.meta.Meta;
-import org.bukkit.command.CommandSender;
-
 import java.util.Map;
+import org.bukkit.command.CommandSender;
 
 public class CommandCooldownEditor implements Editor<CommandSender> {
 
@@ -37,5 +36,4 @@ public class CommandCooldownEditor implements Editor<CommandSender> {
 
         return commandBuilder;
     }
-
 }

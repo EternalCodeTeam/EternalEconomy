@@ -7,7 +7,6 @@ import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.leaderboard.LeaderboardEntry;
 import com.eternalcode.economy.leaderboard.LeaderboardPage;
 import com.eternalcode.economy.leaderboard.LeaderboardService;
-import com.eternalcode.economy.leaderboard.menu.LeaderboardConfig.LeaderboardItem;
 import com.eternalcode.multification.shared.Formatter;
 import dev.rollczi.liteskullapi.SkullAPI;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
