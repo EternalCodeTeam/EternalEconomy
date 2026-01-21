@@ -22,7 +22,6 @@ import com.eternalcode.economy.command.impl.MoneyTransferCommand;
 import com.eternalcode.economy.command.impl.WithdrawCommand;
 import com.eternalcode.economy.command.impl.admin.AdminAddCommand;
 import com.eternalcode.economy.command.impl.admin.AdminBalanceCommand;
-import com.eternalcode.economy.command.impl.admin.AdminGenerateCommand;
 import com.eternalcode.economy.command.impl.admin.AdminRemoveCommand;
 import com.eternalcode.economy.command.impl.admin.AdminResetCommand;
 import com.eternalcode.economy.command.impl.admin.AdminSetCommand;
@@ -182,7 +181,6 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                 ),
                 new AdminResetCommand(accountPaymentService, noticeService),
                 new AdminBalanceCommand(noticeService, decimalFormatter),
-                new AdminGenerateCommand(accountManager, scheduler),
                 new WithdrawCommand(
                     withdrawService, cooldownDuration,
                     noticeService
