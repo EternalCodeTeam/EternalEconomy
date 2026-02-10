@@ -141,11 +141,13 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             Economy.class, vaultEconomyProvider, this,
             ServicePriority.Highest);
 
-        LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?>
-            liteCommandsBuilder = LiteBukkitFactory.builder("eternaleconomy", this, server)
+        LiteCommandsBuilder<CommandSender, LiteBukkitSettings, ?> liteCommandsBuilder = LiteBukkitFactory
+            .builder("eternaleconomy", this, server)
             .extension(
                 new LiteJakartaExtension<>(), settings -> settings
-                    .violationMessage(Min.class, BigDecimal.class, new InvalidBigDecimalMessage<>(noticeService)))
+                    .violationMessage(
+                        Min.class, BigDecimal.class,
+                        new InvalidBigDecimalMessage<>(noticeService)))
 
             .annotations(extension -> extension.validator(
                 Account.class,
@@ -169,27 +171,22 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             .commands(
                 new AdminAddCommand(
                     accountPaymentService, decimalFormatter,
-                    noticeService
-                ),
+                    noticeService),
                 new AdminRemoveCommand(
                     accountPaymentService, decimalFormatter,
-                    noticeService
-                ),
+                    noticeService),
                 new AdminSetCommand(
                     accountPaymentService, decimalFormatter,
-                    noticeService
-                ),
+                    noticeService),
                 new AdminResetCommand(accountPaymentService, noticeService),
                 new AdminBalanceCommand(noticeService, decimalFormatter),
                 new WithdrawCommand(
                     withdrawService, cooldownDuration,
-                    noticeService
-                ),
+                    noticeService),
                 new MoneyBalanceCommand(noticeService, decimalFormatter),
                 new MoneyTransferCommand(
                     accountPaymentService, decimalFormatter,
-                    noticeService, pluginConfig
-                ),
+                    noticeService, pluginConfig),
                 new EconomyReloadCommand(configService, noticeService))
 
             .context(Account.class, new AccountContext(accountManager, messageConfig))
@@ -207,8 +204,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             noticeService,
             decimalFormatter,
             this.skullAPI,
-            liteCommandsBuilder
-        );
+            liteCommandsBuilder);
 
         this.liteCommands = liteCommandsBuilder.build();
 
@@ -226,8 +222,8 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             accountManager,
             decimalFormatter,
             server,
-            this,
-            this.getLogger());
+            this.getLogger(),
+            scheduler);
         bridgeManager.init();
 
         Duration elapsed = started.elapsed();
