@@ -62,7 +62,7 @@ dependencies {
 
     // TriumphGUI for GUI
     implementation("dev.triumphteam:triumph-gui:${Versions.TRIUMPH_GUI}")
-    implementation("dev.rollczi:liteskullapi:${Versions.LITE_SKULL_API}")
+    paperLibrary("dev.rollczi:liteskullapi:${Versions.LITE_SKULL_API}")
 
     testImplementation(platform("org.junit:junit-bom:6.0.3"))
     testImplementation("org.junit.jupiter:junit-jupiter")
