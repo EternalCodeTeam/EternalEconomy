@@ -2,6 +2,7 @@ package com.eternalcode.economy.leaderboard;
 
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.database.AccountRepository;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -23,15 +24,15 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         int startIndex = (page - 1) * pageSize;
 
         if (startIndex < SNAPSHOT_SIZE) {
-            return getPageFromSnapshot(page, pageSize, startIndex);
+            return this.getPageFromSnapshot(page, pageSize, startIndex);
         }
 
-        return getPageFromDatabaseKeyset(page, pageSize, startIndex);
+        return this.getPageFromDatabaseKeyset(page, pageSize, startIndex);
     }
 
     @Override
     public CompletableFuture<LeaderboardEntry> getLeaderboardPosition(Account target) {
-        LeaderboardSnapshot snapshot = snapshotRef.get();
+        LeaderboardSnapshot snapshot = this.snapshotRef.get();
 
         if (snapshot != null) {
             Integer position = snapshot.getPosition(target.uuid());
@@ -40,7 +41,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             }
         }
 
-        return repository.getPosition(target).thenApply(position -> new LeaderboardEntry(target, position));
+        return this.repository.getPosition(target).thenApply(position -> new LeaderboardEntry(target, position));
     }
 
     public void invalidateCache() {
@@ -48,42 +49,42 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     }
 
     public CompletableFuture<Void> refreshSnapshot() {
-        return repository.getTopAccounts(SNAPSHOT_SIZE, 0).thenCombine(
-            repository.countAccounts(), (accounts, totalCount) -> {
+        return this.repository.getTopAccounts(SNAPSHOT_SIZE, 0).thenCombine(
+            this.repository.countAccounts(), (accounts, totalCount) -> {
                 LeaderboardSnapshot newSnapshot = new LeaderboardSnapshot(accounts, totalCount);
-                snapshotRef.set(newSnapshot);
+                this.snapshotRef.set(newSnapshot);
                 return null;
             });
     }
 
     private CompletableFuture<LeaderboardSnapshot> getOrRefreshSnapshot() {
-        LeaderboardSnapshot current = snapshotRef.get();
+        LeaderboardSnapshot current = this.snapshotRef.get();
         if (current != null) {
             return CompletableFuture.completedFuture(current);
         }
 
-        return repository.getTopAccounts(SNAPSHOT_SIZE, 0).thenCombine(
-            repository.countAccounts(), (accounts, totalCount) -> {
+        return this.repository.getTopAccounts(SNAPSHOT_SIZE, 0).thenCombine(
+            this.repository.countAccounts(), (accounts, totalCount) -> {
                 LeaderboardSnapshot newSnapshot = new LeaderboardSnapshot(accounts, totalCount);
-                snapshotRef.set(newSnapshot);
+                this.snapshotRef.set(newSnapshot);
                 return newSnapshot;
             });
     }
 
     private CompletableFuture<LeaderboardPage> getPageFromSnapshot(int page, int pageSize, int startIndex) {
-        return getOrRefreshSnapshot().thenApply(snapshot -> {
+        return this.getOrRefreshSnapshot().thenApply(snapshot -> {
             int endIndex = Math.min(startIndex + pageSize, snapshot.size());
             List<Account> accounts = snapshot.accounts().subList(startIndex, endIndex);
 
-            return createPage(accounts, page, pageSize, startIndex, snapshot.totalCount());
+            return this.createPage(accounts, page, pageSize, startIndex, snapshot.totalCount());
         });
     }
 
     private CompletableFuture<LeaderboardPage> getPageFromDatabaseKeyset(int page, int pageSize, int startIndex) {
-        return getOrRefreshSnapshot().thenCompose(snapshot -> {
+        return this.getOrRefreshSnapshot().thenCompose(snapshot -> {
             int offset = startIndex - SNAPSHOT_SIZE;
-            return repository.getTopAccounts(pageSize, SNAPSHOT_SIZE + offset)
-                .thenApply(accounts -> createPage(accounts, page, pageSize, startIndex, snapshot.totalCount()));
+            return this.repository.getTopAccounts(pageSize, SNAPSHOT_SIZE + offset)
+                .thenApply(accounts -> this.createPage(accounts, page, pageSize, startIndex, snapshot.totalCount()));
         });
     }
 
@@ -96,7 +97,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         }
 
         int maxPages = Math.max(1, (int) Math.ceil((double) totalCount / pageSize));
-        int nextPage = page + 1 < maxPages ? page + 1 : -1;
+        int nextPage = page < maxPages ? page + 1 : -1;
 
         return new LeaderboardPage(entries, page, maxPages, nextPage);
     }

@@ -1,5 +1,6 @@
 package com.eternalcode.economy.leaderboard;
 
+import com.eternalcode.commons.concurrent.FutureHandler;
 import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.config.implementation.PluginConfig;
@@ -13,9 +14,10 @@ import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.execute.ExecuteDefault;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import jakarta.validation.constraints.Min;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 @SuppressWarnings("unused")
 @Command(name = "balancetop", aliases = {"baltop", "btgui", "topgui"})
@@ -58,12 +60,12 @@ public class LeaderboardCommand {
             }
         }
 
-        this.leaderboardService.getLeaderboardPage(page - 1, this.pluginConfig.leaderboardPageSize)
-            .thenAccept(leaderboardPage -> showPage(account, leaderboardPage));
+        this.leaderboardService.getLeaderboardPage(page, this.pluginConfig.leaderboardPageSize)
+            .thenAccept(leaderboardPage -> this.showPage(account, leaderboardPage));
     }
 
     private void showPage(Account account, LeaderboardPage page) {
-        int currentPage = page.currentPage() + 1;
+        int currentPage = page.currentPage();
         List<LeaderboardEntry> entries = page.entries();
 
         if (entries.isEmpty()) {
@@ -100,13 +102,13 @@ public class LeaderboardCommand {
                         .placeholder("{POSITION}", String.valueOf(entry.position()))
                         .player(account.uuid())
                         .send();
-                });
+                }).exceptionally(FutureHandler::handleException);
         }
 
         if (page.nextPage() != -1) {
             this.noticeService.create()
                 .notice(messages -> messages.player.leaderboardFooter)
-                .placeholder("{NEXT_PAGE}", String.valueOf(page.nextPage() + 1))
+                .placeholder("{NEXT_PAGE}", String.valueOf(page.nextPage()))
                 .placeholder("{TOTAL_PAGES}", String.valueOf(page.maxPages()))
                 .placeholder("{PAGE}", String.valueOf(currentPage))
                 .player(account.uuid())
