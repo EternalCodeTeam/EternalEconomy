@@ -8,7 +8,7 @@ object Versions {
     const val ETERNALCODE_COMMONS = "1.3.3"
     const val MULTIFICATION = "1.2.4"
 
-    const val JETBRAINS_ANNOTATIONS = "26.0.2-1"
+    const val JETBRAINS_ANNOTATIONS = "26.1.0"
 
     const val ADVENTURE_PLATFORM_BUKKIT = "4.4.1"
     const val ADVENTURE_API = "4.24.0"
