@@ -173,7 +173,8 @@ public class WithdrawItemServiceImpl implements WithdrawItemService {
 
         try {
             return new BigDecimal(value);
-        } catch (NumberFormatException ignored) {
+        }
+        catch (NumberFormatException ignored) {
             return BigDecimal.ZERO;
         }
     }
