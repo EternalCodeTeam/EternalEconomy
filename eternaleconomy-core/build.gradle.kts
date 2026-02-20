@@ -60,11 +60,11 @@ dependencies {
 
     compileOnly("me.clip:placeholderapi:${Versions.PLACEHOLDER_API}")
 
-    // TriumpGUI for GUI
+    // TriumphGUI for GUI
     implementation("dev.triumphteam:triumph-gui:${Versions.TRIUMPH_GUI}")
     implementation("dev.rollczi:liteskullapi:${Versions.LITE_SKULL_API}")
 
-    testImplementation(platform("org.junit:junit-bom:6.0.2"))
+    testImplementation(platform("org.junit:junit-bom:6.0.3"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("com.github.ben-manes.caffeine:caffeine:3.2.3")
