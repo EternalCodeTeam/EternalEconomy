@@ -33,11 +33,11 @@ public class AccountRepositoryInMemory implements AccountRepository {
     @Override
     public CompletableFuture<List<Account>> getTopAccounts(int limit, int offset) {
         List<Account> sorted = accounts.values().stream()
-                .sorted(Comparator.comparing(Account::balance).reversed()
-                        .thenComparing(Account::uuid))
-                .skip(offset)
-                .limit(limit)
-                .toList();
+            .sorted(Comparator.comparing(Account::balance).reversed()
+                .thenComparing(Account::uuid))
+            .skip(offset)
+            .limit(limit)
+            .toList();
 
         return CompletableFuture.completedFuture(sorted);
     }
@@ -45,10 +45,10 @@ public class AccountRepositoryInMemory implements AccountRepository {
     @Override
     public CompletableFuture<Integer> getPosition(Account target) {
         long position = accounts.values().stream()
-                .sorted(Comparator.comparing(Account::balance).reversed()
-                        .thenComparing(Account::uuid))
-                .takeWhile(account -> !account.uuid().equals(target.uuid()))
-                .count() + 1;
+            .sorted(Comparator.comparing(Account::balance).reversed()
+                .thenComparing(Account::uuid))
+            .takeWhile(account -> !account.uuid().equals(target.uuid()))
+            .count() + 1;
 
         return CompletableFuture.completedFuture((int) position);
     }

@@ -9,4 +9,5 @@ public interface LeaderboardService {
 
     CompletableFuture<LeaderboardPage> getLeaderboardPage(int page, int pageSize);
 
+    CompletableFuture<Void> refreshSnapshot();
 }

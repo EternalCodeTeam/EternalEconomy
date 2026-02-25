@@ -30,6 +30,7 @@ public class ConfigService {
 
         NoticeResolverRegistry noticeRegistry = NoticeResolverDefaults.createRegistry()
             .registerResolver(new SoundBukkitResolver());
+
         configFile
             .withConfigurer(yamlConfigurer, new SerdesCommons(), new SerdesBukkit())
             .withConfigurer(yamlConfigurer, new MultificationSerdesPack(noticeRegistry))

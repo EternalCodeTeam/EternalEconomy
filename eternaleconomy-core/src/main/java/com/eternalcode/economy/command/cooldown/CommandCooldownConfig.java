@@ -3,7 +3,6 @@ package com.eternalcode.economy.command.cooldown;
 import com.eternalcode.multification.notice.Notice;
 import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
-
 import java.time.Duration;
 
 public class CommandCooldownConfig extends OkaeriConfig {
