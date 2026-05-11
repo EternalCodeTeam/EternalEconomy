@@ -33,7 +33,7 @@ public class AccountArgument extends ArgumentResolver<CommandSender, Account> {
         String string) {
         Account account = this.accountManager.getAccount(string);
 
-        if (account == null) {
+        if (account == null || !this.isVisibleToSender(invocation.sender(), account)) {
             NoticeBroadcast invalidPlayerNotice = this.noticeService.create()
                 .notice(messageConfig -> messageConfig.invalidPlayer)
                 .viewer(invocation.sender());
@@ -54,12 +54,32 @@ public class AccountArgument extends ArgumentResolver<CommandSender, Account> {
 
         if (input.length() < 3) {
             return this.server.getOnlinePlayers().stream()
+                .filter(player -> this.isVisibleToSender(invocation.sender(), player))
                 .map(Player::getName)
                 .collect(SuggestionResult.collector());
         }
 
         return this.accountManager.getAccountStartingWith(input).stream()
+            .filter(account -> this.isVisibleToSender(invocation.sender(), account))
             .map(Account::name)
             .collect(SuggestionResult.collector());
+    }
+
+    private boolean isVisibleToSender(CommandSender sender, Account account) {
+        Player onlineTarget = this.server.getPlayer(account.uuid());
+
+        if (onlineTarget == null) {
+            return true;
+        }
+
+        return this.isVisibleToSender(sender, onlineTarget);
+    }
+
+    private boolean isVisibleToSender(CommandSender sender, Player target) {
+        if (!(sender instanceof Player player)) {
+            return true;
+        }
+
+        return player.canSee(target);
     }
 }
