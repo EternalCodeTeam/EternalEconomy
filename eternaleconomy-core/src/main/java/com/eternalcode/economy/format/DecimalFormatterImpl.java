@@ -46,7 +46,7 @@ public class DecimalFormatterImpl implements DecimalFormatter {
 
         fractionalPart *= 100;
         fractionalPart = (fractionalPart < 99 && fractionalPart % 1 >= 0.5) ? ceil(fractionalPart)
-                : floor(fractionalPart);
+            : floor(fractionalPart);
         return (long) amount + TRUNCATED_AMOUNT_DELIMITER + (long) fractionalPart;
     }
 
@@ -67,9 +67,9 @@ public class DecimalFormatterImpl implements DecimalFormatter {
         DecimalUnit decimalUnit = units.get(nearestScaleDivider);
 
         return getFormattedAmountWithSuffix(
-                amount,
-                decimalUnit.getFactor(),
-                decimalUnit.getSuffix());
+            amount,
+            decimalUnit.getFactor(),
+            decimalUnit.getSuffix());
     }
 
     @Override

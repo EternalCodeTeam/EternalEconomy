@@ -2,6 +2,8 @@ object Versions {
 
     const val PAPER_API = "1.20.4-R0.1-SNAPSHOT"
 
+    const val TRIUMPH_GUI = "3.1.13"
+
     const val OKAERI_CONFIGS = "5.0.13"
     const val LITE_COMMANDS = "3.10.9"
 
@@ -10,12 +12,11 @@ object Versions {
 
     const val JETBRAINS_ANNOTATIONS = "26.1.0"
 
-    const val ADVENTURE_PLATFORM_BUKKIT = "4.4.1"
-    const val ADVENTURE_API = "4.24.0"
-
     const val VAULT_API = "1.7.1"
 
     const val PLACEHOLDER_API = "2.12.2"
+
+    const val LITE_SKULL_API = "2.0.0"
 
     const val MARIA_DB = "3.5.7"
     const val POSTGRESQL = "42.7.10"

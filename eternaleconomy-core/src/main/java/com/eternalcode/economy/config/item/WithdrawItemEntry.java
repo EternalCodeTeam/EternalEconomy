@@ -7,8 +7,8 @@ import org.bukkit.Material;
 
 public class WithdrawItemEntry extends OkaeriConfig {
 
-    private BigDecimal minValue;
-    private ConfigItem item;
+    private final BigDecimal minValue;
+    private final ConfigItem item;
 
     public WithdrawItemEntry(BigDecimal minValue, ConfigItem item) {
         this.minValue = minValue;

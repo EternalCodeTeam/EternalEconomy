@@ -2,7 +2,6 @@ package com.eternalcode.economy.delay;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.function.Supplier;
@@ -19,8 +18,12 @@ public class Delay<T> {
 
         this.defaultDelay = defaultDelay;
         this.cache = Caffeine.newBuilder()
-                .expireAfter(new InstantExpiry<T>())
-                .build();
+            .expireAfter(new InstantExpiry<T>())
+            .build();
+    }
+
+    public static <T> Delay<T> withDefault(Supplier<Duration> defaultDelay) {
+        return new Delay<>(defaultDelay);
     }
 
     public void markDelay(T key, Duration delay) {
@@ -50,9 +53,5 @@ public class Delay<T> {
 
     private Instant getExpireAt(T key) {
         return this.cache.asMap().getOrDefault(key, Instant.MIN);
-    }
-
-    public static <T> Delay<T> withDefault(Supplier<Duration> defaultDelay) {
-        return new Delay<>(defaultDelay);
     }
 }

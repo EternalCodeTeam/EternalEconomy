@@ -7,9 +7,8 @@ import dev.rollczi.litecommands.invocation.Invocation;
 import dev.rollczi.litecommands.message.InvokedMessage;
 import dev.rollczi.litecommands.message.LiteMessages;
 import dev.rollczi.litecommands.time.DurationParser;
-import org.bukkit.command.CommandSender;
-
 import java.time.Duration;
+import org.bukkit.command.CommandSender;
 
 public class CommandCooldownMessage implements InvokedMessage<CommandSender, Object, CooldownState> {
 
@@ -29,12 +28,12 @@ public class CommandCooldownMessage implements InvokedMessage<CommandSender, Obj
             return LiteMessages.COMMAND_COOLDOWN.getDefaultMessage(cooldownState);
         }
 
-        String formatted = DurationParser.TIME_UNITS.format(Duration.ofSeconds(cooldownState.getRemainingDuration().getSeconds()));
+        String formatted =
+            DurationParser.TIME_UNITS.format(Duration.ofSeconds(cooldownState.getRemainingDuration().getSeconds()));
 
         return noticeService.create()
             .notice(notice -> cooldown.message)
             .placeholder("{TIME}", formatted)
             .viewer(invocation.sender());
     }
-
 }
