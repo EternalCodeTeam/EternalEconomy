@@ -26,6 +26,7 @@ import org.bukkit.plugin.Plugin;
 public class WithdrawItemServiceImpl implements WithdrawItemService {
 
     private static final String VALUE_PLACEHOLDER = "{VALUE}";
+    private static final String PLAYER_PLACEHOLDER = "{PLAYER}";
     private static final String WITHDRAW_VALUE_KEY = "withdraw_value";
     private static final TagResolver EMPTY_RESOLVER = TagResolver.empty();
 
@@ -52,7 +53,7 @@ public class WithdrawItemServiceImpl implements WithdrawItemService {
     }
 
     @Override
-    public ItemStack createBanknote(BigDecimal value) {
+    public ItemStack createBanknote(BigDecimal value, String creatorName) {
         if (value.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Banknote value must be positive, got: " + value);
         }
@@ -68,7 +69,7 @@ public class WithdrawItemServiceImpl implements WithdrawItemService {
             }
 
             Component name = this.miniMessage.deserialize(
-                configItem.name().replace(VALUE_PLACEHOLDER, formattedValue),
+                this.replaceBanknotePlaceholders(configItem.name(), formattedValue, creatorName),
                 EMPTY_RESOLVER
             ).decoration(TextDecoration.ITALIC, false);
 
@@ -79,7 +80,7 @@ public class WithdrawItemServiceImpl implements WithdrawItemService {
                 for (String line : configItem.lore()) {
                     lore.add(
                         this.miniMessage.deserialize(
-                            line.replace(VALUE_PLACEHOLDER, formattedValue),
+                            this.replaceBanknotePlaceholders(line, formattedValue, creatorName),
                             EMPTY_RESOLVER
                         ).decoration(TextDecoration.ITALIC, false)
                     );
@@ -100,6 +101,12 @@ public class WithdrawItemServiceImpl implements WithdrawItemService {
         });
 
         return itemStack;
+    }
+
+    private String replaceBanknotePlaceholders(String text, String formattedValue, String creatorName) {
+        return text
+            .replace(VALUE_PLACEHOLDER, formattedValue)
+            .replace(PLAYER_PLACEHOLDER, creatorName);
     }
 
     private ConfigItem selectConfigItem(BigDecimal value) {

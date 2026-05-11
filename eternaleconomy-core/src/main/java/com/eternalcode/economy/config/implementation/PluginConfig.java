@@ -56,10 +56,16 @@ public class PluginConfig extends OkaeriConfig {
         @Comment("Cooldown in seconds between withdraw commands (0 = disabled)")
         public int cooldownSeconds = 5;
 
-        @Comment("Default item used when multi-item system is disabled or as fallback")
+        @Comment({
+            "Default item used when multi-item system is disabled or as fallback",
+            "Placeholders: {VALUE}, {PLAYER}"
+        })
         public ConfigItem item = ConfigItem.builder()
             .withName("<white>Check worth <green>{VALUE}$")
-            .withLore(List.of("<gray>Right click to redeem"))
+            .withLore(List.of(
+                "<gray>Created by <white>{PLAYER}",
+                "<gray>Right click to redeem"
+            ))
             .withMaterial(Material.PAPER)
             .withTexture(0)
             .withGlow(true)
@@ -74,14 +80,18 @@ public class PluginConfig extends OkaeriConfig {
         @Comment({
             "Item configurations for specific value thresholds",
             "System selects the entry with highest minValue <= banknote value",
-            "Example: minValue 1.0 = coins, minValue 100.0 = banknotes"
+            "Example: minValue 1.0 = coins, minValue 100.0 = banknotes",
+            "Placeholders: {VALUE}, {PLAYER}"
         })
         public List<WithdrawItemEntry> multiItemEntries = List.of(
             new WithdrawItemEntry(
                 BigDecimal.ONE,
                 ConfigItem.builder()
                     .withName("<white>Coin worth <green>{VALUE}$")
-                    .withLore(List.of("<gray>Right click to redeem"))
+                    .withLore(List.of(
+                        "<gray>Created by <white>{PLAYER}",
+                        "<gray>Right click to redeem"
+                    ))
                     .withMaterial(Material.GOLD_NUGGET)
                     .withTexture(1)
                     .withGlow(false)
@@ -90,7 +100,10 @@ public class PluginConfig extends OkaeriConfig {
                 BigDecimal.valueOf(100),
                 ConfigItem.builder()
                     .withName("<white>Banknote worth <green>{VALUE}$")
-                    .withLore(List.of("<gray>Right click to redeem"))
+                    .withLore(List.of(
+                        "<gray>Created by <white>{PLAYER}",
+                        "<gray>Right click to redeem"
+                    ))
                     .withMaterial(Material.PAPER)
                     .withTexture(100)
                     .withGlow(true)

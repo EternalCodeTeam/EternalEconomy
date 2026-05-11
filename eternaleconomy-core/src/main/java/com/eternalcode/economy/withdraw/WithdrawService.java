@@ -49,6 +49,18 @@ public class WithdrawService {
             return;
         }
 
+        Account account = this.accountManager.getOrCreate(player.getUniqueId(), player.getName());
+        if (!this.accountPaymentService.hasEnoughBalance(account, value)) {
+            BigDecimal missingBalance = value.subtract(account.balance());
+
+            this.noticeService.create()
+                .notice(messageConfig -> messageConfig.player.insufficientBalance)
+                .placeholder("{MISSING_BALANCE}", this.decimalFormatter.format(missingBalance))
+                .player(player.getUniqueId())
+                .send();
+            return;
+        }
+
         if (player.getInventory().firstEmpty() == -1) {
             this.noticeService.create()
                 .notice(messageConfig -> messageConfig.withdraw.noInventorySpace)
@@ -57,10 +69,9 @@ public class WithdrawService {
             return;
         }
 
-        ItemStack banknote = this.withdrawItemService.createBanknote(value);
+        ItemStack banknote = this.withdrawItemService.createBanknote(value, player.getName());
         player.getInventory().addItem(banknote);
 
-        Account account = this.accountManager.getAccount(player.getUniqueId());
         this.accountPaymentService.removeBalance(account, value);
 
         this.noticeService.create()

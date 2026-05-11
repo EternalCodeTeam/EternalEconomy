@@ -38,10 +38,32 @@ public class MoneyTransferCommand {
 
     @Execute
     void execute(@Context Account payer, @Arg @NotSender Account receiver, @Arg @Min(1) BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            this.noticeService.create()
+                .notice(notice -> notice.positiveNumberRequired)
+                .placeholder("{AMOUNT}", amount.toString())
+                .player(payer.uuid())
+                .send();
+
+            return;
+        }
+
         if (amount.compareTo(this.pluginConfig.transactionLimit) > 0) {
             this.noticeService.create()
                 .notice(notice -> notice.player.transferLimit)
                 .placeholder("{LIMIT}", this.decimalFormatter.format(this.pluginConfig.transactionLimit))
+                .player(payer.uuid())
+                .send();
+
+            return;
+        }
+
+        if (!this.accountPaymentService.hasEnoughBalance(payer, amount)) {
+            BigDecimal missingBalance = amount.subtract(payer.balance());
+
+            this.noticeService.create()
+                .notice(notice -> notice.player.insufficientBalance)
+                .placeholder("{MISSING_BALANCE}", this.decimalFormatter.format(missingBalance))
                 .player(payer.uuid())
                 .send();
 

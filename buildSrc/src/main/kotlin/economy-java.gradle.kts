@@ -14,3 +14,7 @@ tasks.compileJava {
     options.encoding = "UTF-8"
     options.release = 17
 }
+
+tasks.test {
+    useJUnitPlatform()
+}

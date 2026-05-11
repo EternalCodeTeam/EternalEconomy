@@ -9,5 +9,5 @@ public interface WithdrawItemService {
 
     boolean isBanknote(ItemStack itemStack);
 
-    ItemStack createBanknote(BigDecimal value);
+    ItemStack createBanknote(BigDecimal value, String creatorName);
 }

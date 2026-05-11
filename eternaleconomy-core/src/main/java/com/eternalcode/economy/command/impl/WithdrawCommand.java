@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.UUID;
 
-@Command(name = "withdraw", aliases = {"paycheck", "check"})
+@Command(name = "withdraw", aliases = {"paycheck", "check", "wyplac"})
 @Permission(EconomyPermissionConstant.PLAYER_WITHDRAW_PERMISSION)
 public class WithdrawCommand {
 

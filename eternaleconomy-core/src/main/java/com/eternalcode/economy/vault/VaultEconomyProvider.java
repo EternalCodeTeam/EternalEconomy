@@ -67,7 +67,7 @@ public class VaultEconomyProvider extends VaultEconomyAdapter {
     @Override
     public boolean has(OfflinePlayer player, double amount) {
         Account account = getPlayerAccount(player);
-        return account != null && account.balance().doubleValue() >= amount;
+        return amount >= 0 && account != null && account.balance().doubleValue() >= amount;
     }
 
     @Override
@@ -83,8 +83,21 @@ public class VaultEconomyProvider extends VaultEconomyAdapter {
             return createFailureResponse();
         }
 
-        this.accountPaymentService.removeBalance(account, BigDecimal.valueOf(amount));
-        return createSuccessResponse(amount, account.balance().doubleValue());
+        if (amount < 0) {
+            return createFailureResponse("Amount cannot be negative");
+        }
+
+        if (amount == 0) {
+            return createSuccessResponse(amount, account.balance().doubleValue());
+        }
+
+        BigDecimal amountValue = BigDecimal.valueOf(amount);
+        if (!this.accountPaymentService.hasEnoughBalance(account, amountValue)) {
+            return createFailureResponse("Insufficient funds");
+        }
+
+        this.accountPaymentService.removeBalance(account, amountValue);
+        return createSuccessResponse(amount, account.balance().subtract(amountValue).doubleValue());
     }
 
     @Override
@@ -100,8 +113,17 @@ public class VaultEconomyProvider extends VaultEconomyAdapter {
             return createFailureResponse();
         }
 
-        this.accountPaymentService.addBalance(account, BigDecimal.valueOf(amount));
-        return createSuccessResponse(amount, account.balance().doubleValue());
+        if (amount < 0) {
+            return createFailureResponse("Amount cannot be negative");
+        }
+
+        if (amount == 0) {
+            return createSuccessResponse(amount, account.balance().doubleValue());
+        }
+
+        BigDecimal amountValue = BigDecimal.valueOf(amount);
+        this.accountPaymentService.addBalance(account, amountValue);
+        return createSuccessResponse(amount, account.balance().add(amountValue).doubleValue());
     }
 
     @Override
@@ -132,6 +154,10 @@ public class VaultEconomyProvider extends VaultEconomyAdapter {
     }
 
     private EconomyResponse createFailureResponse() {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Could not access player account");
+        return createFailureResponse("Could not access player account");
+    }
+
+    private EconomyResponse createFailureResponse(String message) {
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, message);
     }
 }
