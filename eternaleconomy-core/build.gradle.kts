@@ -4,6 +4,7 @@ import net.minecrell.pluginyml.paper.PaperPluginDescription
 plugins {
     `economy-java`
     `economy-repositories`
+    `economy-publish-plugin`
 
     id("net.minecrell.plugin-yml.paper")
     id("com.gradleup.shadow")
@@ -11,6 +12,10 @@ plugins {
     id("me.champeau.jmh")
 }
 
+ext {
+    set("modrinthProjectId", "EternalEconomy")
+    set("hangarProjectId", "EternalEconomy")
+}
 
 repositories {
     maven {
