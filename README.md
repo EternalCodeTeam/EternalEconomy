@@ -1,5 +1,8 @@
 <div align="center">
-  <img src="assets/readme-banner.png" alt="EternalEconomy banner">
+
+<img src="assets/readme-banner.png" alt="EternalEconomy banner">
+
+<br>
 
 [![Available on SpigotMC](https://raw.githubusercontent.com/vLuckyyy/badges/main/available-on-spigotmc.svg)](-)
 [![Available on Modrinth](https://raw.githubusercontent.com/vLuckyyy/badges/main/avaiable-on-modrinth.svg)](https://modrinth.com/plugin/EternalEconomy)
