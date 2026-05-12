@@ -61,6 +61,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.ServicePriority;
@@ -70,6 +71,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class EconomyBukkitPlugin extends JavaPlugin {
 
     private static final String PLUGIN_STARTED = "EternalEconomy has been enabled in %dms.";
+    private static final int BSTATS_PLUGIN_ID = 28941;
 
     private DatabaseManager databaseManager;
     private SkullAPI skullAPI;
@@ -79,6 +81,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
     public void onEnable() {
         Stopwatch started = Stopwatch.createStarted();
         Server server = this.getServer();
+        new Metrics(this, BSTATS_PLUGIN_ID);
 
         MiniMessage miniMessage = MiniMessage.builder()
             .postProcessor(new AdventureUrlPostProcessor())

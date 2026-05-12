@@ -60,6 +60,8 @@ dependencies {
 
     compileOnly("me.clip:placeholderapi:${Versions.PLACEHOLDER_API}")
 
+    implementation("org.bstats:bstats-bukkit:${Versions.BSTATS_BUKKIT}")
+
     // TriumphGUI for GUI
     implementation("dev.triumphteam:triumph-gui:${Versions.TRIUMPH_GUI}")
     paperLibrary("dev.rollczi:liteskullapi:${Versions.LITE_SKULL_API}")
@@ -135,6 +137,7 @@ paper {
 //    listOf(
 //
 //    ).forEach { relocate(it, prefix) }
+        relocate("org.bstats", "com.eternalcode.economy.libs.bstats")
     }
 }
 

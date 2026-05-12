@@ -9,7 +9,7 @@
 [![Available on Hangar](https://raw.githubusercontent.com/vLuckyyy/badges/main/avaiable-on-hangar.svg)](https://hangar.papermc.io/EternalCodeTeam/EternalEconomy)
 
 [![Chat on Discord](https://raw.githubusercontent.com/vLuckyyy/badges/main//chat-with-us-on-discord.svg)](https://discord.com/invite/FQ7jmGBd6c)
-[![Available on BStats](https://raw.githubusercontent.com/vLuckyyy/badges/main/available-on-bstats.svg)](https://bstats.org/plugin/bukkit/EternalEconomy2/13964)
+[![Available on BStats](https://raw.githubusercontent.com/vLuckyyy/badges/main/available-on-bstats.svg)](https://bstats.org/plugin/bukkit/EternalEconomy2/28941)
 
 [Report Bug](https://github.com/EternalCodeTeam/EternalEconomy/issues) • [Request Feature](https://github.com/EternalCodeTeam/EternalEconomy/issues) • [Join Discord](https://discord.com/invite/FQ7jmGBd6c)
 

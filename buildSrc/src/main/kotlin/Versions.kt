@@ -15,6 +15,7 @@ object Versions {
     const val VAULT_API = "1.7.1"
 
     const val PLACEHOLDER_API = "2.12.2"
+    const val BSTATS_BUKKIT = "3.2.1"
 
     const val LITE_SKULL_API = "2.0.0"
 
