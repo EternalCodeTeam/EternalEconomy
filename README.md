@@ -41,15 +41,6 @@
 >
 > For Folia servers, we recommend using [VaultUnlocked](https://modrinth.com/plugin/vaultunlocked) as a modern Vault-compatible bridge.
 
-## Requirements
-
-| Requirement | Version / note |
-| --- | --- |
-| Server | Paper `1.19+` |
-| Java | `17+` runtime |
-| Required plugin | `Vault` |
-| Optional plugin | `PlaceholderAPI` |
-
 ## Commands
 
 | Command | Aliases | Permission | Description |
