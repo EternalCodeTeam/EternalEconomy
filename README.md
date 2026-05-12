@@ -36,10 +36,12 @@
 | Leaderboard | Cached balance ranking with chat pages or configurable GUI. |
 | PlaceholderAPI | Exposes balance placeholders for scoreboards, TAB and other PAPI consumers. |
 | Storage | SQLite by default, with H2, MySQL, MariaDB and PostgreSQL support. |
-| Folia-ready | Marked as Folia supported  |
+| Folia-ready | Marked as Folia supported. |
 
 > [!IMPORTANT]
 > EternalEconomy requires **Vault**. PlaceholderAPI is optional, but enabled automatically when present.
+>
+> For Folia servers, we recommend using [VaultUnlocked](https://modrinth.com/plugin/vaultunlocked) as a modern Vault-compatible bridge.
 
 ## Requirements
 
