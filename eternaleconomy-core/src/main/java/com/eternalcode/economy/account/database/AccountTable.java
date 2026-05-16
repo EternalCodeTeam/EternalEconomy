@@ -17,7 +17,7 @@ class AccountTable {
     @DatabaseField(id = true, unique = true, columnName = UUID)
     private UUID uuid;
 
-    @DatabaseField(index = true, unique = true, columnName = NAME)
+    @DatabaseField(unique = true, columnName = NAME)
     private String name;
 
     @DatabaseField(dataType = DataType.BIG_DECIMAL_NUMERIC, columnName = BALANCE)
