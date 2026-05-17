@@ -6,11 +6,11 @@ import org.bukkit.Material;
 
 public class ConfigItem extends OkaeriConfig {
 
-    private final String name;
-    private final List<String> lore;
-    private final Material material;
-    private final Integer texture;
-    private final boolean glow;
+    private String name;
+    private List<String> lore;
+    private Material material;
+    private Integer texture;
+    private boolean glow;
 
     public ConfigItem(String name, List<String> lore, Material material, Integer texture, boolean glow) {
         this.name = name;
