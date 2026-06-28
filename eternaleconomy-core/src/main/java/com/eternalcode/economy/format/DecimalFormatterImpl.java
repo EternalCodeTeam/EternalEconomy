@@ -45,9 +45,9 @@ public class DecimalFormatterImpl implements DecimalFormatter {
         }
 
         fractionalPart *= 100;
-        String zeroPad = (fractionalPart < 10) ? "0" : "";
         fractionalPart = (fractionalPart < 99 && fractionalPart % 1 >= 0.5) ? ceil(fractionalPart)
             : floor(fractionalPart);
+        String zeroPad = (fractionalPart < 10) ? "0" : "";
 
         return (long) amount +
             TRUNCATED_AMOUNT_DELIMITER +

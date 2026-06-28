@@ -33,13 +33,11 @@ public class AdminSetCommand {
     }
 
     @Execute
-    void execute(@Context CommandSender sender, @Arg Account receiver, @Arg @Min(1) BigDecimal amount) {
+    void execute(@Context CommandSender sender, @Arg Account receiver, @Arg @Min(0) BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) < 1) {
+            amount = BigDecimal.ZERO;
+        }
         this.setAccountBalance(sender, receiver, amount);
-    }
-
-    @Execute
-    void executeZero(@Context CommandSender sender, @Arg Account receiver, @Arg @Max(0) @Min(0) BigDecimal amount) {
-        this.setAccountBalance(sender, receiver, BigDecimal.ZERO);
     }
 
     private void setAccountBalance(CommandSender sender, Account receiver, BigDecimal amount) {
