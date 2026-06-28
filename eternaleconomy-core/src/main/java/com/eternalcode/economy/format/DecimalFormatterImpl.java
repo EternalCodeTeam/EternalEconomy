@@ -31,9 +31,8 @@ public class DecimalFormatterImpl implements DecimalFormatter {
         return getTruncatedAmount(amount / divisor) + suffix;
     }
 
-    // This optimization had to be done as in microbenchmark it was
-    // that use of this method was approximately 15x faster than use
-    // of built-in DecimalFormat.
+    // microbenchmarking revealed that this custom implementation is
+    // approximately 15 times faster than the standard DecimalFormat,
     private static String getTruncatedAmount(double amount) {
         if (amount < 0.01 && amount > 0) {
             BigDecimal bd = BigDecimal.valueOf(amount);
