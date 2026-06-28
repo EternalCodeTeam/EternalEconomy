@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * @author Rafał "shitzuu" Chomczyk
+ * @author vuxeim@pm.me <a href="https://vuxe.im/">vuxeim</a>
  **/
 public class DecimalFormatterImpl implements DecimalFormatter {
 
@@ -45,9 +46,14 @@ public class DecimalFormatterImpl implements DecimalFormatter {
         }
 
         fractionalPart *= 100;
+        String zeroPad = (fractionalPart < 10) ? "0" : "";
         fractionalPart = (fractionalPart < 99 && fractionalPart % 1 >= 0.5) ? ceil(fractionalPart)
             : floor(fractionalPart);
-        return (long) amount + TRUNCATED_AMOUNT_DELIMITER + (long) fractionalPart;
+
+        return (long) amount +
+            TRUNCATED_AMOUNT_DELIMITER +
+            zeroPad +
+            (long) fractionalPart;
     }
 
     public String getFormattedDecimal(BigDecimal amount) {
