@@ -9,7 +9,7 @@ import com.eternalcode.economy.leaderboard.LeaderboardPage;
 import com.eternalcode.economy.leaderboard.LeaderboardService;
 import com.eternalcode.multification.shared.Formatter;
 import dev.rollczi.liteskullapi.SkullAPI;
-import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.builder.item.PaperItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import java.util.ArrayList;
@@ -115,8 +115,8 @@ public class LeaderboardMenu implements MiniMessageHolder {
         if (this.config.fillSettings.enableFillItems) {
             gui.getFiller().fill(
                 this.config.fillSettings.fillItems.stream()
-                    .map(ItemBuilder::from)
-                    .map(ItemBuilder::asGuiItem)
+                    .map(PaperItemBuilder::from)
+                    .map(PaperItemBuilder::asGuiItem)
                     .toList()
             );
         }

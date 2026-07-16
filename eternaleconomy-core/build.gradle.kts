@@ -68,7 +68,7 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:${Versions.BSTATS_BUKKIT}")
 
     // TriumphGUI for GUI
-    implementation("dev.triumphteam:triumph-gui:${Versions.TRIUMPH_GUI}")
+    implementation("dev.triumphteam:triumph-gui-paper:${Versions.TRIUMPH_GUI}")
     paperLibrary("dev.rollczi:liteskullapi:${Versions.LITE_SKULL_API}")
 
     testImplementation(platform("org.junit:junit-bom:6.0.3"))
