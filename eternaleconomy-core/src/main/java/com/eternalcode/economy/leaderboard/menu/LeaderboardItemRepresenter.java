@@ -3,7 +3,7 @@ package com.eternalcode.economy.leaderboard.menu;
 import com.eternalcode.economy.MiniMessageHolder;
 import com.eternalcode.multification.shared.Formatter;
 import dev.rollczi.liteskullapi.SkullAPI;
-import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.builder.item.PaperItemBuilder;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.GuiItem;
 import eu.okaeri.configs.annotation.Exclude;
@@ -92,16 +92,16 @@ public class LeaderboardItemRepresenter implements Serializable, MiniMessageHold
 
         Component nameComponent = RESET_ITEM.append(MINI_MESSAGE.deserialize(formatter.format(this.name)));
 
-        ItemBuilder builder;
+        PaperItemBuilder builder;
 
         if (preloadedSkull != null) {
-            builder = ItemBuilder.from(preloadedSkull);
+            builder = PaperItemBuilder.from(preloadedSkull);
         }
         else if (this.texture != null && !this.texture.equals("none") && skullAPI != null) {
-            builder = ItemBuilder.from(Material.PLAYER_HEAD);
+            builder = PaperItemBuilder.from(Material.PLAYER_HEAD);
         }
         else {
-            builder = ItemBuilder.from(this.material);
+            builder = PaperItemBuilder.from(this.material);
         }
 
         builder.name(nameComponent)
