@@ -99,18 +99,16 @@ paper {
     prefix = "EternalEconomy"
     author = "EternalCodeTeam"
     name = "EternalEconomy"
-    website = "www.eternalcode.pl"
-    // Enabling this option previously caused issues where the plugin was loaded before Vault,
-    // preventing the Vault Economy Provider from registering and causing dependent plugins to malfunction.
-    // Setting the load order to startup ensures the economy plugin is one of the first to load, avoiding these issues.
+    website = "https://www.eternalcode.pl"
     load = BukkitPluginDescription.PluginLoadOrder.STARTUP
-    version = "${project.version}"
+    version = project.version.toString()
 
     serverDependencies {
         register("Vault") {
             required = true
             load = PaperPluginDescription.RelativeLoadOrder.BEFORE
         }
+
         register("PlaceholderAPI") {
             required = false
             load = PaperPluginDescription.RelativeLoadOrder.BEFORE
@@ -128,21 +126,20 @@ tasks.runServer {
     }
 }
 
-paper {
+tasks.shadowJar {
+    archiveFileName.set("EternalEconomy-v${project.version}.jar")
 
-    tasks.shadowJar {
-        archiveFileName.set("EternalEconomy v${project.version}.jar")
+    exclude(
+        "org/intellij/lang/annotations/**",
+        "org/jetbrains/annotations/**"
+    )
 
-        exclude(
-            "org/intellij/lang/annotations/**",
-            "org/jetbrains/annotations/**"
-        )
+    val relocationPrefix = "com.eternalcode.economy.libs"
 
-//    val prefix = "com.eternalcode.economy.libs"
-//    listOf(
-//
-//    ).forEach { relocate(it, prefix) }
-        relocate("org.bstats", "com.eternalcode.economy.libs.bstats")
+    mapOf(
+        "org.bstats" to "$relocationPrefix.bstats",
+        "dev.triumphteam.gui" to "$relocationPrefix.triumphgui"
+    ).forEach { (source, target) ->
+        relocate(source, target)
     }
 }
-
