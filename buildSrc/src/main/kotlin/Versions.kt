@@ -19,7 +19,7 @@ object Versions {
 
     const val LITE_SKULL_API = "2.0.0"
 
-    const val MARIA_DB = "3.5.7"
+    const val MARIA_DB = "3.5.9"
     const val POSTGRESQL = "42.7.13"
     const val H2 = "2.4.240"
     const val ORMLITE = "6.1"
