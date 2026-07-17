@@ -10,6 +10,7 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import java.math.BigDecimal;
 import org.bukkit.command.CommandSender;
@@ -32,13 +33,11 @@ public class AdminSetCommand {
     }
 
     @Execute
-    void execute(@Context CommandSender sender, @Arg Account receiver, @Arg @Min(1) BigDecimal amount) {
+    void execute(@Context CommandSender sender, @Arg Account receiver, @Arg @Min(0) BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) < 1) {
+            amount = BigDecimal.ZERO;
+        }
         this.setAccountBalance(sender, receiver, amount);
-    }
-
-    @Execute(name = "0")
-    void execute(@Context CommandSender sender, @Arg Account receiver) {
-        this.setAccountBalance(sender, receiver, BigDecimal.ZERO);
     }
 
     private void setAccountBalance(CommandSender sender, Account receiver, BigDecimal amount) {
