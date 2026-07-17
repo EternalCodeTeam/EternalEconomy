@@ -75,7 +75,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("com.github.ben-manes.caffeine:caffeine:3.2.4")
-    testImplementation("com.google.guava:guava:33.5.0-jre")
+    testImplementation("com.google.guava:guava:33.6.0-jre")
 
     jmh("org.openjdk.jmh:jmh-core:1.37")
     jmh("org.openjdk.jmh:jmh-generator-annprocess:1.37")
