@@ -36,7 +36,7 @@ public class AccountManager {
         accountRepository.getAllAccounts()
             .thenAccept(accounts -> {
                 for (Account account : accounts) {
-                    accountManager.save(account);
+                    accountManager.updateCache(account);
                 }
             })
             .exceptionally(throwable -> {
@@ -79,6 +79,16 @@ public class AccountManager {
     }
 
     public void save(Account account) {
+        this.updateCache(account);
+        this.leaderboardService.invalidateCache();
+
+        this.accountRepository.save(account).exceptionally(throwable -> {
+            this.logger.severe("Failed to save account " + account.uuid() + ": " + throwable.getMessage());
+            return null;
+        });
+    }
+
+    private void updateCache(Account account) {
         Account old = this.accountByUniqueId.get(account.uuid());
         if (old != null && !old.name().equals(account.name())) {
             this.accountByName.remove(old.name());
@@ -86,13 +96,6 @@ public class AccountManager {
 
         this.accountByUniqueId.put(account.uuid(), account);
         this.accountByName.put(account.name(), account);
-
-        this.leaderboardService.invalidateCache();
-
-        this.accountRepository.save(account).exceptionally(throwable -> {
-            this.logger.severe("Failed to save account " + account.uuid() + ": " + throwable.getMessage());
-            return null;
-        });
     }
 
     public Collection<Account> getAccountStartingWith(String prefix) {
