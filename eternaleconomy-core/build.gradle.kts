@@ -60,7 +60,7 @@ dependencies {
     paperLibrary("eu.okaeri:okaeri-configs-serdes-commons:${Versions.OKAERI_CONFIGS}")
     paperLibrary("eu.okaeri:okaeri-configs-serdes-bukkit:${Versions.OKAERI_CONFIGS}")
 
-    paperLibrary("com.github.cryptomorin:XSeries:13.7.1")
+    paperLibrary("com.github.cryptomorin:XSeries:13.8.0")
     paperLibrary("com.github.ben-manes.caffeine:caffeine:3.2.4")
 
     compileOnly("me.clip:placeholderapi:${Versions.PLACEHOLDER_API}")
