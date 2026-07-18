@@ -5,7 +5,7 @@ object Versions {
     const val TRIUMPH_GUI = "3.1.13"
 
     const val OKAERI_CONFIGS = "5.0.13"
-    const val LITE_COMMANDS = "3.10.9"
+    const val LITE_COMMANDS = "3.11.0"
 
     const val ETERNALCODE_COMMONS = "1.4.1"
     const val MULTIFICATION = "1.2.4"
