@@ -8,8 +8,14 @@ plugins {
 
 val buildNumber = providers.environmentVariable("GITHUB_RUN_NUMBER").orNull
 val isRelease = providers.environmentVariable("GITHUB_EVENT_NAME").orNull == "release"
+val declaredVersion = project.version.toString()
+val isSnapshot = declaredVersion.endsWith("-SNAPSHOT")
 
-if (buildNumber != null && !isRelease) {
+require(!isRelease || !isSnapshot) {
+    "GitHub releases require a stable project version, but found: $declaredVersion"
+}
+
+if (buildNumber != null && !isRelease && isSnapshot) {
     var offset = "0"
 
     try {
@@ -66,6 +72,15 @@ val hangarToken = providers.environmentVariable("HANGAR_API_TOKEN")
 
 val projectVersion = project.version.toString()
 val releaseChannel = if (isRelease) "Release" else "Snapshot"
+val shouldPublish = isRelease || isSnapshot
+
+tasks.matching {
+    it.name == "modrinth" || it.name == "publishPluginPublicationToHangar"
+}.configureEach {
+    onlyIf("Snapshot pushes and stable GitHub releases are publishable") {
+        shouldPublish
+    }
+}
 
 afterEvaluate {
     val shadowJarTask = tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar")
