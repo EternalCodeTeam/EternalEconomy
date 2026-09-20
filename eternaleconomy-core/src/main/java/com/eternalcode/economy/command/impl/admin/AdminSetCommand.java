@@ -13,6 +13,7 @@ import dev.rollczi.litecommands.annotations.permission.Permission;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import java.math.BigDecimal;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 @Command(name = "economy set", aliases = "eco set")
@@ -50,11 +51,13 @@ public class AdminSetCommand {
             .viewer(sender)
             .send();
 
-        this.noticeService.create()
-            .notice(notice -> notice.player.set)
-            .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-            .placeholder("{PLAYER}", receiver.name())
-            .player(receiver.uuid())
-            .send();
+        if (Bukkit.getPlayer(receiver.uuid()) != null) {
+            this.noticeService.create()
+                .notice(notice -> notice.player.set)
+                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+                .placeholder("{PLAYER}", receiver.name())
+                .player(receiver.uuid())
+                .send();
+        }
     }
 }

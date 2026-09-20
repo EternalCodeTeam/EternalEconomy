@@ -12,6 +12,7 @@ import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import jakarta.validation.constraints.Min;
 import java.math.BigDecimal;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 @Command(name = "economy add", aliases = "eco add")
@@ -43,11 +44,13 @@ public class AdminAddCommand {
             .viewer(sender)
             .send();
 
-        this.noticeService.create()
-            .notice(notice -> notice.player.added)
-            .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-            .placeholder("{PLAYER}", receiver.name())
-            .player(receiver.uuid())
-            .send();
+        if (Bukkit.getPlayer(receiver.uuid()) != null) {
+            this.noticeService.create()
+                .notice(notice -> notice.player.added)
+                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+                .placeholder("{PLAYER}", receiver.name())
+                .player(receiver.uuid())
+                .send();
+        }
     }
 }

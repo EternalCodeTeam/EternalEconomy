@@ -9,6 +9,7 @@ import dev.rollczi.litecommands.annotations.command.Command;
 import dev.rollczi.litecommands.annotations.context.Context;
 import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 @Command(name = "economy reset", aliases = "eco reset")
@@ -36,10 +37,12 @@ public class AdminResetCommand {
             .viewer(sender)
             .send();
 
-        this.noticeService.create()
-            .notice(notice -> notice.player.reset)
-            .placeholder("{PLAYER}", receiver.name())
-            .player(receiver.uuid())
-            .send();
+        if (Bukkit.getPlayer(receiver.uuid()) != null) {
+            this.noticeService.create()
+                .notice(notice -> notice.player.reset)
+                .placeholder("{PLAYER}", receiver.name())
+                .player(receiver.uuid())
+                .send();
+        }
     }
 }

@@ -14,6 +14,7 @@ import dev.rollczi.litecommands.annotations.execute.Execute;
 import dev.rollczi.litecommands.annotations.permission.Permission;
 import jakarta.validation.constraints.Min;
 import java.math.BigDecimal;
+import org.bukkit.Bukkit;
 
 @Command(name = "pay", aliases = "transfer")
 @Permission(EconomyPermissionConstant.PLAYER_PAY_PERMISSION)
@@ -79,11 +80,13 @@ public class MoneyTransferCommand {
             .player(payer.uuid())
             .send();
 
-        this.noticeService.create()
-            .notice(notice -> notice.player.transferReceived)
-            .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
-            .placeholder("{PLAYER}", payer.name())
-            .player(receiver.uuid())
-            .send();
+        if (Bukkit.getPlayer(receiver.uuid()) != null) {
+            this.noticeService.create()
+                .notice(notice -> notice.player.transferReceived)
+                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+                .placeholder("{PLAYER}", payer.name())
+                .player(receiver.uuid())
+                .send();
+        }
     }
 }

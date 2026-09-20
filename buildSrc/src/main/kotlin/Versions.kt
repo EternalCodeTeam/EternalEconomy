@@ -1,6 +1,6 @@
 object Versions {
 
-    const val PAPER_API = "1.20.4-R0.1-SNAPSHOT"
+    const val PAPER_API = "1.21.4-R0.1-SNAPSHOT"
 
     const val TRIUMPH_GUI = "3.1.13"
 
