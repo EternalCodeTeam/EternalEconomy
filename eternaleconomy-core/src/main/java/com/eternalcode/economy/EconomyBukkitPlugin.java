@@ -40,6 +40,7 @@ import com.eternalcode.economy.multification.NoticeBroadcastHandler;
 import com.eternalcode.economy.multification.NoticeHandler;
 import com.eternalcode.economy.multification.NoticeService;
 import com.eternalcode.economy.vault.VaultEconomyProvider;
+import com.eternalcode.economy.withdraw.WithdrawDecayTask;
 import com.eternalcode.economy.withdraw.WithdrawItemServiceImpl;
 import com.eternalcode.economy.withdraw.WithdrawService;
 import com.eternalcode.economy.withdraw.controller.WithdrawAnvilController;
@@ -76,6 +77,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
     private DatabaseManager databaseManager;
     private SkullAPI skullAPI;
     private LiteCommands<CommandSender> liteCommands;
+    private WithdrawDecayTask withdrawDecayTask;
 
     @Override
     public void onEnable() {
@@ -126,11 +128,16 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             this, pluginConfig,
             decimalFormatter,
             miniMessage);
+        this.withdrawDecayTask = new WithdrawDecayTask(
+            server, scheduler,
+            withdrawItemServiceImpl,
+            pluginConfig);
         WithdrawService withdrawService = new WithdrawService(
             server,
             noticeService,
             decimalFormatter,
             withdrawItemServiceImpl,
+            this.withdrawDecayTask,
             accountPaymentService,
             accountManager);
 
@@ -220,6 +227,9 @@ public class EconomyBukkitPlugin extends JavaPlugin {
             new WithdrawAnvilController(withdrawItemServiceImpl, noticeService),
             this);
 
+        server.getPluginManager().registerEvents(this.withdrawDecayTask, this);
+        this.withdrawDecayTask.start();
+
         BridgeManager bridgeManager = new BridgeManager(
             this.getPluginMeta(),
             accountManager,
@@ -235,6 +245,10 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (this.withdrawDecayTask != null) {
+            this.withdrawDecayTask.stop();
+        }
+
         if (this.skullAPI != null) {
             this.skullAPI.shutdown();
         }

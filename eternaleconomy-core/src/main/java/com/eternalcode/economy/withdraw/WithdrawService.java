@@ -19,6 +19,7 @@ public class WithdrawService {
     private final Server server;
     private final NoticeService noticeService;
     private final WithdrawItemService withdrawItemService;
+    private final WithdrawDecayTask withdrawDecayTask;
     private final DecimalFormatter decimalFormatter;
     private final AccountPaymentService accountPaymentService;
     private final AccountManager accountManager;
@@ -28,6 +29,7 @@ public class WithdrawService {
         NoticeService noticeService,
         DecimalFormatter decimalFormatter,
         WithdrawItemService withdrawItemService,
+        WithdrawDecayTask withdrawDecayTask,
         AccountPaymentService accountPaymentService,
         AccountManager accountManager
     ) {
@@ -35,6 +37,7 @@ public class WithdrawService {
         this.noticeService = noticeService;
         this.decimalFormatter = decimalFormatter;
         this.withdrawItemService = withdrawItemService;
+        this.withdrawDecayTask = withdrawDecayTask;
         this.accountPaymentService = accountPaymentService;
         this.accountManager = accountManager;
     }
@@ -71,6 +74,7 @@ public class WithdrawService {
 
         ItemStack banknote = this.withdrawItemService.createBanknote(value, player.getName());
         player.getInventory().addItem(banknote);
+        this.scheduleDecayIfNeeded(player, banknote);
 
         this.accountPaymentService.removeBalance(account, value);
 
@@ -79,6 +83,28 @@ public class WithdrawService {
             .placeholder("{VALUE}", this.decimalFormatter.format(value))
             .player(player.getUniqueId())
             .send();
+    }
+
+    private void scheduleDecayIfNeeded(Player player, ItemStack banknote) {
+        long nextUpdate = this.withdrawItemService.getNextUpdate(banknote);
+        if (nextUpdate == Long.MAX_VALUE) {
+            return;
+        }
+
+        int slot = this.findSlot(player, banknote);
+        if (slot >= 0) {
+            this.withdrawDecayTask.schedule(player.getUniqueId(), slot, nextUpdate);
+        }
+    }
+
+    private int findSlot(Player player, ItemStack target) {
+        ItemStack[] contents = player.getInventory().getStorageContents();
+        for (int slot = 0; slot < contents.length; slot++) {
+            if (contents[slot] == target) {
+                return slot;
+            }
+        }
+        return -1;
     }
 
     public void redeem(Player player, ItemStack item, BigDecimal value, int amount) {

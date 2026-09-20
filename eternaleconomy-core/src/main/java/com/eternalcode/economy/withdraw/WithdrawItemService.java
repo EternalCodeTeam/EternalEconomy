@@ -10,4 +10,8 @@ public interface WithdrawItemService {
     boolean isBanknote(ItemStack itemStack);
 
     ItemStack createBanknote(BigDecimal value, String creatorName);
+
+    long refreshLore(ItemStack itemStack);
+
+    long getNextUpdate(ItemStack itemStack);
 }

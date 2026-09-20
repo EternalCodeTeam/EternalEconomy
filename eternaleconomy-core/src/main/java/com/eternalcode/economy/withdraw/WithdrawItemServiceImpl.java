@@ -1,43 +1,37 @@
 package com.eternalcode.economy.withdraw;
 
-import com.cryptomorin.xseries.XEnchantment;
 import com.eternalcode.economy.config.implementation.PluginConfig;
 import com.eternalcode.economy.config.item.ConfigItem;
-import com.eternalcode.economy.config.item.WithdrawItemEntry;
 import com.eternalcode.economy.format.DecimalFormatter;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.TreeMap;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
 public class WithdrawItemServiceImpl implements WithdrawItemService {
 
-    private static final String VALUE_PLACEHOLDER = "{VALUE}";
-    private static final String PLAYER_PLACEHOLDER = "{PLAYER}";
     private static final String WITHDRAW_VALUE_KEY = "withdraw_value";
-    private static final TagResolver EMPTY_RESOLVER = TagResolver.empty();
+    private static final String WITHDRAW_CREATED_AT_KEY = "withdraw_created_at";
+    private static final String WITHDRAW_CREATOR_KEY = "withdraw_creator";
+    private static final String WITHDRAW_LAST_RENDERED_KEY = "withdraw_last_rendered";
+    private static final String WITHDRAW_NEXT_UPDATE_KEY = "withdraw_next_update";
+    private static final String WITHDRAW_SETTLED_KEY = "withdraw_settled";
 
     private final PluginConfig pluginConfig;
     private final DecimalFormatter moneyFormatter;
-    private final MiniMessage miniMessage;
-    private final NamespacedKey banknoteValueKey;
-    private final Enchantment glowEnchantment;
+    private final WithdrawBanknoteRenderer renderer;
+    private final WithdrawDecayCalculator decayCalculator;
 
-    private volatile NavigableMap<BigDecimal, ConfigItem> cachedThresholdMap;
-    private volatile List<WithdrawItemEntry> cachedEntries;
+    private final NamespacedKey banknoteValueKey;
+    private final NamespacedKey createdAtKey;
+    private final NamespacedKey creatorKey;
+    private final NamespacedKey lastRenderedKey;
+    private final NamespacedKey nextUpdateKey;
+    private final NamespacedKey settledKey;
 
     public WithdrawItemServiceImpl(
         Plugin plugin,
@@ -47,9 +41,15 @@ public class WithdrawItemServiceImpl implements WithdrawItemService {
     ) {
         this.pluginConfig = pluginConfig;
         this.moneyFormatter = moneyFormatter;
-        this.miniMessage = miniMessage;
+        this.renderer = new WithdrawBanknoteRenderer(pluginConfig, miniMessage);
+        this.decayCalculator = new WithdrawDecayCalculator();
+
         this.banknoteValueKey = new NamespacedKey(plugin, WITHDRAW_VALUE_KEY);
-        this.glowEnchantment = XEnchantment.UNBREAKING.get();
+        this.createdAtKey = new NamespacedKey(plugin, WITHDRAW_CREATED_AT_KEY);
+        this.creatorKey = new NamespacedKey(plugin, WITHDRAW_CREATOR_KEY);
+        this.lastRenderedKey = new NamespacedKey(plugin, WITHDRAW_LAST_RENDERED_KEY);
+        this.nextUpdateKey = new NamespacedKey(plugin, WITHDRAW_NEXT_UPDATE_KEY);
+        this.settledKey = new NamespacedKey(plugin, WITHDRAW_SETTLED_KEY);
     }
 
     @Override
@@ -58,8 +58,10 @@ public class WithdrawItemServiceImpl implements WithdrawItemService {
             throw new IllegalArgumentException("Banknote value must be positive, got: " + value);
         }
 
-        ConfigItem configItem = this.selectConfigItem(value);
+        ConfigItem configItem = this.renderer.selectConfigItem(value);
         String formattedValue = this.moneyFormatter.format(value);
+        long createdAt = System.currentTimeMillis();
+        PluginConfig.WithdrawItem.Decay decayConfig = this.pluginConfig.withdraw.decay;
 
         ItemStack itemStack = new ItemStack(configItem.material());
 
@@ -68,90 +70,32 @@ public class WithdrawItemServiceImpl implements WithdrawItemService {
                 meta.setCustomModelData(configItem.texture());
             }
 
-            Component name = this.miniMessage.deserialize(
-                this.replaceBanknotePlaceholders(configItem.name(), formattedValue, creatorName),
-                EMPTY_RESOLVER
-            ).decoration(TextDecoration.ITALIC, false);
+            this.renderer.renderAppearance(
+                meta, configItem,
+                formattedValue, formattedValue, creatorName,
+                decayConfig.hourlyRatePercent.toPlainString());
 
-            meta.displayName(name);
+            PersistentDataContainer pdc = meta.getPersistentDataContainer();
+            pdc.set(this.banknoteValueKey, PersistentDataType.STRING, value.toPlainString());
+            pdc.set(this.creatorKey, PersistentDataType.STRING, creatorName);
+            pdc.set(this.createdAtKey, PersistentDataType.LONG, createdAt);
+            pdc.set(this.lastRenderedKey, PersistentDataType.STRING, formattedValue);
 
-            if (!configItem.lore().isEmpty()) {
-                List<Component> lore = new ArrayList<>(configItem.lore().size());
-                for (String line : configItem.lore()) {
-                    lore.add(
-                        this.miniMessage.deserialize(
-                            this.replaceBanknotePlaceholders(line, formattedValue, creatorName),
-                            EMPTY_RESOLVER
-                        ).decoration(TextDecoration.ITALIC, false)
-                    );
+            if (decayConfig.enabled) {
+                BigDecimal floor = decayConfig.minValue.min(value);
+
+                long nextUpdate = this.decayCalculator.computeNextUpdateAtMillis(
+                    value, createdAt, value, floor,
+                    decayConfig.hourlyRatePercent.doubleValue(),
+                    decayConfig.displayUpdateThresholdPercent.doubleValue());
+
+                if (nextUpdate != Long.MAX_VALUE) {
+                    pdc.set(this.nextUpdateKey, PersistentDataType.LONG, nextUpdate);
                 }
-                meta.lore(lore);
             }
-
-            if (configItem.glow()) {
-                meta.addEnchant(this.glowEnchantment, 1, true);
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            }
-
-            meta.getPersistentDataContainer().set(
-                this.banknoteValueKey,
-                PersistentDataType.STRING,
-                value.toPlainString()
-            );
         });
 
         return itemStack;
-    }
-
-    private String replaceBanknotePlaceholders(String text, String formattedValue, String creatorName) {
-        return text
-            .replace(VALUE_PLACEHOLDER, formattedValue)
-            .replace(PLAYER_PLACEHOLDER, creatorName);
-    }
-
-    private ConfigItem selectConfigItem(BigDecimal value) {
-        if (!this.pluginConfig.withdraw.multiItemEnabled) {
-            return this.pluginConfig.withdraw.item;
-        }
-
-        NavigableMap<BigDecimal, ConfigItem> thresholdMap = this.getOrRebuildThresholdMap();
-        if (thresholdMap.isEmpty()) {
-            return this.pluginConfig.withdraw.item;
-        }
-
-        Map.Entry<BigDecimal, ConfigItem> entry = thresholdMap.floorEntry(value);
-        if (entry == null) {
-            return this.pluginConfig.withdraw.item;
-        }
-
-        return entry.getValue();
-    }
-
-    private NavigableMap<BigDecimal, ConfigItem> getOrRebuildThresholdMap() {
-        List<WithdrawItemEntry> entries = this.pluginConfig.withdraw.multiItemEntries;
-
-        if (this.cachedThresholdMap == null || this.cachedEntries != entries) {
-            this.cachedThresholdMap = this.buildThresholdMap(entries);
-            this.cachedEntries = entries;
-        }
-
-        return this.cachedThresholdMap;
-    }
-
-    private NavigableMap<BigDecimal, ConfigItem> buildThresholdMap(List<WithdrawItemEntry> entries) {
-        NavigableMap<BigDecimal, ConfigItem> map = new TreeMap<>();
-
-        if (entries == null || entries.isEmpty()) {
-            return map;
-        }
-
-        for (WithdrawItemEntry entry : entries) {
-            if (entry.minValue() != null && entry.item() != null) {
-                map.put(entry.minValue(), entry.item());
-            }
-        }
-
-        return map;
     }
 
     @Override
@@ -171,18 +115,133 @@ public class WithdrawItemServiceImpl implements WithdrawItemService {
         }
 
         ItemMeta meta = itemStack.getItemMeta();
-        String value = meta.getPersistentDataContainer()
-            .get(this.banknoteValueKey, PersistentDataType.STRING);
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
 
-        if (value == null) {
+        String rawValue = pdc.get(this.banknoteValueKey, PersistentDataType.STRING);
+        if (rawValue == null) {
             return BigDecimal.ZERO;
         }
 
+        BigDecimal nominal;
         try {
-            return new BigDecimal(value);
+            nominal = new BigDecimal(rawValue);
         }
         catch (NumberFormatException ignored) {
             return BigDecimal.ZERO;
         }
+
+        PluginConfig.WithdrawItem.Decay decayConfig = this.pluginConfig.withdraw.decay;
+        if (!decayConfig.enabled) {
+            return nominal;
+        }
+
+        Long createdAt = pdc.get(this.createdAtKey, PersistentDataType.LONG);
+        if (createdAt == null) {
+            // banknote was created before the decay feature was enabled - never decays
+            return nominal;
+        }
+
+        BigDecimal floor = decayConfig.minValue.min(nominal);
+
+        return this.decayCalculator.computeDecayedValue(
+            nominal, createdAt, System.currentTimeMillis(),
+            decayConfig.hourlyRatePercent.doubleValue(), floor);
+    }
+
+    @Override
+    public long getNextUpdate(ItemStack itemStack) {
+        if (itemStack == null || !itemStack.hasItemMeta()) {
+            return Long.MAX_VALUE;
+        }
+
+        Long stored = itemStack.getItemMeta()
+            .getPersistentDataContainer()
+            .get(this.nextUpdateKey, PersistentDataType.LONG);
+
+        return stored == null ? Long.MAX_VALUE : stored;
+    }
+
+    @Override
+    public long refreshLore(ItemStack itemStack) {
+        if (itemStack == null || !itemStack.hasItemMeta() || !this.pluginConfig.withdraw.decay.enabled) {
+            return Long.MAX_VALUE;
+        }
+
+        ItemMeta readMeta = itemStack.getItemMeta();
+        PersistentDataContainer readPdc = readMeta.getPersistentDataContainer();
+
+        if (!readPdc.has(this.banknoteValueKey, PersistentDataType.STRING)) {
+            return Long.MAX_VALUE;
+        }
+        if (readPdc.has(this.settledKey, PersistentDataType.BYTE)) {
+            return Long.MAX_VALUE;
+        }
+
+        String rawValue = readPdc.get(this.banknoteValueKey, PersistentDataType.STRING);
+        Long createdAt = readPdc.get(this.createdAtKey, PersistentDataType.LONG);
+        String creatorName = readPdc.get(this.creatorKey, PersistentDataType.STRING);
+
+        if (rawValue == null || createdAt == null || creatorName == null) {
+            // banknote predates the decay feature - nothing to track
+            return Long.MAX_VALUE;
+        }
+
+        BigDecimal nominal;
+        try {
+            nominal = new BigDecimal(rawValue);
+        }
+        catch (NumberFormatException exception) {
+            return Long.MAX_VALUE;
+        }
+
+        PluginConfig.WithdrawItem.Decay decayConfig = this.pluginConfig.withdraw.decay;
+        BigDecimal floor = decayConfig.minValue.min(nominal);
+
+        long now = System.currentTimeMillis();
+        BigDecimal currentValue = this.decayCalculator.computeDecayedValue(
+            nominal, createdAt, now, decayConfig.hourlyRatePercent.doubleValue(), floor);
+        String formattedCurrent = this.moneyFormatter.format(currentValue);
+        String lastRendered = readPdc.get(this.lastRenderedKey, PersistentDataType.STRING);
+
+        boolean valueChanged = !formattedCurrent.equals(lastRendered);
+        boolean settled = currentValue.compareTo(floor) <= 0;
+
+        String formattedNominal = this.moneyFormatter.format(nominal);
+        ConfigItem configItem = this.renderer.selectConfigItem(nominal);
+        long[] nextUpdateHolder = {Long.MAX_VALUE};
+
+        itemStack.editMeta(meta -> {
+            PersistentDataContainer pdc = meta.getPersistentDataContainer();
+
+            if (valueChanged) {
+                this.renderer.renderAppearance(
+                    meta, configItem,
+                    formattedNominal, formattedCurrent, creatorName,
+                    decayConfig.hourlyRatePercent.toPlainString());
+                pdc.set(this.lastRenderedKey, PersistentDataType.STRING, formattedCurrent);
+            }
+
+            if (settled) {
+                pdc.set(this.settledKey, PersistentDataType.BYTE, (byte) 1);
+                pdc.remove(this.nextUpdateKey);
+                nextUpdateHolder[0] = Long.MAX_VALUE;
+                return;
+            }
+
+            long nextUpdate = this.decayCalculator.computeNextUpdateAtMillis(
+                nominal, createdAt, currentValue, floor,
+                decayConfig.hourlyRatePercent.doubleValue(),
+                decayConfig.displayUpdateThresholdPercent.doubleValue());
+
+            if (nextUpdate == Long.MAX_VALUE) {
+                pdc.remove(this.nextUpdateKey);
+            }
+            else {
+                pdc.set(this.nextUpdateKey, PersistentDataType.LONG, nextUpdate);
+            }
+            nextUpdateHolder[0] = nextUpdate;
+        });
+
+        return nextUpdateHolder[0];
     }
 }

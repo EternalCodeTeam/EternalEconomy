@@ -108,5 +108,41 @@ public class PluginConfig extends OkaeriConfig {
                     .withTexture(100)
                     .withGlow(true)
                     .build()));
+
+        @Comment({
+            "Hourly value decay for withdrawn checks",
+            "When enabled, a check loses a percentage of its CURRENT value every hour (compound decay)",
+            "Its actual payout is always computed fresh at redemption time, regardless of on-screen lore",
+            "New placeholders become available in item name/lore: {CURRENT_VALUE}, {DECAY_RATE}"
+        })
+        public Decay decay = new Decay();
+
+        public static class Decay extends OkaeriConfig {
+
+            @Comment("Enable hourly value decay for withdrawn checks")
+            public boolean enabled = false;
+
+            @Comment("Percentage of the CURRENT value lost every hour (compound), e.g. 5.0 = -5%/h")
+            public BigDecimal hourlyRatePercent = BigDecimal.valueOf(5);
+
+            @Comment("A check never decays below this amount")
+            public BigDecimal minValue = BigDecimal.ONE;
+
+            @Comment({
+                "The displayed (lore) value refreshes once the real value would visibly drop by",
+                "at least this percentage since the last refresh. Lower = more frequent, more precise",
+                "on-screen updates at the cost of slightly more work; does not affect the real payout"
+            })
+            public BigDecimal displayUpdateThresholdPercent = BigDecimal.valueOf(0.5);
+
+            @Comment("Maximum number of check lore refreshes processed per scheduler tick (spreads out load)")
+            public int maxUpdatesPerTick = 50;
+
+            @Comment({
+                "How often (in seconds) a full safety re-scan of online players' inventories runs,",
+                "to self-heal any check that might have missed its scheduled lore refresh"
+            })
+            public int reconciliationIntervalSeconds = 900;
+        }
     }
 }
