@@ -35,7 +35,7 @@ public class WithdrawAnvilController implements Listener {
 
         if (this.isBanknoteInteraction(clickedItem, cursorItem, event.getAction())) {
             event.setCancelled(true);
-            event.getView().close();
+            event.getWhoClicked().closeInventory();
 
             this.noticeService.create()
                 .notice(messageConfig -> messageConfig.withdraw.invalidInteraction)
@@ -69,7 +69,7 @@ public class WithdrawAnvilController implements Listener {
 
         if (isDraggingToTopInventory) {
             event.setCancelled(true);
-            event.getView().close();
+            event.getWhoClicked().closeInventory();
 
             this.noticeService.create()
                 .notice(messageConfig -> messageConfig.withdraw.invalidInteraction)
