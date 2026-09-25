@@ -32,36 +32,40 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:${Versions.PAPER_API}")
 
     // eternalcode commons
-    paperLibrary("com.eternalcode:eternalcode-commons-adventure:${Versions.ETERNALCODE_COMMONS}")
-    paperLibrary("com.eternalcode:eternalcode-commons-bukkit:${Versions.ETERNALCODE_COMMONS}")
-    paperLibrary("com.eternalcode:eternalcode-commons-shared:${Versions.ETERNALCODE_COMMONS}")
-    paperLibrary("com.eternalcode:eternalcode-commons-folia:${Versions.ETERNALCODE_COMMONS}")
+    implementation("com.eternalcode:eternalcode-commons-adventure:${Versions.ETERNALCODE_COMMONS}") {
+        exclude(group = "net.kyori") // provided by paper
+    }
+    implementation("com.eternalcode:eternalcode-commons-bukkit:${Versions.ETERNALCODE_COMMONS}")
+    implementation("com.eternalcode:eternalcode-commons-shared:${Versions.ETERNALCODE_COMMONS}")
+    implementation("com.eternalcode:eternalcode-commons-folia:${Versions.ETERNALCODE_COMMONS}")
 
     paperLibrary("org.mariadb.jdbc:mariadb-java-client:${Versions.MARIA_DB}")
     paperLibrary("org.postgresql:postgresql:${Versions.POSTGRESQL}")
     paperLibrary("com.h2database:h2:${Versions.H2}")
-    paperLibrary("com.j256.ormlite:ormlite-core:${Versions.ORMLITE}")
-    paperLibrary("com.j256.ormlite:ormlite-jdbc:${Versions.ORMLITE}")
-    paperLibrary("com.zaxxer:HikariCP:${Versions.HIKARI_CP}")
+    implementation("com.j256.ormlite:ormlite-core:${Versions.ORMLITE}")
+    implementation("com.j256.ormlite:ormlite-jdbc:${Versions.ORMLITE}")
+    implementation("com.zaxxer:HikariCP:${Versions.HIKARI_CP}") {
+        exclude(group = "org.slf4j") // provided by paper
+    }
 
-    paperLibrary("dev.rollczi:litecommands-bukkit:${Versions.LITE_COMMANDS}")
-    paperLibrary("dev.rollczi:litecommands-adventure:${Versions.LITE_COMMANDS}")
-    paperLibrary("dev.rollczi:litecommands-jakarta:${Versions.LITE_COMMANDS}")
+    implementation("dev.rollczi:litecommands-bukkit:${Versions.LITE_COMMANDS}")
+    implementation("dev.rollczi:litecommands-adventure:${Versions.LITE_COMMANDS}")
+    implementation("dev.rollczi:litecommands-jakarta:${Versions.LITE_COMMANDS}")
 
     // multification
-    paperLibrary("com.eternalcode:multification-bukkit:${Versions.MULTIFICATION}")
-    paperLibrary("com.eternalcode:multification-okaeri:${Versions.MULTIFICATION}")
+    implementation("com.eternalcode:multification-bukkit:${Versions.MULTIFICATION}")
+    implementation("com.eternalcode:multification-okaeri:${Versions.MULTIFICATION}")
 
     // vault
     compileOnly("com.github.MilkBowl:VaultAPI:${Versions.VAULT_API}")
 
     // okaeri configs
-    paperLibrary("eu.okaeri:okaeri-configs-yaml-snakeyaml:${Versions.OKAERI_CONFIGS}")
-    paperLibrary("eu.okaeri:okaeri-configs-serdes-commons:${Versions.OKAERI_CONFIGS}")
-    paperLibrary("eu.okaeri:okaeri-configs-serdes-bukkit:${Versions.OKAERI_CONFIGS}")
+    implementation("eu.okaeri:okaeri-configs-yaml-snakeyaml:${Versions.OKAERI_CONFIGS}")
+    implementation("eu.okaeri:okaeri-configs-serdes-commons:${Versions.OKAERI_CONFIGS}")
+    implementation("eu.okaeri:okaeri-configs-serdes-bukkit:${Versions.OKAERI_CONFIGS}")
 
-    paperLibrary("com.github.cryptomorin:XSeries:13.7.1")
-    paperLibrary("com.github.ben-manes.caffeine:caffeine:3.2.4")
+    implementation("com.github.cryptomorin:XSeries:13.7.1")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.2.4")
 
     compileOnly("me.clip:placeholderapi:${Versions.PLACEHOLDER_API}")
 
@@ -69,7 +73,7 @@ dependencies {
 
     // TriumphGUI for GUI
     implementation("dev.triumphteam:triumph-gui-paper:${Versions.TRIUMPH_GUI}")
-    paperLibrary("dev.rollczi:liteskullapi:${Versions.LITE_SKULL_API}")
+    implementation("dev.rollczi:liteskullapi:${Versions.LITE_SKULL_API}")
 
     testImplementation(platform("org.junit:junit-bom:6.1.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -136,9 +140,31 @@ tasks.shadowJar {
 
     val relocationPrefix = "com.eternalcode.economy.libs"
 
+    mergeServiceFiles()
+
     mapOf(
         "org.bstats" to "$relocationPrefix.bstats",
-        "dev.triumphteam.gui" to "$relocationPrefix.triumphgui"
+        "dev.triumphteam.gui" to "$relocationPrefix.triumphgui",
+        "dev.rollczi.liteskullapi" to "$relocationPrefix.liteskullapi",
+        "dev.rollczi.litecommands" to "$relocationPrefix.litecommands",
+        "com.eternalcode.commons" to "$relocationPrefix.commons",
+        "com.eternalcode.multification" to "$relocationPrefix.multification",
+        "eu.okaeri.configs" to "$relocationPrefix.okaeri.configs",
+        "org.yaml.snakeyaml" to "$relocationPrefix.snakeyaml",
+        "com.j256.ormlite" to "$relocationPrefix.ormlite",
+        "com.zaxxer.hikari" to "$relocationPrefix.hikari",
+        "com.cryptomorin.xseries" to "$relocationPrefix.xseries",
+        "com.github.benmanes.caffeine" to "$relocationPrefix.caffeine",
+        "com.google.errorprone" to "$relocationPrefix.errorprone",
+        "org.jspecify" to "$relocationPrefix.jspecify",
+        // litecommands-jakarta (hibernate validator stack)
+        "jakarta.validation" to "$relocationPrefix.jakarta.validation",
+        "jakarta.el" to "$relocationPrefix.jakarta.el",
+        "org.hibernate.validator" to "$relocationPrefix.hibernate.validator",
+        "org.glassfish.expressly" to "$relocationPrefix.expressly",
+        "com.sun.el" to "$relocationPrefix.sun.el",
+        "org.jboss.logging" to "$relocationPrefix.jboss.logging",
+        "com.fasterxml.classmate" to "$relocationPrefix.classmate"
     ).forEach { (source, target) ->
         relocate(source, target)
     }
