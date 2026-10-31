@@ -13,6 +13,9 @@ import org.bukkit.Material;
 @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal"})
 public class PluginConfig extends OkaeriConfig {
 
+    @Comment("Balance display settings")
+    public BalanceDisplay balanceDisplay = new BalanceDisplay();
+
     @Comment("Units settings")
     public Units units = new Units();
 
@@ -39,6 +42,15 @@ public class PluginConfig extends OkaeriConfig {
 
     @Comment("Currency item settings")
     public WithdrawItem withdraw = new WithdrawItem();
+
+    public static class BalanceDisplay extends OkaeriConfig {
+
+        @Comment({
+            "Show exact balance values in /balance and /balancetop",
+            "true = 1 500 000, false = 1.5m"
+        })
+        public boolean exactValues = false;
+    }
 
     public static class Units extends OkaeriConfig {
 

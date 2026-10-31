@@ -27,7 +27,7 @@ public class AdminBalanceCommand {
     public void execute(@Context CommandSender sender, @Arg Account account) {
         this.noticeService.create()
             .notice(notice -> notice.admin.balance)
-            .placeholder("{BALANCE}", this.decimalFormatter.format(account.balance()))
+            .placeholder("{BALANCE}", this.decimalFormatter.formatBalance(account.balance()))
             .placeholder("{PLAYER}", account.name())
             .viewer(sender)
             .send();

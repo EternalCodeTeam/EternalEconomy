@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * @author Rafał "shitzuu" Chomczyk
- * @author vuxeim@pm.me <a href="https://vuxe.im/">vuxeim</a>
+ * @author vuxeim@pm.me <a href="https://vuxe.im/">vuxe.im</a>
  **/
 public class DecimalFormatterImpl implements DecimalFormatter {
 
@@ -85,5 +85,39 @@ public class DecimalFormatterImpl implements DecimalFormatter {
     @Override
     public String format(double amount) {
         return this.getFormattedDecimal(amount);
+    }
+
+    @Override
+    public String formatBalance(BigDecimal amount) {
+        if (!this.pluginConfig.balanceDisplay.exactValues) {
+            return this.format(amount);
+        }
+
+        String plainValue = amount.toPlainString();
+        int decimalSeparator = plainValue.indexOf('.');
+        String integralPart = decimalSeparator >= 0
+            ? plainValue.substring(0, decimalSeparator)
+            : plainValue;
+        String fractionalPart = decimalSeparator >= 0
+            ? plainValue.substring(decimalSeparator)
+            : "";
+
+        boolean negative = integralPart.startsWith("-");
+        int digitStart = negative ? 1 : 0;
+        String digits = integralPart.substring(digitStart);
+        StringBuilder grouped = new StringBuilder();
+
+        if (negative) {
+            grouped.append('-');
+        }
+
+        for (int i = 0; i < digits.length(); i++) {
+            if (i > 0 && (digits.length() - i) % 3 == 0) {
+                grouped.append(' ');
+            }
+            grouped.append(digits.charAt(i));
+        }
+
+        return grouped.append(fractionalPart).toString();
     }
 }
