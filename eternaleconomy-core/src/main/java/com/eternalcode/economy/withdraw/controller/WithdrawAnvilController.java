@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -24,75 +25,74 @@ public class WithdrawAnvilController implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onAnvilClick(InventoryClickEvent event) {
-        Inventory topInventory = event.getInventory();
+        Inventory topInventory = event.getView().getTopInventory();
 
-        if (this.isRestrictedInventory(topInventory)) {
+        if (!this.isRestrictedInventory(topInventory)) {
             return;
         }
 
+        InventoryAction action = event.getAction();
         ItemStack clickedItem = event.getCurrentItem();
         ItemStack cursorItem = event.getCursor();
 
-        if (this.isBanknoteInteraction(clickedItem, cursorItem, event.getAction())) {
-            event.setCancelled(true);
-            event.getWhoClicked().closeInventory();
+        boolean clickingTopInventory =
+                event.getRawSlot() >= 0
+                        && event.getRawSlot() < topInventory.getSize(); // Raw slots below the top inventory size belong to it.
 
-            this.noticeService.create()
-                .notice(messageConfig -> messageConfig.withdraw.invalidInteraction)
-                .viewer(event.getWhoClicked())
-                .send();
+        if (action == InventoryAction.MOVE_TO_OTHER_INVENTORY
+                && this.withdrawItemService.isBanknote(clickedItem)) {
+
+            event.setCancelled(true);
+            this.sendInvalidInteractionNotice(event);
+            return;
+        }
+
+        if (clickingTopInventory
+                && (action == InventoryAction.PLACE_ALL
+                || action == InventoryAction.PLACE_ONE
+                || action == InventoryAction.PLACE_SOME)
+                && this.withdrawItemService.isBanknote(cursorItem)) {
+
+            event.setCancelled(true);
+            this.sendInvalidInteractionNotice(event);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onAnvilDrag(InventoryDragEvent event) {
-        Inventory inventory = event.getInventory();
+        Inventory topInventory = event.getView().getTopInventory();
 
-        if (this.isRestrictedInventory(inventory)) {
+        if (!this.isRestrictedInventory(topInventory)) {
             return;
         }
 
         ItemStack draggedItem = event.getOldCursor();
-        if (draggedItem == null || !this.withdrawItemService.isBanknote(draggedItem)) {
+
+        if (!this.withdrawItemService.isBanknote(draggedItem)) {
             return;
         }
 
-        int inventorySize = inventory.getSize();
-        boolean isDraggingToTopInventory = false;
+        int topInventorySize = topInventory.getSize();
 
-        for (Integer slot : event.getRawSlots()) {
-            if (slot < inventorySize) {
-                isDraggingToTopInventory = true;
-                break;
+        for (int rawSlot : event.getRawSlots()) {
+            if (rawSlot >= 0 && rawSlot < topInventorySize) { // Cancel the drag if it touches the top inventory.
+                event.setCancelled(true);
+                this.sendInvalidInteractionNotice(event);
+                return;
             }
-        }
-
-        if (isDraggingToTopInventory) {
-            event.setCancelled(true);
-            event.getWhoClicked().closeInventory();
-
-            this.noticeService.create()
-                .notice(messageConfig -> messageConfig.withdraw.invalidInteraction)
-                .viewer(event.getWhoClicked())
-                .send();
         }
     }
 
     private boolean isRestrictedInventory(Inventory inventory) {
         InventoryType type = inventory.getType();
-        return type != InventoryType.ANVIL && type != InventoryType.CRAFTING && type != InventoryType.WORKBENCH;
+        return type == InventoryType.ANVIL
+                || type == InventoryType.WORKBENCH;
     }
 
-    private boolean isBanknoteInteraction(ItemStack clickedItem, ItemStack cursorItem, InventoryAction action) {
-        if (action == InventoryAction.MOVE_TO_OTHER_INVENTORY && this.withdrawItemService.isBanknote(clickedItem)) {
-            return true;
-        }
-
-        if (action == InventoryAction.PLACE_ALL || action == InventoryAction.PLACE_ONE
-            || action == InventoryAction.PLACE_SOME) {
-            return this.withdrawItemService.isBanknote(cursorItem);
-        }
-
-        return false;
+    private void sendInvalidInteractionNotice(InventoryInteractEvent event) {
+        this.noticeService.create()
+                .notice(messageConfig -> messageConfig.withdraw.invalidInteraction)
+                .viewer(event.getWhoClicked())
+                .send();
     }
 }
