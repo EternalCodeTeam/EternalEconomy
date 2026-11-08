@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -34,37 +35,23 @@ public class WithdrawAnvilController implements Listener {
         ItemStack clickedItem = event.getCurrentItem();
         ItemStack cursorItem = event.getCursor();
 
-        /*
-         * Clicking a slot in the top inventory.
-         *
-         * Raw slots belonging to the top inventory are:
-         * 0 .. topInventory.getSize() - 1
-         */
         boolean clickingTopInventory =
                 event.getRawSlot() >= 0
-                        && event.getRawSlot() < topInventory.getSize();
+                        && event.getRawSlot() < topInventory.getSize(); // Raw slots below the top inventory size belong to it.
 
-        /*
-         * Player is trying to put a banknote from the cursor
-         * into the anvil/crafting/workbench.
-         */
-        if (clickingTopInventory
-                && this.withdrawItemService.isBanknote(cursorItem)) {
+        if (action == InventoryAction.MOVE_TO_OTHER_INVENTORY
+                && this.withdrawItemService.isBanknote(clickedItem)) {
 
             event.setCancelled(true);
             this.sendInvalidInteractionNotice(event);
             return;
         }
 
-        /*
-         * Shift-clicking a banknote while an anvil/crafting/workbench
-         * is open would move the item between inventories.
-         *
-         * Cancel it so the banknote cannot be automatically inserted
-         * into the restricted inventory.
-         */
-        if (action == InventoryAction.MOVE_TO_OTHER_INVENTORY
-                && this.withdrawItemService.isBanknote(clickedItem)) {
+        if (clickingTopInventory
+                && (action == InventoryAction.PLACE_ALL
+                || action == InventoryAction.PLACE_ONE
+                || action == InventoryAction.PLACE_SOME)
+                && this.withdrawItemService.isBanknote(cursorItem)) {
 
             event.setCancelled(true);
             this.sendInvalidInteractionNotice(event);
@@ -87,12 +74,8 @@ public class WithdrawAnvilController implements Listener {
 
         int topInventorySize = topInventory.getSize();
 
-        /*
-         * If any dragged slot belongs to the top inventory,
-         * cancel the whole drag operation.
-         */
         for (int rawSlot : event.getRawSlots()) {
-            if (rawSlot >= 0 && rawSlot < topInventorySize) {
+            if (rawSlot >= 0 && rawSlot < topInventorySize) { // Cancel the drag if it touches the top inventory.
                 event.setCancelled(true);
                 this.sendInvalidInteractionNotice(event);
                 return;
@@ -106,14 +89,7 @@ public class WithdrawAnvilController implements Listener {
                 || type == InventoryType.WORKBENCH;
     }
 
-    private void sendInvalidInteractionNotice(InventoryClickEvent event) {
-        this.noticeService.create()
-                .notice(messageConfig -> messageConfig.withdraw.invalidInteraction)
-                .viewer(event.getWhoClicked())
-                .send();
-    }
-
-    private void sendInvalidInteractionNotice(InventoryDragEvent event) {
+    private void sendInvalidInteractionNotice(InventoryInteractEvent event) {
         this.noticeService.create()
                 .notice(messageConfig -> messageConfig.withdraw.invalidInteraction)
                 .viewer(event.getWhoClicked())
