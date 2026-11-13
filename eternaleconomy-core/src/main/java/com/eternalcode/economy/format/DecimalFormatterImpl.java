@@ -93,6 +93,11 @@ public class DecimalFormatterImpl implements DecimalFormatter {
             return this.format(amount);
         }
 
+        return this.formatExact(amount);
+    }
+
+    @Override
+    public String formatExact(BigDecimal amount) {
         String plainValue = amount.toPlainString();
         int decimalSeparator = plainValue.indexOf('.');
         String integralPart = decimalSeparator >= 0

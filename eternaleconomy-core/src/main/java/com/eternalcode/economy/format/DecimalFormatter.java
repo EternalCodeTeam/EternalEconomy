@@ -9,4 +9,6 @@ public interface DecimalFormatter {
     String format(double amount);
 
     String formatBalance(BigDecimal amount);
+
+    String formatExact(BigDecimal amount);
 }

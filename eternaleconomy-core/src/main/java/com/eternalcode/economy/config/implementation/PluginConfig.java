@@ -65,6 +65,9 @@ public class PluginConfig extends OkaeriConfig {
 
     public static class WithdrawItem extends OkaeriConfig {
 
+        @Comment("Show exact values in withdraw item placeholders instead of shortened values")
+        public boolean showExactValue = false;
+
         @Comment("Cooldown in seconds between withdraw commands (0 = disabled)")
         public int cooldownSeconds = 5;
 
