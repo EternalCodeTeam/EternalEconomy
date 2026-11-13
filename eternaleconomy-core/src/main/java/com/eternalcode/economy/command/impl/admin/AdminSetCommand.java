@@ -46,7 +46,7 @@ public class AdminSetCommand {
 
         this.noticeService.create()
             .notice(notice -> notice.admin.set)
-            .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+            .placeholder("{AMOUNT}", this.decimalFormatter.formatBalance(amount))
             .placeholder("{PLAYER}", receiver.name())
             .viewer(sender)
             .send();
@@ -54,7 +54,7 @@ public class AdminSetCommand {
         if (Bukkit.getPlayer(receiver.uuid()) != null) {
             this.noticeService.create()
                 .notice(notice -> notice.player.set)
-                .placeholder("{AMOUNT}", this.decimalFormatter.format(amount))
+                .placeholder("{AMOUNT}", this.decimalFormatter.formatBalance(amount))
                 .placeholder("{PLAYER}", receiver.name())
                 .player(receiver.uuid())
                 .send();

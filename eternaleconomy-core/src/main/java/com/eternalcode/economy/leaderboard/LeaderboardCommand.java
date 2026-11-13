@@ -88,7 +88,7 @@ public class LeaderboardCommand {
                 .notice(messages -> messages.player.leaderboardEntry)
                 .placeholder("{POSITION}", String.valueOf(entry.position()))
                 .placeholder("{PLAYER}", entry.account().name())
-                .placeholder("{BALANCE}", this.decimalFormatter.format(entry.account().balance()))
+                .placeholder("{BALANCE}", this.decimalFormatter.formatBalance(entry.account().balance()))
                 .placeholder("{BALANCE_RAW}", String.valueOf(entry.account().balance()))
                 .player(account.uuid())
                 .send();

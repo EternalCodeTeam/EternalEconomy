@@ -137,7 +137,7 @@ public class LeaderboardMenu implements MiniMessageHolder {
             int slot = slots.get(i);
             ItemStack preloadedSkull = skullCache.get(i);
 
-            String formattedBalance = this.decimalFormatter.format(entry.account().balance());
+            String formattedBalance = this.decimalFormatter.formatBalance(entry.account().balance());
             LeaderboardItemRepresenter item = this.config.playerItems.template;
 
             Formatter formatter = new Formatter()

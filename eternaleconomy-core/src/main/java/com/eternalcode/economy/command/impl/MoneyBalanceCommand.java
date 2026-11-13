@@ -27,7 +27,7 @@ public class MoneyBalanceCommand {
     void execute(@Context Account account) {
         this.noticeService.create()
             .notice(messageConfig -> messageConfig.player.balance)
-            .placeholder("{BALANCE}", this.decimalFormatter.format(account.balance()))
+            .placeholder("{BALANCE}", this.decimalFormatter.formatBalance(account.balance()))
             .player(account.uuid())
             .send();
     }
@@ -38,7 +38,7 @@ public class MoneyBalanceCommand {
         this.noticeService.create()
             .notice(messageConfig -> messageConfig.player.balanceOther)
             .placeholder("{PLAYER}", account.name())
-            .placeholder("{BALANCE}", this.decimalFormatter.format(account.balance()))
+            .placeholder("{BALANCE}", this.decimalFormatter.formatBalance(account.balance()))
             .viewer(sender)
             .send();
     }
