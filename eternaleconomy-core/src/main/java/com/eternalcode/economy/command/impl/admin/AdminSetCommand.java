@@ -3,6 +3,8 @@ package com.eternalcode.economy.command.impl.admin;
 import com.eternalcode.economy.EconomyPermissionConstant;
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.AccountPaymentService;
+import com.eternalcode.economy.account.AccountResolver;
+import com.eternalcode.economy.account.AccountTarget;
 import com.eternalcode.economy.format.DecimalFormatter;
 import com.eternalcode.economy.multification.NoticeService;
 import dev.rollczi.litecommands.annotations.argument.Arg;
@@ -21,24 +23,36 @@ import org.bukkit.command.CommandSender;
 public class AdminSetCommand {
 
     private final AccountPaymentService accountPaymentService;
+    private final AccountResolver accountResolver;
     private final DecimalFormatter decimalFormatter;
     private final NoticeService noticeService;
 
     public AdminSetCommand(
         AccountPaymentService accountPaymentService,
+        AccountResolver accountResolver,
         DecimalFormatter decimalFormatter,
         NoticeService noticeService) {
         this.accountPaymentService = accountPaymentService;
+        this.accountResolver = accountResolver;
         this.decimalFormatter = decimalFormatter;
         this.noticeService = noticeService;
     }
 
     @Execute
-    void execute(@Context CommandSender sender, @Arg Account receiver, @Arg @Min(0) BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) < 1) {
-            amount = BigDecimal.ZERO;
-        }
-        this.setAccountBalance(sender, receiver, amount);
+    void execute(@Context CommandSender sender, @Arg AccountTarget target, @Arg @Min(0) BigDecimal amount) {
+        BigDecimal balance = amount.max(BigDecimal.ZERO);
+
+        this.accountResolver.resolve(target).thenAccept(account -> {
+            if (account.isEmpty()) {
+                this.noticeService.create()
+                    .notice(notice -> notice.invalidPlayer)
+                    .viewer(sender)
+                    .send();
+                return;
+            }
+
+            this.setAccountBalance(sender, account.get(), balance);
+        });
     }
 
     private void setAccountBalance(CommandSender sender, Account receiver, BigDecimal amount) {

@@ -52,7 +52,7 @@
 | `/balancetop [page]` | `/baltop`, `/btgui`, `/topgui` | `eternaleconomy.player.balance.top` | Opens or prints the balance leaderboard. |
 | `/economy add <player> <amount>` | `/eco add` | `eternaleconomy.admin.add` | Adds money to a player. |
 | `/economy remove <player> <amount>` | `/eco remove` | `eternaleconomy.admin.remove` | Removes money from a player. |
-| `/economy set <player> <amount>` | `/eco set` | `eternaleconomy.admin.set` | Sets a player's balance. |
+| `/economy set <player\|uuid> <amount>` | `/eco set` | `eternaleconomy.admin.set` | Sets a player's balance, creating the account if the player has never joined. |
 | `/economy set <player> 0` | `/eco set <player> 0` | `eternaleconomy.admin.set` | Sets a player's balance to zero. |
 | `/economy reset <player>` | `/eco reset` | `eternaleconomy.admin.reset` | Resets balance to the configured default. |
 | `/economy reload` | - | `eternaleconomy.admin.reload` | Reloads plugin configuration. |

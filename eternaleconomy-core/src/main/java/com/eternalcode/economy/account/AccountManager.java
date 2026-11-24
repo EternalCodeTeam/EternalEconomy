@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.logging.Logger;
@@ -56,33 +57,48 @@ public class AccountManager {
         return this.accountByName.get(name);
     }
 
-    public Account getOrCreate(UUID uuid, String name) {
+    public synchronized Account getOrCreate(UUID uuid, String name) {
         Account existing = this.accountByUniqueId.get(uuid);
 
-        if (existing != null) {
-            if (!existing.name().equals(name)) {
-                Account updated = new Account(uuid, name, existing.balance());
-                this.save(updated);
-                return updated;
-            }
+        if (existing != null && existing.name().equals(name)) {
             return existing;
         }
 
-        Account byName = this.accountByName.get(name);
-        if (byName != null) {
-            return byName;
+        BigDecimal balance = existing != null ? existing.balance() : BigDecimal.ZERO;
+        Account account = new Account(uuid, name, balance);
+        Account nameHolder = this.accountByName.get(name);
+
+        if (nameHolder == null || nameHolder.uuid().equals(uuid)) {
+            this.save(account);
+            return account;
         }
 
-        Account newAccount = new Account(uuid, name, BigDecimal.ZERO);
-        this.save(newAccount);
-        return newAccount;
+        this.saveWithReleasedName(account, nameHolder);
+        return account;
     }
 
     public void save(Account account) {
         this.updateCache(account);
         this.leaderboardService.invalidateCache();
 
-        this.accountRepository.save(account).exceptionally(throwable -> {
+        this.logSaveFailure(account, this.accountRepository.save(account));
+    }
+
+    private void saveWithReleasedName(Account account, Account nameHolder) {
+        Account released = new Account(nameHolder.uuid(), nameHolder.uuid().toString(), nameHolder.balance());
+
+        this.updateCache(released);
+        this.updateCache(account);
+        this.leaderboardService.invalidateCache();
+
+        CompletableFuture<Void> saved = this.accountRepository.save(released)
+            .thenCompose(ignored -> this.accountRepository.save(account));
+
+        this.logSaveFailure(account, saved);
+    }
+
+    private void logSaveFailure(Account account, CompletableFuture<Void> saved) {
+        saved.exceptionally(throwable -> {
             this.logger.severe("Failed to save account " + account.uuid() + ": " + throwable.getMessage());
             return null;
         });

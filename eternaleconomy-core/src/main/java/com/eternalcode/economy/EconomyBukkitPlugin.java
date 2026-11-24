@@ -6,12 +6,15 @@ import com.eternalcode.commons.adventure.AdventureUrlPostProcessor;
 import com.eternalcode.commons.scheduler.Scheduler;
 import com.eternalcode.economy.account.Account;
 import com.eternalcode.economy.account.AccountController;
+import com.eternalcode.economy.account.AccountResolver;
+import com.eternalcode.economy.account.AccountTarget;
 import com.eternalcode.economy.account.AccountManager;
 import com.eternalcode.economy.account.AccountPaymentService;
 import com.eternalcode.economy.account.database.AccountRepository;
 import com.eternalcode.economy.account.database.AccountRepositoryImpl;
 import com.eternalcode.economy.bridge.BridgeManager;
 import com.eternalcode.economy.command.argument.AccountArgument;
+import com.eternalcode.economy.command.argument.AccountTargetArgument;
 import com.eternalcode.economy.command.context.AccountContext;
 import com.eternalcode.economy.command.cooldown.CommandCooldownEditor;
 import com.eternalcode.economy.command.cooldown.CommandCooldownMessage;
@@ -121,6 +124,7 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
         DecimalFormatter decimalFormatter = new DecimalFormatterImpl(pluginConfig);
         AccountPaymentService accountPaymentService = new AccountPaymentService(accountManager, pluginConfig);
+        AccountResolver accountResolver = new AccountResolver(accountManager, server, scheduler, this.getLogger());
 
         WithdrawItemServiceImpl withdrawItemServiceImpl = new WithdrawItemServiceImpl(
             this, pluginConfig,
@@ -179,8 +183,8 @@ public class EconomyBukkitPlugin extends JavaPlugin {
                     accountPaymentService, decimalFormatter,
                     noticeService),
                 new AdminSetCommand(
-                    accountPaymentService, decimalFormatter,
-                    noticeService),
+                    accountPaymentService, accountResolver,
+                    decimalFormatter, noticeService),
                 new AdminResetCommand(accountPaymentService, noticeService),
                 new AdminBalanceCommand(noticeService, decimalFormatter),
                 new WithdrawCommand(
@@ -194,6 +198,9 @@ public class EconomyBukkitPlugin extends JavaPlugin {
 
             .context(Account.class, new AccountContext(accountManager, messageConfig))
             .argument(Account.class, new AccountArgument(accountManager, noticeService, server))
+            .argument(
+                AccountTarget.class,
+                new AccountTargetArgument(accountManager, noticeService, decimalFormatter, server))
 
             .result(Notice.class, new NoticeHandler(noticeService))
             .result(NoticeBroadcast.class, new NoticeBroadcastHandler());
