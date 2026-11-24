@@ -12,7 +12,7 @@ dependencies {
     implementation("com.modrinth.minotaur:Minotaur:2.9.0")
     implementation("io.papermc.hangar-publish-plugin:io.papermc.hangar-publish-plugin.gradle.plugin:0.1.4")
     implementation("net.minecrell:plugin-yml:0.6.0")
-    implementation("xyz.jpenilla:run-task:3.0.2")
+    implementation("xyz.jpenilla:run-task:3.1.0")
     implementation("me.champeau.jmh:jmh-gradle-plugin:0.7.3")
 }
 
